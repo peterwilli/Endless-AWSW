@@ -1,0 +1,9 @@
+version: "3"
+services:
+  endless_server:
+    build: .
+    volumes:
+      - "./src:/opt/awsw"
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:5000:5000"

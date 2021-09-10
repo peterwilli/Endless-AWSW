@@ -1,0 +1,5 @@
+data_*.txt
+cached_*.lock
+cached_*.txt
+awsw_story_input.txt
+models/
