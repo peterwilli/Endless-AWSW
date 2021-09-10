@@ -60,7 +60,7 @@ class ModelManager:
         return result
 
     def say(self, past, prompt):
-        prompt = f'{past}{self.end_token}c \"{prompt}\"{self.end_token}'
+        prompt = f'{past}{self.end_token}c \"{prompt}\"{self.end_token}DragonReply'
         prompt_tokens = self.tokenizer.encode(prompt)
         prompt_tensor = torch.tensor(prompt_tokens).unsqueeze(0)
         prompt_tensor = prompt_tensor.to(self.device)
@@ -76,8 +76,8 @@ class ModelManager:
             )
 
             text = self.tokenizer.decode(sample_outputs[0], skip_special_tokens=False)
-            text = text[len(prompt):]
-            post_processed = self.post_process_reply(text)
-            logging.debug(f"prompt: {prompt} reply: {text} ({len(prompt_tokens)} tokens) post_processed: {post_processed}")
+            text_trimmed = text[len(prompt):]
+            post_processed = self.post_process_reply(text_trimmed)
+            logging.debug(f"prompt: {prompt} reply: {text} (trimmed: {text_trimmed}) ({len(prompt_tokens)} tokens) post_processed: {post_processed}")
             if post_processed is not None:
                 return post_processed
