@@ -15,10 +15,24 @@ label me_testmod_sebmeet:
         json_str = response.read()
         command_dict = json.loads(json_str)
         cmd = command_dict['cmd']
+        talk_functions = {
+            'Ry': Ry,
+            'Lo': Lo,
+            'Br': Br,
+            'Wr': Wr,
+            'Ka': Ka,
+            'Rz': Rz,
+            'Kv': Kv,
+            'Zh': Zh,
+            'm': m,
+            'An': An,
+            'Ad': Ad,
+            'Sb': Sb
+        }
         
     if cmd == "msg":
         $ msg_from = command_dict['from']
         $ msg = command_dict['msg']
         $ persistent.endless_awsw_past += msg
-        if msg_from == "Rz":
-            Rz "[msg]"
+        $ talk_functions[msg_from](msg)
+        jump me_testmod_sebmeet
