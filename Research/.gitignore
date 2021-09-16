@@ -1,4 +1,5 @@
 data_*.txt
+data_*.txt.lock
 cached_*.lock
 cached_*.txt
 awsw_story_input.txt
