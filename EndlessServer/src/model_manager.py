@@ -1,6 +1,6 @@
 from transformers import Trainer, TrainingArguments
 import torch
-from transformers import GPT2LMHeadModel, GPT2Tokenizer, GPT2Config, GPT2LMHeadModel
+from transformers import GPT2LMHeadModel, GPT2Tokenizer, GPT2Config, GPT2LMHeadModel, GPTNeoForCausalLM
 import re
 import sys
 import logging
@@ -32,8 +32,8 @@ class ModelManager:
             self.path,
             do_train = False
         )
-        self.tokenizer = GPT2Tokenizer.from_pretrained('gpt2', bos_token='<|startoftext|>', eos_token='<|endoftext|>', pad_token='<|pad|>')
-        model = GPT2LMHeadModel.from_pretrained(self.path, pad_token_id = self.tokenizer.eos_token_id)
+        self.tokenizer = GPT2Tokenizer.from_pretrained('EleutherAI/gpt-neo-125M', bos_token='<|startoftext|>', eos_token='<|endoftext|>', pad_token='<|pad|>')
+        model = GPTNeoForCausalLM.from_pretrained(self.path, pad_token_id = self.tokenizer.pad_token_id, eos_token_id=self.tokenizer.eos_token_id)
         model.to(self.device)
         model.resize_token_embeddings(len(self.tokenizer))
         model.eval()
@@ -60,8 +60,9 @@ class ModelManager:
         return result
 
     def say(self, past, prompt):
-        prompt = f'{past}{self.end_token}c \"{prompt}\"{self.end_token}DragonReply'
-        prompt_tokens = self.tokenizer.encode(prompt)
+        prompt = f'{past} PlayerReply c \"{prompt}\" DragonReply'
+        # Make sure we use the last 128 tokens to avoid issues.
+        prompt_tokens = self.tokenizer.encode(prompt)[-128:]
         prompt_tensor = torch.tensor(prompt_tokens).unsqueeze(0)
         prompt_tensor = prompt_tensor.to(self.device)
 
@@ -69,9 +70,9 @@ class ModelManager:
             sample_outputs = self.model.generate(
                 prompt_tensor, 
                 do_sample=True,   
+                top_p=0.95, 
                 top_k=50, 
                 max_length = 128,
-                top_p=0.95, 
                 num_return_sequences=1
             )
 
