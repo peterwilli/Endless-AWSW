@@ -22,7 +22,8 @@ class ModelManager:
             'm': 'Narrator',
             'An': 'Anna',
             'Ad': 'Adine',
-            'Sb': 'Sebastian'
+            'Sb': 'Sebastian',
+            'Mv': 'Maverick'
         }
         self.end_token = "<|endoftext|>"
         self.splitter = re.compile(r'\s|\"')

@@ -19,7 +19,7 @@ with open("training_data.txt", 'w') as training_data_fd:
             regular_images_regex = re.compile(r'{image=.*?}')
             menu_replies = []
             for line in lines:
-                allowed_lines = ["n", "m", "Rz", "Lo", "Ad", "c", "Ry", "Br", "An", "Sb", "Wr", "Zh", "Kv", "Ka"]
+                allowed_lines = ["n", "m", "Rz", "Lo", "Ad", "c", "Ry", "Mv", "Br", "An", "Sb", "Wr", "Zh", "Kv", "Ka"]
                 line_stripped = line.strip()
 
                 # Parse edge case with menu (convert it to "C")
@@ -43,4 +43,8 @@ with open("training_data.txt", 'w') as training_data_fd:
                         
                 split_lines = line_stripped.split(" ")
                 if split_lines[0] in allowed_lines:
-                    training_data_fd.write(line_stripped + "\n")
+                    with_index = line_stripped.find('" with')
+                    if with_index > -1:
+                        training_data_fd.write(line_stripped[:with_index + 1] + "\n")
+                    else:
+                        training_data_fd.write(line_stripped + "\n")
