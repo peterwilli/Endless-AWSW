@@ -1,0 +1,969 @@
+sw-dev@58abb46b8dca:/opt/awsw$ rm -rf models && ipython '/opt/awsw/AWSW_GPT_Neo_test1.py' && rm -rf models && ipython '/opt/awsw/AWSW_GPT_Neo_test2.py' && rm -rf models && ipython '/opt/awsw/AWSW_GPT_Neo_test3.py' && rm -rf models && ipython '/opt/awsw/AWSW_GPT_Neo_test4.py' && rm -rf models && ipython '/opt/awsw/AWSW_GPT_Neo_test5.py' && rm -rf models && ipython '/opt/awsw/AWSW_GPT_Neo_test6.py' > trainings_logs.log 
+Tue Sep 21 08:12:44 2021       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 470.57.02    Driver Version: 470.57.02    CUDA Version: 11.4     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA GeForce ...  Off  | 00000000:01:00.0 Off |                  N/A |
+| N/A   51C    P8     5W /  N/A |    554MiB /  5934MiB |      3%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
++-----------------------------------------------------------------------------+
+Requirement already satisfied: transformers in /usr/local/lib/python3.8/dist-packages (4.10.0)
+Requirement already satisfied: datasets in /usr/local/lib/python3.8/dist-packages (1.11.0)
+Requirement already satisfied: huggingface-hub>=0.0.12 in /usr/local/lib/python3.8/dist-packages (from transformers) (0.0.16)
+Requirement already satisfied: packaging in /usr/local/lib/python3.8/dist-packages (from transformers) (21.0)
+Requirement already satisfied: pyyaml>=5.1 in /usr/local/lib/python3.8/dist-packages (from transformers) (5.4.1)
+Requirement already satisfied: filelock in /usr/local/lib/python3.8/dist-packages (from transformers) (3.0.12)
+Requirement already satisfied: regex!=2019.12.17 in /usr/local/lib/python3.8/dist-packages (from transformers) (2021.8.28)
+Requirement already satisfied: tqdm>=4.27 in /usr/local/lib/python3.8/dist-packages (from transformers) (4.62.2)
+Requirement already satisfied: sacremoses in /usr/local/lib/python3.8/dist-packages (from transformers) (0.0.45)
+Requirement already satisfied: requests in /usr/local/lib/python3.8/dist-packages (from transformers) (2.26.0)
+Requirement already satisfied: numpy>=1.17 in /usr/local/lib/python3.8/dist-packages (from transformers) (1.21.2)
+Requirement already satisfied: tokenizers<0.11,>=0.10.1 in /usr/local/lib/python3.8/dist-packages (from transformers) (0.10.3)
+Requirement already satisfied: dill in /usr/local/lib/python3.8/dist-packages (from datasets) (0.3.4)
+Requirement already satisfied: pyarrow!=4.0.0,>=1.0.0 in /usr/local/lib/python3.8/dist-packages (from datasets) (5.0.0)
+Requirement already satisfied: multiprocess in /usr/local/lib/python3.8/dist-packages (from datasets) (0.70.12.2)
+Requirement already satisfied: fsspec>=2021.05.0 in /usr/local/lib/python3.8/dist-packages (from datasets) (2021.8.1)
+Requirement already satisfied: pandas in /usr/local/lib/python3.8/dist-packages (from datasets) (1.3.2)
+Requirement already satisfied: xxhash in /usr/local/lib/python3.8/dist-packages (from datasets) (2.0.2)
+Requirement already satisfied: typing-extensions in /usr/local/lib/python3.8/dist-packages (from huggingface-hub>=0.0.12->transformers) (3.10.0.2)
+Requirement already satisfied: pyparsing>=2.0.2 in /usr/local/lib/python3.8/dist-packages (from packaging->transformers) (2.4.7)
+Requirement already satisfied: joblib in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (1.0.1)
+Requirement already satisfied: click in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (8.0.1)
+Requirement already satisfied: six in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (1.16.0)
+Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (2021.5.30)
+Requirement already satisfied: idna<4,>=2.5; python_version >= "3" in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (3.2)
+Requirement already satisfied: urllib3<1.27,>=1.21.1 in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (1.26.6)
+Requirement already satisfied: charset-normalizer~=2.0.0; python_version >= "3" in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (2.0.4)
+Requirement already satisfied: python-dateutil>=2.7.3 in /usr/local/lib/python3.8/dist-packages (from pandas->datasets) (2.8.2)
+Requirement already satisfied: pytz>=2017.3 in /usr/local/lib/python3.8/dist-packages (from pandas->datasets) (2021.1)
+Will use cuda:0 for training with seed: 10
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Loading empty, pre-trained model.
+Model attached to cuda:0
+eval_lines: 
+train_lines: PlayerReply c "Hey, Remy!" DragonReply Ry "Hello, [player_name]."
+PlayerReply c "Is there any particular reason why you wanted to meet here?" DragonReply Ry "I enjoy Tatsu Park is all. Have you been here before?"
+PlayerReply c "Can't say I have." PlayerReply c "A few times." PlayerReply c "Once or twice." DragonReply Ry "I see." DragonReply Ry "Well, what do you think of it?"
+PlayerReply c "It's pretty idyllic." DragonReply Ry smile "It is. I like it a lot here."
+PlayerReply c "It's pretty romantic." DragonReply Ry shy "You think so?"
+num_training_steps: 867 num_total_steps: 8670
+<Figure size 432x288 with 1 Axes>
+***** Running training *****
+  Num examples = 4334
+  Num Epochs = 10
+  Instantaneous batch size per device = 5
+  Total train batch size (w. parallel, distributed & accumulation) = 5
+  Gradient Accumulation steps = 1
+  Total optimization steps = 8670
+{'loss': 2.3681, 'learning_rate': 0.0001441753171856978, 'epoch': 0.29}                                                
+{'loss': 1.674, 'learning_rate': 0.0002883506343713956, 'epoch': 0.58}                                                 
+  6%|████▌                                                                          | 500/8670 [01:45<29:11,  4.67it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-500
+Configuration saved in /opt/awsw/models/checkpoint-500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-500/pytorch_model.bin
+{'loss': 1.6091, 'learning_rate': 0.00043252595155709344, 'epoch': 0.87}                                               
+{'loss': 1.4496, 'learning_rate': 0.0005767012687427913, 'epoch': 1.15}                                                
+ 12%|████████▉                                                                     | 1000/8670 [03:35<27:48,  4.60it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-1000
+Configuration saved in /opt/awsw/models/checkpoint-1000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-1000/pytorch_model.bin
+{'loss': 1.4349, 'learning_rate': 0.0007208765859284891, 'epoch': 1.44}                                                
+{'loss': 1.466, 'learning_rate': 0.0008650519031141869, 'epoch': 1.73}                                                 
+ 17%|█████████████▍                                                                | 1500/8670 [05:25<26:08,  4.57it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-1500
+Configuration saved in /opt/awsw/models/checkpoint-1500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-1500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-500] due to args.save_total_limit
+{'loss': 1.5218, 'learning_rate': 0.0009999868701534738, 'epoch': 2.02}                                                
+{'loss': 1.2417, 'learning_rate': 0.000996375405343884, 'epoch': 2.31}                                                 
+ 23%|█████████████████▉                                                            | 2000/8670 [07:17<24:35,  4.52it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-2000
+Configuration saved in /opt/awsw/models/checkpoint-2000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-2000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-1000] due to args.save_total_limit
+{'loss': 1.2698, 'learning_rate': 0.0009864061275485822, 'epoch': 2.6}                                                 
+{'loss': 1.2829, 'learning_rate': 0.0009702067280333778, 'epoch': 2.88}                                                
+ 29%|██████████████████████▍                                                       | 2500/8670 [09:09<22:44,  4.52it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-2500
+Configuration saved in /opt/awsw/models/checkpoint-2500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-2500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-1500] due to args.save_total_limit
+{'loss': 1.0525, 'learning_rate': 0.0009479846964351256, 'epoch': 3.17}                                                
+{'loss': 0.9344, 'learning_rate': 0.0009200246631354752, 'epoch': 3.46}                                                
+ 35%|██████████████████████████▉                                                   | 3000/8670 [11:02<20:57,  4.51it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-3000
+Configuration saved in /opt/awsw/models/checkpoint-3000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-3000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-2000] due to args.save_total_limit
+{'loss': 0.9713, 'learning_rate': 0.0008866847535791594, 'epoch': 3.75}                                                
+{'loss': 0.9067, 'learning_rate': 0.0008483920012324575, 'epoch': 4.04}                                                
+ 40%|███████████████████████████████▍                                              | 3500/8670 [12:56<19:23,  4.44it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-3500
+Configuration saved in /opt/awsw/models/checkpoint-3500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-3500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-2500] due to args.save_total_limit
+{'loss': 0.6069, 'learning_rate': 0.0008056368779348431, 'epoch': 4.33}                                                
+{'loss': 0.6449, 'learning_rate': 0.000758967011701687, 'epoch': 4.61}                                                 
+ 46%|███████████████████████████████████▉                                          | 4000/8670 [14:48<17:17,  4.50it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-4000
+Configuration saved in /opt/awsw/models/checkpoint-4000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-4000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-3000] due to args.save_total_limit
+{'loss': 0.6501, 'learning_rate': 0.0007089801724433917, 'epoch': 4.9}                                                 
+{'loss': 0.4489, 'learning_rate': 0.0006563166154432164, 'epoch': 5.19}                                                
+ 52%|████████████████████████████████████████▍                                     | 4500/8670 [16:43<15:27,  4.49it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-4500
+Configuration saved in /opt/awsw/models/checkpoint-4500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-4500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-3500] due to args.save_total_limit
+{'loss': 0.3642, 'learning_rate': 0.0006016508806621758, 'epoch': 5.48}                                                
+{'loss': 0.3886, 'learning_rate': 0.0005456831529094343, 'epoch': 5.77}                                                
+ 58%|████████████████████████████████████████████▉                                 | 5000/8670 [18:38<14:11,  4.31it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-5000
+Configuration saved in /opt/awsw/models/checkpoint-5000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-5000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-4000] due to args.save_total_limit
+{'loss': 0.3333, 'learning_rate': 0.0004891302935412478, 'epoch': 6.06}                                                
+{'loss': 0.1871, 'learning_rate': 0.0004327166585587387, 'epoch': 6.34}                                                
+ 63%|█████████████████████████████████████████████████▍                            | 5500/8670 [20:34<12:21,  4.28it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-5500
+Configuration saved in /opt/awsw/models/checkpoint-5500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-5500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-4500] due to args.save_total_limit
+{'loss': 0.1902, 'learning_rate': 0.00037716482071068077, 'epoch': 6.63}                                               
+{'loss': 0.1898, 'learning_rate': 0.0003231863144370323, 'epoch': 6.92}                                                
+ 69%|█████████████████████████████████████████████████████▉                        | 6000/8670 [22:29<09:55,  4.48it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-6000
+Configuration saved in /opt/awsw/models/checkpoint-6000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-6000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-5000] due to args.save_total_limit
+{'loss': 0.1113, 'learning_rate': 0.00027147252219639526, 'epoch': 7.21}                                               
+{'loss': 0.0846, 'learning_rate': 0.00022268581890966217, 'epoch': 7.5}                                                
+ 75%|██████████████████████████████████████████████████████████▍                   | 6500/8670 [24:26<08:16,  4.37it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-6500
+Configuration saved in /opt/awsw/models/checkpoint-6500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-6500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-5500] due to args.save_total_limit
+{'loss': 0.0833, 'learning_rate': 0.00017745108794604776, 'epoch': 7.79}                                               
+{'loss': 0.073, 'learning_rate': 0.00013634771731879674, 'epoch': 8.07}                                                
+ 81%|██████████████████████████████████████████████████████████████▉               | 7000/8670 [26:22<06:21,  4.37it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-7000
+Configuration saved in /opt/awsw/models/checkpoint-7000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-7000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-6000] due to args.save_total_limit
+{'loss': 0.0422, 'learning_rate': 9.990217860711499e-05, 'epoch': 8.36}                                                
+{'loss': 0.0417, 'learning_rate': 6.858128365703242e-05, 'epoch': 8.65}                                                
+ 87%|███████████████████████████████████████████████████████████████████▍          | 7500/8670 [28:18<04:27,  4.37it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-7500
+Configuration saved in /opt/awsw/models/checkpoint-7500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-7500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-6500] due to args.save_total_limit
+{'loss': 0.0396, 'learning_rate': 4.2786205432588096e-05, 'epoch': 8.94}                                               
+{'loss': 0.0308, 'learning_rate': 2.2847339601127947e-05, 'epoch': 9.23}                                               
+ 92%|███████████████████████████████████████████████████████████████████████▉      | 8000/8670 [30:14<02:27,  4.55it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-8000
+Configuration saved in /opt/awsw/models/checkpoint-8000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-8000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-7000] due to args.save_total_limit
+{'loss': 0.0292, 'learning_rate': 9.020072667984159e-06, 'epoch': 9.52}                                                
+{'loss': 0.0277, 'learning_rate': 1.481510864283553e-06, 'epoch': 9.8}                                                 
+ 98%|████████████████████████████████████████████████████████████████████████████▍ | 8500/8670 [32:10<00:38,  4.36it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-8500
+Configuration saved in /opt/awsw/models/checkpoint-8500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-8500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-7500] due to args.save_total_limit
+100%|██████████████████████████████████████████████████████████████████████████████| 8670/8670 [32:50<00:00,  4.59it/s]
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+{'train_runtime': 1970.6052, 'train_samples_per_second': 21.993, 'train_steps_per_second': 4.4, 'train_loss': 0.685389650514244, 'epoch': 10.0}
+100%|██████████████████████████████████████████████████████████████████████████████| 8670/8670 [32:50<00:00,  4.40it/s]
+Prompt: How are you?
+Reply: Ry "Oh, no. The arrangement you see in this library is based on a sophisticated system that sorts everything in a very intuitive manner based on a number of criteria: genre, author, complexity and age."<|endoftext|>
+
+
+Prompt: What do you think of Lorem?
+Reply: Ad "He's a good art critic."<|endoftext|>
+
+
+Prompt: Oh my god, Adine. What is this?
+Reply: Ad "This is the third one I've ever seen. I mean, if you tell me what happened, I'll have to tell you."<|endoftext|>
+
+
+Prompt: What will we do here?
+Reply: An "I can't promise anything right now, but I'll keep it in mind."<|endoftext|>
+
+
+Tue Sep 21 08:45:57 2021       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 470.57.02    Driver Version: 470.57.02    CUDA Version: 11.4     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA GeForce ...  Off  | 00000000:01:00.0 Off |                  N/A |
+| N/A   86C    P0    63W /  N/A |    364MiB /  5934MiB |     19%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
++-----------------------------------------------------------------------------+
+Requirement already satisfied: transformers in /usr/local/lib/python3.8/dist-packages (4.10.0)
+Requirement already satisfied: datasets in /usr/local/lib/python3.8/dist-packages (1.11.0)
+Requirement already satisfied: sacremoses in /usr/local/lib/python3.8/dist-packages (from transformers) (0.0.45)
+Requirement already satisfied: pyyaml>=5.1 in /usr/local/lib/python3.8/dist-packages (from transformers) (5.4.1)
+Requirement already satisfied: tokenizers<0.11,>=0.10.1 in /usr/local/lib/python3.8/dist-packages (from transformers) (0.10.3)
+Requirement already satisfied: requests in /usr/local/lib/python3.8/dist-packages (from transformers) (2.26.0)
+Requirement already satisfied: tqdm>=4.27 in /usr/local/lib/python3.8/dist-packages (from transformers) (4.62.2)
+Requirement already satisfied: packaging in /usr/local/lib/python3.8/dist-packages (from transformers) (21.0)
+Requirement already satisfied: regex!=2019.12.17 in /usr/local/lib/python3.8/dist-packages (from transformers) (2021.8.28)
+Requirement already satisfied: numpy>=1.17 in /usr/local/lib/python3.8/dist-packages (from transformers) (1.21.2)
+Requirement already satisfied: filelock in /usr/local/lib/python3.8/dist-packages (from transformers) (3.0.12)
+Requirement already satisfied: huggingface-hub>=0.0.12 in /usr/local/lib/python3.8/dist-packages (from transformers) (0.0.16)
+Requirement already satisfied: pyarrow!=4.0.0,>=1.0.0 in /usr/local/lib/python3.8/dist-packages (from datasets) (5.0.0)
+Requirement already satisfied: multiprocess in /usr/local/lib/python3.8/dist-packages (from datasets) (0.70.12.2)
+Requirement already satisfied: fsspec>=2021.05.0 in /usr/local/lib/python3.8/dist-packages (from datasets) (2021.8.1)
+Requirement already satisfied: dill in /usr/local/lib/python3.8/dist-packages (from datasets) (0.3.4)
+Requirement already satisfied: pandas in /usr/local/lib/python3.8/dist-packages (from datasets) (1.3.2)
+Requirement already satisfied: xxhash in /usr/local/lib/python3.8/dist-packages (from datasets) (2.0.2)
+Requirement already satisfied: joblib in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (1.0.1)
+Requirement already satisfied: click in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (8.0.1)
+Requirement already satisfied: six in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (1.16.0)
+Requirement already satisfied: idna<4,>=2.5; python_version >= "3" in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (3.2)
+Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (2021.5.30)
+Requirement already satisfied: charset-normalizer~=2.0.0; python_version >= "3" in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (2.0.4)
+Requirement already satisfied: urllib3<1.27,>=1.21.1 in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (1.26.6)
+Requirement already satisfied: pyparsing>=2.0.2 in /usr/local/lib/python3.8/dist-packages (from packaging->transformers) (2.4.7)
+Requirement already satisfied: typing-extensions in /usr/local/lib/python3.8/dist-packages (from huggingface-hub>=0.0.12->transformers) (3.10.0.2)
+Requirement already satisfied: python-dateutil>=2.7.3 in /usr/local/lib/python3.8/dist-packages (from pandas->datasets) (2.8.2)
+Requirement already satisfied: pytz>=2017.3 in /usr/local/lib/python3.8/dist-packages (from pandas->datasets) (2021.1)
+Will use cuda:0 for training with seed: 10
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Loading empty, pre-trained model.
+Model attached to cuda:0
+eval_lines: 
+train_lines: PlayerReply c "Hey, Remy!" DragonReply Ry "Hello, [player_name]."
+PlayerReply c "Is there any particular reason why you wanted to meet here?" DragonReply Ry "I enjoy Tatsu Park is all. Have you been here before?"
+PlayerReply c "Can't say I have." PlayerReply c "A few times." PlayerReply c "Once or twice." DragonReply Ry "I see." DragonReply Ry "Well, what do you think of it?"
+PlayerReply c "It's pretty idyllic." DragonReply Ry smile "It is. I like it a lot here."
+PlayerReply c "It's pretty romantic." DragonReply Ry shy "You think so?"
+num_training_steps: 867 num_total_steps: 8670
+<Figure size 432x288 with 1 Axes>
+***** Running training *****
+  Num examples = 4334
+  Num Epochs = 10
+  Instantaneous batch size per device = 5
+  Total train batch size (w. parallel, distributed & accumulation) = 5
+  Gradient Accumulation steps = 1
+  Total optimization steps = 8670
+{'loss': 2.7376, 'learning_rate': 0.0001441753171856978, 'epoch': 0.29}                                                
+{'loss': 1.868, 'learning_rate': 0.0002883506343713956, 'epoch': 0.58}                                                 
+  6%|████▌                                                                          | 500/8670 [01:54<31:28,  4.33it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-500
+Configuration saved in /opt/awsw/models/checkpoint-500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-500/pytorch_model.bin
+{'loss': 1.778, 'learning_rate': 0.00043252595155709344, 'epoch': 0.87}                                                
+{'loss': 1.6406, 'learning_rate': 0.0005767012687427913, 'epoch': 1.15}                                                
+ 12%|████████▉                                                                     | 1000/8670 [03:53<29:46,  4.29it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-1000
+Configuration saved in /opt/awsw/models/checkpoint-1000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-1000/pytorch_model.bin
+{'loss': 1.5911, 'learning_rate': 0.0007208765859284891, 'epoch': 1.44}                                                
+{'loss': 1.6393, 'learning_rate': 0.0008650519031141869, 'epoch': 1.73}                                                
+ 17%|█████████████▍                                                                | 1500/8670 [05:51<28:38,  4.17it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-1500
+Configuration saved in /opt/awsw/models/checkpoint-1500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-1500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-500] due to args.save_total_limit
+{'loss': 1.6339, 'learning_rate': 0.0009999868701534738, 'epoch': 2.02}                                                
+{'loss': 1.4219, 'learning_rate': 0.000996375405343884, 'epoch': 2.31}                                                 
+ 23%|█████████████████▉                                                            | 2000/8670 [07:51<25:29,  4.36it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-2000
+Configuration saved in /opt/awsw/models/checkpoint-2000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-2000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-1000] due to args.save_total_limit
+{'loss': 1.4399, 'learning_rate': 0.0009864061275485822, 'epoch': 2.6}                                                 
+{'loss': 1.4127, 'learning_rate': 0.0009702067280333778, 'epoch': 2.88}                                                
+ 29%|██████████████████████▍                                                       | 2500/8670 [09:49<23:52,  4.31it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-2500
+Configuration saved in /opt/awsw/models/checkpoint-2500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-2500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-1500] due to args.save_total_limit
+{'loss': 1.2186, 'learning_rate': 0.0009479846964351256, 'epoch': 3.17}                                                
+{'loss': 1.121, 'learning_rate': 0.0009200246631354752, 'epoch': 3.46}                                                 
+ 35%|██████████████████████████▉                                                   | 3000/8670 [11:49<21:58,  4.30it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-3000
+Configuration saved in /opt/awsw/models/checkpoint-3000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-3000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-2000] due to args.save_total_limit
+{'loss': 1.1422, 'learning_rate': 0.0008866847535791594, 'epoch': 3.75}                                                
+{'loss': 1.0964, 'learning_rate': 0.0008483920012324575, 'epoch': 4.04}                                                
+ 40%|███████████████████████████████▍                                              | 3500/8670 [13:50<19:11,  4.49it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-3500
+Configuration saved in /opt/awsw/models/checkpoint-3500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-3500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-2500] due to args.save_total_limit
+{'loss': 0.8503, 'learning_rate': 0.0008056368779348431, 'epoch': 4.32}                                                
+{'loss': 0.874, 'learning_rate': 0.000758967011701687, 'epoch': 4.61}                                                  
+ 46%|███████████████████████████████████▉                                          | 4000/8670 [15:45<18:32,  4.20it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-4000
+Configuration saved in /opt/awsw/models/checkpoint-4000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-4000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-3000] due to args.save_total_limit
+{'loss': 0.87, 'learning_rate': 0.0007089801724433917, 'epoch': 4.9}                                                   
+{'loss': 0.725, 'learning_rate': 0.0006563166154432164, 'epoch': 5.19}                                                 
+ 52%|████████████████████████████████████████▍                                     | 4500/8670 [17:46<15:48,  4.39it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-4500
+Configuration saved in /opt/awsw/models/checkpoint-4500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-4500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-3500] due to args.save_total_limit
+{'loss': 0.6555, 'learning_rate': 0.0006016508806621758, 'epoch': 5.48}                                                
+{'loss': 0.6586, 'learning_rate': 0.0005456831529094343, 'epoch': 5.77}                                                
+ 58%|████████████████████████████████████████████▉                                 | 5000/8670 [19:43<14:21,  4.26it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-5000
+Configuration saved in /opt/awsw/models/checkpoint-5000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-5000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-4000] due to args.save_total_limit
+{'loss': 0.6225, 'learning_rate': 0.0004891302935412478, 'epoch': 6.05}                                                
+{'loss': 0.5031, 'learning_rate': 0.0004327166585587387, 'epoch': 6.34}                                                
+ 63%|█████████████████████████████████████████████████▍                            | 5500/8670 [21:43<12:18,  4.29it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-5500
+Configuration saved in /opt/awsw/models/checkpoint-5500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-5500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-4500] due to args.save_total_limit
+{'loss': 0.5011, 'learning_rate': 0.00037716482071068077, 'epoch': 6.63}                                               
+{'loss': 0.4935, 'learning_rate': 0.0003231863144370323, 'epoch': 6.92}                                                
+ 69%|█████████████████████████████████████████████████████▉                        | 6000/8670 [23:39<09:46,  4.55it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-6000
+Configuration saved in /opt/awsw/models/checkpoint-6000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-6000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-5000] due to args.save_total_limit
+{'loss': 0.4171, 'learning_rate': 0.00027147252219639526, 'epoch': 7.21}                                               
+{'loss': 0.393, 'learning_rate': 0.00022268581890966217, 'epoch': 7.5}                                                 
+ 75%|██████████████████████████████████████████████████████████▍                   | 6500/8670 [25:37<07:56,  4.56it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-6500
+Configuration saved in /opt/awsw/models/checkpoint-6500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-6500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-5500] due to args.save_total_limit
+{'loss': 0.3986, 'learning_rate': 0.00017745108794604776, 'epoch': 7.78}                                               
+{'loss': 0.3828, 'learning_rate': 0.00013634771731879674, 'epoch': 8.07}                                               
+ 81%|██████████████████████████████████████████████████████████████▉               | 7000/8670 [27:36<06:06,  4.56it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-7000
+Configuration saved in /opt/awsw/models/checkpoint-7000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-7000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-6000] due to args.save_total_limit
+{'loss': 0.3402, 'learning_rate': 9.990217860711499e-05, 'epoch': 8.36}                                                
+{'loss': 0.3353, 'learning_rate': 6.858128365703242e-05, 'epoch': 8.65}                                                
+ 87%|███████████████████████████████████████████████████████████████████▍          | 7500/8670 [29:31<04:26,  4.39it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-7500
+Configuration saved in /opt/awsw/models/checkpoint-7500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-7500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-6500] due to args.save_total_limit
+{'loss': 0.3435, 'learning_rate': 4.2786205432588096e-05, 'epoch': 8.94}                                               
+{'loss': 0.317, 'learning_rate': 2.2847339601127947e-05, 'epoch': 9.23}                                                
+ 92%|███████████████████████████████████████████████████████████████████████▉      | 8000/8670 [31:29<02:33,  4.37it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-8000
+Configuration saved in /opt/awsw/models/checkpoint-8000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-8000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-7000] due to args.save_total_limit
+{'loss': 0.314, 'learning_rate': 9.020072667984159e-06, 'epoch': 9.51}                                                 
+{'loss': 0.3101, 'learning_rate': 1.481510864283553e-06, 'epoch': 9.8}                                                 
+ 98%|████████████████████████████████████████████████████████████████████████████▍ | 8500/8670 [33:25<00:38,  4.37it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-8500
+Configuration saved in /opt/awsw/models/checkpoint-8500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-8500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-7500] due to args.save_total_limit
+100%|██████████████████████████████████████████████████████████████████████████████| 8670/8670 [34:05<00:00,  4.38it/s]
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+{'train_runtime': 2045.6255, 'train_samples_per_second': 21.187, 'train_steps_per_second': 4.238, 'train_loss': 0.9301854323900832, 'epoch': 10.0}
+100%|██████████████████████████████████████████████████████████████████████████████| 8670/8670 [34:05<00:00,  4.38it/s]<Figure size 432x288 with 1 Axes>
+100%|██████████████████████████████████████████████████████████████████████████████| 8670/8670 [34:05<00:00,  4.24it/s]
+Prompt: How are you?
+Reply: Ry "I already told you, it's not here."<|endoftext|>
+
+
+Prompt: What do you think of Lorem?
+Reply: Lo think "He certainly keeps things interesting around here. And he's a good art critic."<|endoftext|>
+
+
+Prompt: Oh my god, Adine. What is this?
+Reply: Adine's Adventures Are they, or is it as simple as we are led to believe?"<|endoftext|>
+
+
+Prompt: What will we do here?
+Reply: Sb "I'll start off with a few easy moves."<|endoftext|>
+
+
+Tue Sep 21 09:20:27 2021       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 470.57.02    Driver Version: 470.57.02    CUDA Version: 11.4     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA GeForce ...  Off  | 00000000:01:00.0 Off |                  N/A |
+| N/A   86C    P0    63W /  N/A |    364MiB /  5934MiB |     24%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
++-----------------------------------------------------------------------------+
+Requirement already satisfied: transformers in /usr/local/lib/python3.8/dist-packages (4.10.0)
+Requirement already satisfied: datasets in /usr/local/lib/python3.8/dist-packages (1.11.0)
+Requirement already satisfied: pyyaml>=5.1 in /usr/local/lib/python3.8/dist-packages (from transformers) (5.4.1)
+Requirement already satisfied: huggingface-hub>=0.0.12 in /usr/local/lib/python3.8/dist-packages (from transformers) (0.0.16)
+Requirement already satisfied: regex!=2019.12.17 in /usr/local/lib/python3.8/dist-packages (from transformers) (2021.8.28)
+Requirement already satisfied: requests in /usr/local/lib/python3.8/dist-packages (from transformers) (2.26.0)
+Requirement already satisfied: numpy>=1.17 in /usr/local/lib/python3.8/dist-packages (from transformers) (1.21.2)
+Requirement already satisfied: filelock in /usr/local/lib/python3.8/dist-packages (from transformers) (3.0.12)
+Requirement already satisfied: sacremoses in /usr/local/lib/python3.8/dist-packages (from transformers) (0.0.45)
+Requirement already satisfied: tqdm>=4.27 in /usr/local/lib/python3.8/dist-packages (from transformers) (4.62.2)
+Requirement already satisfied: packaging in /usr/local/lib/python3.8/dist-packages (from transformers) (21.0)
+Requirement already satisfied: tokenizers<0.11,>=0.10.1 in /usr/local/lib/python3.8/dist-packages (from transformers) (0.10.3)
+Requirement already satisfied: multiprocess in /usr/local/lib/python3.8/dist-packages (from datasets) (0.70.12.2)
+Requirement already satisfied: fsspec>=2021.05.0 in /usr/local/lib/python3.8/dist-packages (from datasets) (2021.8.1)
+Requirement already satisfied: dill in /usr/local/lib/python3.8/dist-packages (from datasets) (0.3.4)
+Requirement already satisfied: pyarrow!=4.0.0,>=1.0.0 in /usr/local/lib/python3.8/dist-packages (from datasets) (5.0.0)
+Requirement already satisfied: xxhash in /usr/local/lib/python3.8/dist-packages (from datasets) (2.0.2)
+Requirement already satisfied: pandas in /usr/local/lib/python3.8/dist-packages (from datasets) (1.3.2)
+Requirement already satisfied: typing-extensions in /usr/local/lib/python3.8/dist-packages (from huggingface-hub>=0.0.12->transformers) (3.10.0.2)
+Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (2021.5.30)
+Requirement already satisfied: idna<4,>=2.5; python_version >= "3" in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (3.2)
+Requirement already satisfied: charset-normalizer~=2.0.0; python_version >= "3" in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (2.0.4)
+Requirement already satisfied: urllib3<1.27,>=1.21.1 in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (1.26.6)
+Requirement already satisfied: click in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (8.0.1)
+Requirement already satisfied: joblib in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (1.0.1)
+Requirement already satisfied: six in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (1.16.0)
+Requirement already satisfied: pyparsing>=2.0.2 in /usr/local/lib/python3.8/dist-packages (from packaging->transformers) (2.4.7)
+Requirement already satisfied: python-dateutil>=2.7.3 in /usr/local/lib/python3.8/dist-packages (from pandas->datasets) (2.8.2)
+Requirement already satisfied: pytz>=2017.3 in /usr/local/lib/python3.8/dist-packages (from pandas->datasets) (2021.1)
+Will use cuda:0 for training with seed: 10
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Loading empty, pre-trained model.
+Model attached to cuda:0
+eval_lines: 
+train_lines: PlayerReply c "Hey, Remy!" DragonReply Ry "Hello, [player_name]."
+PlayerReply c "Is there any particular reason why you wanted to meet here?" DragonReply Ry "I enjoy Tatsu Park is all. Have you been here before?"
+PlayerReply c "Can't say I have." PlayerReply c "A few times." PlayerReply c "Once or twice." DragonReply Ry "I see." DragonReply Ry "Well, what do you think of it?"
+PlayerReply c "It's pretty idyllic." DragonReply Ry smile "It is. I like it a lot here."
+PlayerReply c "It's pretty romantic." DragonReply Ry shy "You think so?"
+num_training_steps: 867 num_total_steps: 8670
+<Figure size 432x288 with 1 Axes>
+***** Running training *****
+  Num examples = 4334
+  Num Epochs = 10
+  Instantaneous batch size per device = 5
+  Total train batch size (w. parallel, distributed & accumulation) = 5
+  Gradient Accumulation steps = 1
+  Total optimization steps = 8670
+{'loss': 2.706, 'learning_rate': 0.0001441753171856978, 'epoch': 0.29}                                                 
+{'loss': 1.9084, 'learning_rate': 0.0002883506343713956, 'epoch': 0.58}                                                
+  6%|████▌                                                                          | 500/8670 [01:53<30:14,  4.50it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-500
+Configuration saved in /opt/awsw/models/checkpoint-500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-500/pytorch_model.bin
+{'loss': 1.7433, 'learning_rate': 0.00043252595155709344, 'epoch': 0.87}                                               
+{'loss': 1.6461, 'learning_rate': 0.0005767012687427913, 'epoch': 1.15}                                                
+ 12%|████████▉                                                                     | 1000/8670 [03:52<29:03,  4.40it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-1000
+Configuration saved in /opt/awsw/models/checkpoint-1000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-1000/pytorch_model.bin
+{'loss': 1.5942, 'learning_rate': 0.0007208765859284891, 'epoch': 1.44}                                                
+{'loss': 1.6536, 'learning_rate': 0.0008650519031141869, 'epoch': 1.73}                                                
+ 17%|█████████████▍                                                                | 1500/8670 [05:47<27:24,  4.36it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-1500
+Configuration saved in /opt/awsw/models/checkpoint-1500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-1500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-500] due to args.save_total_limit
+{'loss': 1.626, 'learning_rate': 0.0009999868701534738, 'epoch': 2.02}                                                 
+{'loss': 1.4301, 'learning_rate': 0.000996375405343884, 'epoch': 2.31}                                                 
+ 23%|█████████████████▉                                                            | 2000/8670 [07:45<25:00,  4.44it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-2000
+Configuration saved in /opt/awsw/models/checkpoint-2000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-2000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-1000] due to args.save_total_limit
+{'loss': 1.4258, 'learning_rate': 0.0009864061275485822, 'epoch': 2.6}                                                 
+{'loss': 1.4351, 'learning_rate': 0.0009702067280333778, 'epoch': 2.88}                                                
+ 29%|██████████████████████▍                                                       | 2500/8670 [09:41<24:00,  4.28it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-2500
+Configuration saved in /opt/awsw/models/checkpoint-2500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-2500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-1500] due to args.save_total_limit
+{'loss': 1.2044, 'learning_rate': 0.0009479846964351256, 'epoch': 3.17}                                                
+{'loss': 1.1237, 'learning_rate': 0.0009200246631354752, 'epoch': 3.46}                                                
+ 35%|██████████████████████████▉                                                   | 3000/8670 [11:41<21:51,  4.32it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-3000
+Configuration saved in /opt/awsw/models/checkpoint-3000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-3000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-2000] due to args.save_total_limit
+{'loss': 1.1483, 'learning_rate': 0.0008866847535791594, 'epoch': 3.75}                                                
+{'loss': 1.084, 'learning_rate': 0.0008483920012324575, 'epoch': 4.04}                                                 
+ 40%|███████████████████████████████▍                                              | 3500/8670 [13:41<19:08,  4.50it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-3500
+Configuration saved in /opt/awsw/models/checkpoint-3500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-3500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-2500] due to args.save_total_limit
+{'loss': 0.845, 'learning_rate': 0.0008056368779348431, 'epoch': 4.32}                                                 
+{'loss': 0.8782, 'learning_rate': 0.000758967011701687, 'epoch': 4.61}                                                 
+ 46%|███████████████████████████████████▉                                          | 4000/8670 [15:38<18:09,  4.29it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-4000
+Configuration saved in /opt/awsw/models/checkpoint-4000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-4000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-3000] due to args.save_total_limit
+{'loss': 0.8845, 'learning_rate': 0.0007089801724433917, 'epoch': 4.9}                                                 
+{'loss': 0.7253, 'learning_rate': 0.0006563166154432164, 'epoch': 5.19}                                                
+ 52%|████████████████████████████████████████▍                                     | 4500/8670 [17:37<16:41,  4.16it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-4500
+Configuration saved in /opt/awsw/models/checkpoint-4500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-4500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-3500] due to args.save_total_limit
+{'loss': 0.6551, 'learning_rate': 0.0006016508806621758, 'epoch': 5.48}                                                
+{'loss': 0.6676, 'learning_rate': 0.0005456831529094343, 'epoch': 5.77}                                                
+ 58%|████████████████████████████████████████████▉                                 | 5000/8670 [19:35<14:35,  4.19it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-5000
+Configuration saved in /opt/awsw/models/checkpoint-5000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-5000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-4000] due to args.save_total_limit
+{'loss': 0.6218, 'learning_rate': 0.0004891302935412478, 'epoch': 6.05}                                                
+{'loss': 0.5025, 'learning_rate': 0.0004327166585587387, 'epoch': 6.34}                                                
+ 63%|█████████████████████████████████████████████████▍                            | 5500/8670 [21:35<12:19,  4.28it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-5500
+Configuration saved in /opt/awsw/models/checkpoint-5500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-5500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-4500] due to args.save_total_limit
+{'loss': 0.4936, 'learning_rate': 0.00037716482071068077, 'epoch': 6.63}                                               
+{'loss': 0.496, 'learning_rate': 0.0003231863144370323, 'epoch': 6.92}                                                 
+ 69%|█████████████████████████████████████████████████████▉                        | 6000/8670 [23:32<10:28,  4.25it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-6000
+Configuration saved in /opt/awsw/models/checkpoint-6000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-6000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-5000] due to args.save_total_limit
+{'loss': 0.4203, 'learning_rate': 0.00027147252219639526, 'epoch': 7.21}                                               
+{'loss': 0.4048, 'learning_rate': 0.00022268581890966217, 'epoch': 7.5}                                                
+ 75%|██████████████████████████████████████████████████████████▍                   | 6500/8670 [25:32<08:09,  4.43it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-6500
+Configuration saved in /opt/awsw/models/checkpoint-6500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-6500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-5500] due to args.save_total_limit
+{'loss': 0.3928, 'learning_rate': 0.00017745108794604776, 'epoch': 7.78}                                               
+{'loss': 0.3782, 'learning_rate': 0.00013634771731879674, 'epoch': 8.07}                                               
+ 81%|██████████████████████████████████████████████████████████████▉               | 7000/8670 [27:32<06:43,  4.14it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-7000
+Configuration saved in /opt/awsw/models/checkpoint-7000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-7000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-6000] due to args.save_total_limit
+{'loss': 0.3428, 'learning_rate': 9.990217860711499e-05, 'epoch': 8.36}                                                
+{'loss': 0.3349, 'learning_rate': 6.858128365703242e-05, 'epoch': 8.65}                                                
+ 87%|███████████████████████████████████████████████████████████████████▍          | 7500/8670 [29:28<04:29,  4.35it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-7500
+Configuration saved in /opt/awsw/models/checkpoint-7500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-7500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-6500] due to args.save_total_limit
+{'loss': 0.3394, 'learning_rate': 4.2786205432588096e-05, 'epoch': 8.94}                                               
+{'loss': 0.3143, 'learning_rate': 2.2847339601127947e-05, 'epoch': 9.23}                                               
+ 92%|███████████████████████████████████████████████████████████████████████▉      | 8000/8670 [31:25<02:31,  4.41it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-8000
+Configuration saved in /opt/awsw/models/checkpoint-8000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-8000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-7000] due to args.save_total_limit
+{'loss': 0.3129, 'learning_rate': 9.020072667984159e-06, 'epoch': 9.51}                                                
+{'loss': 0.3099, 'learning_rate': 1.481510864283553e-06, 'epoch': 9.8}                                                 
+ 98%|████████████████████████████████████████████████████████████████████████████▍ | 8500/8670 [33:22<00:38,  4.42it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-8500
+Configuration saved in /opt/awsw/models/checkpoint-8500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-8500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-7500] due to args.save_total_limit
+100%|██████████████████████████████████████████████████████████████████████████████| 8670/8670 [34:01<00:00,  4.55it/s]
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+{'train_runtime': 2041.7335, 'train_samples_per_second': 21.227, 'train_steps_per_second': 4.246, 'train_loss': 0.9302089607564361, 'epoch': 10.0}
+100%|██████████████████████████████████████████████████████████████████████████████| 8670/8670 [34:01<00:00,  4.55it/s]<Figure size 432x288 with 1 Axes>
+100%|██████████████████████████████████████████████████████████████████████████████| 8670/8670 [34:01<00:00,  4.25it/s]
+Prompt: How are you?
+Reply: Ry "Oh, hello [player_name]. What are you doing here?"<|endoftext|>
+
+
+Prompt: What do you think of Lorem?
+Reply: Lo relieved "Well, I know one place that never closes. Let's go there."<|endoftext|>
+
+
+Prompt: Oh my god, Adine. What is this?
+Reply: Adine's special. Or rather, [adinestagename!t]'s special. It's a routine I came up with and have been practicing for a while."<|endoftext|>
+
+
+Prompt: What will we do here?
+Reply: Sb "I'll check it out once I'm done here."<|endoftext|>
+
+
+Tue Sep 21 09:54:53 2021       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 470.57.02    Driver Version: 470.57.02    CUDA Version: 11.4     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA GeForce ...  Off  | 00000000:01:00.0 Off |                  N/A |
+| N/A   86C    P0    63W /  N/A |    366MiB /  5934MiB |     18%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
++-----------------------------------------------------------------------------+
+Requirement already satisfied: transformers in /usr/local/lib/python3.8/dist-packages (4.10.0)
+Requirement already satisfied: datasets in /usr/local/lib/python3.8/dist-packages (1.11.0)
+Requirement already satisfied: tqdm>=4.27 in /usr/local/lib/python3.8/dist-packages (from transformers) (4.62.2)
+Requirement already satisfied: huggingface-hub>=0.0.12 in /usr/local/lib/python3.8/dist-packages (from transformers) (0.0.16)
+Requirement already satisfied: pyyaml>=5.1 in /usr/local/lib/python3.8/dist-packages (from transformers) (5.4.1)
+Requirement already satisfied: tokenizers<0.11,>=0.10.1 in /usr/local/lib/python3.8/dist-packages (from transformers) (0.10.3)
+Requirement already satisfied: sacremoses in /usr/local/lib/python3.8/dist-packages (from transformers) (0.0.45)
+Requirement already satisfied: packaging in /usr/local/lib/python3.8/dist-packages (from transformers) (21.0)
+Requirement already satisfied: requests in /usr/local/lib/python3.8/dist-packages (from transformers) (2.26.0)
+Requirement already satisfied: filelock in /usr/local/lib/python3.8/dist-packages (from transformers) (3.0.12)
+Requirement already satisfied: regex!=2019.12.17 in /usr/local/lib/python3.8/dist-packages (from transformers) (2021.8.28)
+Requirement already satisfied: numpy>=1.17 in /usr/local/lib/python3.8/dist-packages (from transformers) (1.21.2)
+Requirement already satisfied: fsspec>=2021.05.0 in /usr/local/lib/python3.8/dist-packages (from datasets) (2021.8.1)
+Requirement already satisfied: pandas in /usr/local/lib/python3.8/dist-packages (from datasets) (1.3.2)
+Requirement already satisfied: xxhash in /usr/local/lib/python3.8/dist-packages (from datasets) (2.0.2)
+Requirement already satisfied: dill in /usr/local/lib/python3.8/dist-packages (from datasets) (0.3.4)
+Requirement already satisfied: pyarrow!=4.0.0,>=1.0.0 in /usr/local/lib/python3.8/dist-packages (from datasets) (5.0.0)
+Requirement already satisfied: multiprocess in /usr/local/lib/python3.8/dist-packages (from datasets) (0.70.12.2)
+Requirement already satisfied: typing-extensions in /usr/local/lib/python3.8/dist-packages (from huggingface-hub>=0.0.12->transformers) (3.10.0.2)
+Requirement already satisfied: six in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (1.16.0)
+Requirement already satisfied: click in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (8.0.1)
+Requirement already satisfied: joblib in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (1.0.1)
+Requirement already satisfied: pyparsing>=2.0.2 in /usr/local/lib/python3.8/dist-packages (from packaging->transformers) (2.4.7)
+Requirement already satisfied: idna<4,>=2.5; python_version >= "3" in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (3.2)
+Requirement already satisfied: urllib3<1.27,>=1.21.1 in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (1.26.6)
+Requirement already satisfied: charset-normalizer~=2.0.0; python_version >= "3" in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (2.0.4)
+Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (2021.5.30)
+Requirement already satisfied: pytz>=2017.3 in /usr/local/lib/python3.8/dist-packages (from pandas->datasets) (2021.1)
+Requirement already satisfied: python-dateutil>=2.7.3 in /usr/local/lib/python3.8/dist-packages (from pandas->datasets) (2.8.2)
+Will use cuda:0 for training with seed: 10
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Loading empty, pre-trained model.
+Model attached to cuda:0
+eval_lines: 
+train_lines: PlayerReply c "Hey, Remy!" DragonReply Ry "Hello, [player_name]."
+PlayerReply c "Is there any particular reason why you wanted to meet here?" DragonReply Ry "I enjoy Tatsu Park is all. Have you been here before?"
+PlayerReply c "Can't say I have." PlayerReply c "A few times." PlayerReply c "Once or twice." DragonReply Ry "I see." DragonReply Ry "Well, what do you think of it?"
+PlayerReply c "It's pretty idyllic." DragonReply Ry smile "It is. I like it a lot here."
+PlayerReply c "It's pretty romantic." DragonReply Ry shy "You think so?"
+num_training_steps: 867 num_total_steps: 8670
+<Figure size 432x288 with 1 Axes>
+***** Running training *****
+  Num examples = 4334
+  Num Epochs = 10
+  Instantaneous batch size per device = 5
+  Total train batch size (w. parallel, distributed & accumulation) = 5
+  Gradient Accumulation steps = 1
+  Total optimization steps = 8670
+{'loss': 2.4944, 'learning_rate': 0.0001441753171856978, 'epoch': 0.29}                                                
+{'loss': 1.5204, 'learning_rate': 0.0002883506343713956, 'epoch': 0.58}                                                
+  6%|████▌                                                                          | 500/8670 [01:50<30:18,  4.49it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-500
+Configuration saved in /opt/awsw/models/checkpoint-500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-500/pytorch_model.bin
+{'loss': 1.9308, 'learning_rate': 0.00043252595155709344, 'epoch': 0.87}                                               
+{'loss': 2.2055, 'learning_rate': 0.0005767012687427913, 'epoch': 1.15}                                                
+ 12%|████████▉                                                                     | 1000/8670 [03:47<29:24,  4.35it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-1000
+Configuration saved in /opt/awsw/models/checkpoint-1000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-1000/pytorch_model.bin
+{'loss': 2.203, 'learning_rate': 0.0007208765859284891, 'epoch': 1.44}                                                 
+{'loss': 1.0482, 'learning_rate': 0.0008650519031141869, 'epoch': 1.73}                                                
+ 17%|█████████████▍                                                                | 1500/8670 [05:44<26:51,  4.45it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-1500
+Configuration saved in /opt/awsw/models/checkpoint-1500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-1500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-500] due to args.save_total_limit
+{'loss': 1.8345, 'learning_rate': 0.0009999868701534738, 'epoch': 2.02}                                                
+{'loss': 2.0352, 'learning_rate': 0.000996375405343884, 'epoch': 2.31}                                                 
+ 23%|█████████████████▉                                                            | 2000/8670 [07:42<25:53,  4.29it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-2000
+Configuration saved in /opt/awsw/models/checkpoint-2000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-2000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-1000] due to args.save_total_limit
+{'loss': 1.1092, 'learning_rate': 0.0009864061275485822, 'epoch': 2.6}                                                 
+{'loss': 1.3668, 'learning_rate': 0.0009702067280333778, 'epoch': 2.88}                                                
+ 29%|██████████████████████▍                                                       | 2500/8670 [09:40<23:47,  4.32it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-2500
+Configuration saved in /opt/awsw/models/checkpoint-2500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-2500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-1500] due to args.save_total_limit
+{'loss': 1.7356, 'learning_rate': 0.0009479846964351256, 'epoch': 3.17}                                                
+{'loss': 1.5665, 'learning_rate': 0.0009200246631354752, 'epoch': 3.46}                                                
+ 35%|██████████████████████████▉                                                   | 3000/8670 [11:36<21:38,  4.37it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-3000
+Configuration saved in /opt/awsw/models/checkpoint-3000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-3000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-2000] due to args.save_total_limit
+{'loss': 0.6005, 'learning_rate': 0.0008866847535791594, 'epoch': 3.75}                                                
+{'loss': 1.3465, 'learning_rate': 0.0008483920012324575, 'epoch': 4.04}                                                
+ 40%|███████████████████████████████▍                                              | 3500/8670 [13:30<19:36,  4.39it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-3500
+Configuration saved in /opt/awsw/models/checkpoint-3500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-3500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-2500] due to args.save_total_limit
+{'loss': 1.263, 'learning_rate': 0.0008056368779348431, 'epoch': 4.33}                                                 
+{'loss': 0.7128, 'learning_rate': 0.000758967011701687, 'epoch': 4.61}                                                 
+ 46%|███████████████████████████████████▉                                          | 4000/8670 [15:27<17:55,  4.34it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-4000
+Configuration saved in /opt/awsw/models/checkpoint-4000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-4000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-3000] due to args.save_total_limit
+{'loss': 0.7178, 'learning_rate': 0.0007089801724433917, 'epoch': 4.9}                                                 
+{'loss': 1.1073, 'learning_rate': 0.0006563166154432164, 'epoch': 5.19}                                                
+ 52%|████████████████████████████████████████▍                                     | 4500/8670 [17:24<16:01,  4.34it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-4500
+Configuration saved in /opt/awsw/models/checkpoint-4500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-4500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-3500] due to args.save_total_limit
+{'loss': 0.8444, 'learning_rate': 0.0006016508806621758, 'epoch': 5.48}                                                
+{'loss': 0.354, 'learning_rate': 0.0005456831529094343, 'epoch': 5.77}                                                 
+ 58%|████████████████████████████████████████████▉                                 | 5000/8670 [19:21<14:05,  4.34it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-5000
+Configuration saved in /opt/awsw/models/checkpoint-5000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-5000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-4000] due to args.save_total_limit
+{'loss': 0.7458, 'learning_rate': 0.0004891302935412478, 'epoch': 6.06}                                                
+{'loss': 0.6514, 'learning_rate': 0.0004327166585587387, 'epoch': 6.34}                                                
+ 63%|█████████████████████████████████████████████████▍                            | 5500/8670 [21:18<12:07,  4.36it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-5500
+Configuration saved in /opt/awsw/models/checkpoint-5500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-5500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-4500] due to args.save_total_limit
+{'loss': 0.3218, 'learning_rate': 0.00037716482071068077, 'epoch': 6.63}                                               
+{'loss': 0.3811, 'learning_rate': 0.0003231863144370323, 'epoch': 6.92}                                                
+ 69%|█████████████████████████████████████████████████████▉                        | 6000/8670 [23:14<09:55,  4.49it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-6000
+Configuration saved in /opt/awsw/models/checkpoint-6000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-6000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-5000] due to args.save_total_limit
+{'loss': 0.4898, 'learning_rate': 0.00027147252219639526, 'epoch': 7.21}                                               
+{'loss': 0.3427, 'learning_rate': 0.00022268581890966217, 'epoch': 7.5}                                                
+ 75%|██████████████████████████████████████████████████████████▍                   | 6500/8670 [25:11<08:00,  4.52it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-6500
+Configuration saved in /opt/awsw/models/checkpoint-6500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-6500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-5500] due to args.save_total_limit
+{'loss': 0.1999, 'learning_rate': 0.00017745108794604776, 'epoch': 7.79}                                               
+{'loss': 0.3002, 'learning_rate': 0.00013634771731879674, 'epoch': 8.07}                                               
+ 81%|██████████████████████████████████████████████████████████████▉               | 7000/8670 [27:06<06:12,  4.49it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-7000
+Configuration saved in /opt/awsw/models/checkpoint-7000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-7000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-6000] due to args.save_total_limit
+{'loss': 0.2465, 'learning_rate': 9.990217860711499e-05, 'epoch': 8.36}                                                
+{'loss': 0.1224, 'learning_rate': 6.858128365703242e-05, 'epoch': 8.65}                                                
+ 87%|███████████████████████████████████████████████████████████████████▍          | 7500/8670 [29:03<04:25,  4.41it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-7500
+Configuration saved in /opt/awsw/models/checkpoint-7500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-7500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-6500] due to args.save_total_limit
+{'loss': 0.2122, 'learning_rate': 4.2786205432588096e-05, 'epoch': 8.94}                                               
+{'loss': 0.1876, 'learning_rate': 2.2847339601127947e-05, 'epoch': 9.23}                                               
+ 92%|███████████████████████████████████████████████████████████████████████▉      | 8000/8670 [31:00<02:37,  4.26it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-8000
+Configuration saved in /opt/awsw/models/checkpoint-8000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-8000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-7000] due to args.save_total_limit
+{'loss': 0.1314, 'learning_rate': 9.020072667984159e-06, 'epoch': 9.52}                                                
+{'loss': 0.1526, 'learning_rate': 1.481510864283553e-06, 'epoch': 9.8}                                                 
+ 98%|████████████████████████████████████████████████████████████████████████████▍ | 8500/8670 [32:58<00:38,  4.47it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-8500
+Configuration saved in /opt/awsw/models/checkpoint-8500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-8500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-7500] due to args.save_total_limit
+100%|██████████████████████████████████████████████████████████████████████████████| 8670/8670 [33:37<00:00,  4.66it/s]
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+{'train_runtime': 2017.9899, 'train_samples_per_second': 21.477, 'train_steps_per_second': 4.296, 'train_loss': 0.9396026175739856, 'epoch': 10.0}
+100%|██████████████████████████████████████████████████████████████████████████████| 8670/8670 [33:37<00:00,  4.66it/s]<Figure size 432x288 with 1 Axes>
+100%|██████████████████████████████████████████████████████████████████████████████| 8670/8670 [33:38<00:00,  4.30it/s]
+Prompt: How are you?
+Reply: Ry "I'm not sure how I'm supposed to go back like this."<|endoftext|>
+
+
+Prompt: What do you think of Lorem?
+Reply: Ad "He's a charming fellow."<|endoftext|>
+
+
+Prompt: Oh my god, Adine. What is this?
+Reply: Ad "Are you alright?"<|endoftext|>
+
+
+Prompt: What will we do here?
+Reply: Ry "We'll deliver what we have here."<|endoftext|>
+
+
+Tue Sep 21 10:28:56 2021       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 470.57.02    Driver Version: 470.57.02    CUDA Version: 11.4     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA GeForce ...  Off  | 00000000:01:00.0 Off |                  N/A |
+| N/A   86C    P0    63W /  N/A |    366MiB /  5934MiB |     40%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
++-----------------------------------------------------------------------------+
+Requirement already satisfied: transformers in /usr/local/lib/python3.8/dist-packages (4.10.0)
+Requirement already satisfied: datasets in /usr/local/lib/python3.8/dist-packages (1.11.0)
+Requirement already satisfied: filelock in /usr/local/lib/python3.8/dist-packages (from transformers) (3.0.12)
+Requirement already satisfied: numpy>=1.17 in /usr/local/lib/python3.8/dist-packages (from transformers) (1.21.2)
+Requirement already satisfied: sacremoses in /usr/local/lib/python3.8/dist-packages (from transformers) (0.0.45)
+Requirement already satisfied: tokenizers<0.11,>=0.10.1 in /usr/local/lib/python3.8/dist-packages (from transformers) (0.10.3)
+Requirement already satisfied: packaging in /usr/local/lib/python3.8/dist-packages (from transformers) (21.0)
+Requirement already satisfied: huggingface-hub>=0.0.12 in /usr/local/lib/python3.8/dist-packages (from transformers) (0.0.16)
+Requirement already satisfied: tqdm>=4.27 in /usr/local/lib/python3.8/dist-packages (from transformers) (4.62.2)
+Requirement already satisfied: regex!=2019.12.17 in /usr/local/lib/python3.8/dist-packages (from transformers) (2021.8.28)
+Requirement already satisfied: pyyaml>=5.1 in /usr/local/lib/python3.8/dist-packages (from transformers) (5.4.1)
+Requirement already satisfied: requests in /usr/local/lib/python3.8/dist-packages (from transformers) (2.26.0)
+Requirement already satisfied: fsspec>=2021.05.0 in /usr/local/lib/python3.8/dist-packages (from datasets) (2021.8.1)
+Requirement already satisfied: pyarrow!=4.0.0,>=1.0.0 in /usr/local/lib/python3.8/dist-packages (from datasets) (5.0.0)
+Requirement already satisfied: xxhash in /usr/local/lib/python3.8/dist-packages (from datasets) (2.0.2)
+Requirement already satisfied: multiprocess in /usr/local/lib/python3.8/dist-packages (from datasets) (0.70.12.2)
+Requirement already satisfied: dill in /usr/local/lib/python3.8/dist-packages (from datasets) (0.3.4)
+Requirement already satisfied: pandas in /usr/local/lib/python3.8/dist-packages (from datasets) (1.3.2)
+Requirement already satisfied: joblib in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (1.0.1)
+Requirement already satisfied: six in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (1.16.0)
+Requirement already satisfied: click in /usr/local/lib/python3.8/dist-packages (from sacremoses->transformers) (8.0.1)
+Requirement already satisfied: pyparsing>=2.0.2 in /usr/local/lib/python3.8/dist-packages (from packaging->transformers) (2.4.7)
+Requirement already satisfied: typing-extensions in /usr/local/lib/python3.8/dist-packages (from huggingface-hub>=0.0.12->transformers) (3.10.0.2)
+Requirement already satisfied: charset-normalizer~=2.0.0; python_version >= "3" in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (2.0.4)
+Requirement already satisfied: idna<4,>=2.5; python_version >= "3" in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (3.2)
+Requirement already satisfied: urllib3<1.27,>=1.21.1 in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (1.26.6)
+Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.8/dist-packages (from requests->transformers) (2021.5.30)
+Requirement already satisfied: python-dateutil>=2.7.3 in /usr/local/lib/python3.8/dist-packages (from pandas->datasets) (2.8.2)
+Requirement already satisfied: pytz>=2017.3 in /usr/local/lib/python3.8/dist-packages (from pandas->datasets) (2021.1)
+Will use cuda:0 for training with seed: 10
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Loading empty, pre-trained model.
+Model attached to cuda:0
+eval_lines: 
+train_lines: PlayerReply c "Hey, Remy!" DragonReply Ry "Hello, [player_name]."
+PlayerReply c "Is there any particular reason why you wanted to meet here?" DragonReply Ry "I enjoy Tatsu Park is all. Have you been here before?"
+PlayerReply c "Can't say I have." PlayerReply c "A few times." PlayerReply c "Once or twice." DragonReply Ry "I see." DragonReply Ry "Well, what do you think of it?"
+PlayerReply c "It's pretty idyllic." DragonReply Ry smile "It is. I like it a lot here."
+PlayerReply c "It's pretty romantic." DragonReply Ry shy "You think so?"
+num_training_steps: 867 num_total_steps: 8670
+<Figure size 432x288 with 1 Axes>
+***** Running training *****
+  Num examples = 4334
+  Num Epochs = 10
+  Instantaneous batch size per device = 5
+  Total train batch size (w. parallel, distributed & accumulation) = 5
+  Gradient Accumulation steps = 1
+  Total optimization steps = 8670
+{'loss': 2.3916, 'learning_rate': 0.0001441753171856978, 'epoch': 0.29}                                                
+{'loss': 1.6741, 'learning_rate': 0.0002883506343713956, 'epoch': 0.58}                                                
+  6%|████▌                                                                          | 500/8670 [01:50<30:16,  4.50it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-500
+Configuration saved in /opt/awsw/models/checkpoint-500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-500/pytorch_model.bin
+{'loss': 1.6094, 'learning_rate': 0.00043252595155709344, 'epoch': 0.87}                                               
+{'loss': 1.4506, 'learning_rate': 0.0005767012687427913, 'epoch': 1.15}                                                
+ 12%|████████▉                                                                     | 1000/8670 [03:44<29:25,  4.34it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-1000
+Configuration saved in /opt/awsw/models/checkpoint-1000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-1000/pytorch_model.bin
+{'loss': 1.4354, 'learning_rate': 0.0007208765859284891, 'epoch': 1.44}                                                
+{'loss': 1.4523, 'learning_rate': 0.0008650519031141869, 'epoch': 1.73}                                                
+ 17%|█████████████▍                                                                | 1500/8670 [05:42<27:55,  4.28it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-1500
+Configuration saved in /opt/awsw/models/checkpoint-1500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-1500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-500] due to args.save_total_limit
+{'loss': 1.5108, 'learning_rate': 0.0009999868701534738, 'epoch': 2.02}                                                
+{'loss': 1.2402, 'learning_rate': 0.000996375405343884, 'epoch': 2.31}                                                 
+ 23%|█████████████████▉                                                            | 2000/8670 [07:38<26:31,  4.19it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-2000
+Configuration saved in /opt/awsw/models/checkpoint-2000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-2000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-1000] due to args.save_total_limit
+{'loss': 1.2704, 'learning_rate': 0.0009864061275485822, 'epoch': 2.6}                                                 
+{'loss': 1.277, 'learning_rate': 0.0009702067280333778, 'epoch': 2.88}                                                 
+ 29%|██████████████████████▍                                                       | 2500/8670 [09:36<23:56,  4.30it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-2500
+Configuration saved in /opt/awsw/models/checkpoint-2500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-2500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-1500] due to args.save_total_limit
+{'loss': 1.0561, 'learning_rate': 0.0009479846964351256, 'epoch': 3.17}                                                
+{'loss': 0.93, 'learning_rate': 0.0009200246631354752, 'epoch': 3.46}                                                  
+ 35%|██████████████████████████▉                                                   | 3000/8670 [11:33<21:32,  4.39it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-3000
+Configuration saved in /opt/awsw/models/checkpoint-3000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-3000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-2000] due to args.save_total_limit
+{'loss': 0.9639, 'learning_rate': 0.0008866847535791594, 'epoch': 3.75}                                                
+{'loss': 0.9056, 'learning_rate': 0.0008483920012324575, 'epoch': 4.04}                                                
+ 40%|███████████████████████████████▍                                              | 3500/8670 [13:31<19:16,  4.47it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-3500
+Configuration saved in /opt/awsw/models/checkpoint-3500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-3500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-2500] due to args.save_total_limit
+{'loss': 0.6021, 'learning_rate': 0.0008056368779348431, 'epoch': 4.33}                                                
+{'loss': 0.6413, 'learning_rate': 0.000758967011701687, 'epoch': 4.61}                                                 
+ 46%|███████████████████████████████████▉                                          | 4000/8670 [15:28<17:20,  4.49it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-4000
+Configuration saved in /opt/awsw/models/checkpoint-4000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-4000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-3000] due to args.save_total_limit
+{'loss': 0.6502, 'learning_rate': 0.0007089801724433917, 'epoch': 4.9}                                                 
+{'loss': 0.4431, 'learning_rate': 0.0006563166154432164, 'epoch': 5.19}                                                
+ 52%|████████████████████████████████████████▍                                     | 4500/8670 [17:23<15:56,  4.36it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-4500
+Configuration saved in /opt/awsw/models/checkpoint-4500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-4500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-3500] due to args.save_total_limit
+{'loss': 0.3603, 'learning_rate': 0.0006016508806621758, 'epoch': 5.48}                                                
+{'loss': 0.3892, 'learning_rate': 0.0005456831529094343, 'epoch': 5.77}                                                
+ 58%|████████████████████████████████████████████▉                                 | 5000/8670 [19:21<14:12,  4.31it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-5000
+Configuration saved in /opt/awsw/models/checkpoint-5000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-5000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-4000] due to args.save_total_limit
+{'loss': 0.334, 'learning_rate': 0.0004891302935412478, 'epoch': 6.06}                                                 
+{'loss': 0.1861, 'learning_rate': 0.0004327166585587387, 'epoch': 6.34}                                                
+ 63%|█████████████████████████████████████████████████▍                            | 5500/8670 [21:18<12:09,  4.34it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-5500
+Configuration saved in /opt/awsw/models/checkpoint-5500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-5500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-4500] due to args.save_total_limit
+{'loss': 0.19, 'learning_rate': 0.00037716482071068077, 'epoch': 6.63}                                                 
+{'loss': 0.1885, 'learning_rate': 0.0003231863144370323, 'epoch': 6.92}                                                
+ 69%|█████████████████████████████████████████████████████▉                        | 6000/8670 [23:15<10:19,  4.31it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-6000
+Configuration saved in /opt/awsw/models/checkpoint-6000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-6000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-5000] due to args.save_total_limit
+{'loss': 0.1117, 'learning_rate': 0.00027147252219639526, 'epoch': 7.21}                                               
+{'loss': 0.0846, 'learning_rate': 0.00022268581890966217, 'epoch': 7.5}                                                
+ 75%|██████████████████████████████████████████████████████████▍                   | 6500/8670 [25:13<08:36,  4.20it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-6500
+Configuration saved in /opt/awsw/models/checkpoint-6500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-6500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-5500] due to args.save_total_limit
+{'loss': 0.0831, 'learning_rate': 0.00017745108794604776, 'epoch': 7.79}                                               
+{'loss': 0.0719, 'learning_rate': 0.00013634771731879674, 'epoch': 8.07}                                               
+ 81%|██████████████████████████████████████████████████████████████▉               | 7000/8670 [27:09<06:27,  4.31it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-7000
+Configuration saved in /opt/awsw/models/checkpoint-7000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-7000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-6000] due to args.save_total_limit
+{'loss': 0.0415, 'learning_rate': 9.990217860711499e-05, 'epoch': 8.36}                                                
+{'loss': 0.0413, 'learning_rate': 6.858128365703242e-05, 'epoch': 8.65}                                                
+ 87%|███████████████████████████████████████████████████████████████████▍          | 7500/8670 [29:05<04:32,  4.30it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-7500
+Configuration saved in /opt/awsw/models/checkpoint-7500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-7500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-6500] due to args.save_total_limit
+{'loss': 0.039, 'learning_rate': 4.2786205432588096e-05, 'epoch': 8.94}                                                
+{'loss': 0.0308, 'learning_rate': 2.2847339601127947e-05, 'epoch': 9.23}                                               
+ 92%|███████████████████████████████████████████████████████████████████████▉      | 8000/8670 [31:02<02:41,  4.16it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-8000
+Configuration saved in /opt/awsw/models/checkpoint-8000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-8000/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-7000] due to args.save_total_limit
+{'loss': 0.0293, 'learning_rate': 9.020072667984159e-06, 'epoch': 9.52}                                                
+{'loss': 0.0275, 'learning_rate': 1.481510864283553e-06, 'epoch': 9.8}                                                 
+ 98%|████████████████████████████████████████████████████████████████████████████▍ | 8500/8670 [32:57<00:38,  4.43it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-8500
+Configuration saved in /opt/awsw/models/checkpoint-8500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-8500/pytorch_model.bin
+Deleting older checkpoint [/opt/awsw/models/checkpoint-7500] due to args.save_total_limit
+100%|██████████████████████████████████████████████████████████████████████████████| 8670/8670 [33:37<00:00,  4.46it/s]
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+{'train_runtime': 2017.2702, 'train_samples_per_second': 21.484, 'train_steps_per_second': 4.298, 'train_loss': 0.6843098035458187, 'epoch': 10.0}
+100%|██████████████████████████████████████████████████████████████████████████████| 8670/8670 [33:37<00:00,  4.30it/s]
+Prompt: How are you?
+Reply: Ry "Well, the computer is old and not for use. It's just a library item."<|endoftext|>
+
+
+Prompt: What do you think of Lorem?
+Reply: Ad "He's got me all the time, so I'm not sure if I'm going to be a father."<|endoftext|>
+
+
+Prompt: Oh my god, Adine. What is this?
+Reply: Ad "Well, it's a long story. Do you know what it means?"<|endoftext|>
+
+
+Prompt: What will we do here?
+Reply: Ry "I'll have to think about it. What do you want me to do, then?"<|endoftext|>
+
+
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+***** Running training *****
+  Num examples = 4334
+  Num Epochs = 10
+  Instantaneous batch size per device = 5
+  Total train batch size (w. parallel, distributed & accumulation) = 5
+  Gradient Accumulation steps = 1
+  Total optimization steps = 8670
+  6%|████▌                                                                          | 500/8670 [01:53<30:19,  4.49it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-500
+Configuration saved in /opt/awsw/models/checkpoint-500/config.json
+Model weights saved in /opt/awsw/models/checkpoint-500/pytorch_model.bin
+ 12%|████████▉                                                                     | 1000/8670 [03:53<29:41,  4.30it/s]Saving model checkpoint to /opt/awsw/models/checkpoint-1000
+Configuration saved in /opt/awsw/models/checkpoint-1000/config.json
+Model weights saved in /opt/awsw/models/checkpoint-1000/pytorch_model.bin
+ 13%|█████████▉                                                                    | 1102/8670 [04:19<29:50,  4.23it/s] 13%|██████████▎                                                                   | 1153/8670 [04:32<31:55,  3.92it/s] 13%|██████████▍                                                                   | 1160/8670 [04:34<32:44,  3.82it/s] 14%|███████████                                                                   | 1236/8670 [04:54<30:39,  4.04it
