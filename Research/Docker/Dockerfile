@@ -1,8 +1,8 @@
-FROM nvidia/cuda:11.3.1-cudnn8-runtime-ubuntu20.04
+FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04
 MAINTAINER Peter Willemsen <peter@codebuffet.co>
 RUN echo "Installing dependencies..." && \
     apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y curl git build-essential cmake python3-pip python3 pkg-config libssl-dev zsh clang && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y curl sudo git build-essential cmake python3-pip python3 pkg-config libssl-dev zsh clang && \
     apt-get dist-upgrade -y && \
 	rm -rf /var/lib/apt/lists/*
 
