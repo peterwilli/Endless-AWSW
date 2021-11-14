@@ -2,5 +2,5 @@
 for f in *.ipynb
 do
   echo "Processing $f..."
-  runipy -o "$f"
+  jupyter nbconvert --execute --to notebook --ExecutePreprocessor.timeout=-1 --inplace "$f"
 done
