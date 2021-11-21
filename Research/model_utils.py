@@ -22,15 +22,15 @@ from transformers import Trainer, TrainingArguments, TrainerCallback
 from config import Config
     
 def get_model(name):
-    tokenizer = GPT2Tokenizer.from_pretrained(name, bos_token='<|startoftext|>', eos_token='<|endoftext|>', pad_token='<|pad|>') #gpt2-medium
+    tokenizer = GPT2Tokenizer.from_pretrained(name, eos_token='<|endoftext|>', pad_token='<|pad|>') #gpt2-medium
     model = None
     if name == 'distilgpt2':
-        model = GPT2LMHeadModel.from_pretrained(name, pad_token_id = tokenizer.pad_token_id, bos_token_id=tokenizer.bos_token_id, eos_token_id=tokenizer.eos_token_id)
+        model = GPT2LMHeadModel.from_pretrained(name, pad_token_id = tokenizer.pad_token_id, eos_token_id=tokenizer.eos_token_id)
     else:
-        model = GPTNeoForCausalLM.from_pretrained(name, pad_token_id = tokenizer.pad_token_id, bos_token_id=tokenizer.bos_token_id, eos_token_id=tokenizer.eos_token_id)
+        model = GPTNeoForCausalLM.from_pretrained(name, pad_token_id = tokenizer.pad_token_id, eos_token_id=tokenizer.eos_token_id)
     
-    model.config.attention_dropout = 0.01
-    model.config.embed_dropout = 0.01
+    model.config.attention_dropout = 0.5
+    model.config.embed_dropout = 0.5
     model.resize_token_embeddings(len(tokenizer))
     return model, tokenizer
 
@@ -43,30 +43,6 @@ def random_model_folder():
 
 def get_dataset(tokenizer, block_size):
     dataset = load_dataset('text', data_files={'train': os.path.join(Config.work_dir, "data_train.txt"), 'test': os.path.join(Config.work_dir, "data_test.txt")})
-
-    class AWSWDataset(torch.utils.data.IterableDataset):
-        def __init__(self, dataset, dataset_type, do_shuffle=False):
-            self.current_dataset = dataset
-            self.dataset_type = dataset_type
-            self.do_shuffle = do_shuffle
-            self.shuffled_datasets = []
-            self.current_idx = 0
-            for i in range(1):
-                self.current_dataset = self.current_dataset.shuffle()
-                mapped_dataset = self.current_dataset.map(
-                    group_texts,
-                    batched=True,
-                    batch_size=dataset_batch_size,
-                    num_proc=dataset_map_cores
-                )
-                self.shuffled_datasets.append(mapped_dataset)
-
-        def approx_len(self):
-            return len(self.shuffled_datasets[0][self.dataset_type])
-
-        def __iter__(self):
-            self.current_idx = (self.current_idx + 1) % len(self.shuffled_datasets)
-            return iter(self.shuffled_datasets[self.current_idx][self.dataset_type])
 
     def encode(batch):
         result = []
@@ -85,9 +61,6 @@ def get_dataset(tokenizer, block_size):
     def group_texts(examples):
         # Concatenate all texts.
         concatenated_examples = {k: sum(examples[k], []) for k in examples.keys()}
-        #random_shift = random.randint(0, 64)
-        #concatenated_examples['input_ids'] = concatenated_examples['input_ids'][random_shift:]
-        #concatenated_examples['attention_mask'] = concatenated_examples['attention_mask'][random_shift:]
         total_length = len(concatenated_examples[list(examples.keys())[0]])
         # Pad the end
         to_add = (math.ceil(total_length / block_size) * block_size) - total_length
@@ -288,14 +261,10 @@ def train_model(params: dict, results: dict, device):
         lr_end = params['lr_end']
         power = params['power']
         scheduler = get_polynomial_decay_schedule_with_warmup(optimizer, num_warmup_steps, num_total_steps, power=power, lr_end=lr_end)
-        
-    class AWSWTrainer(Trainer):
-        def _get_train_sampler(self):
-            return None
 
     class AWSWTrainerCallback(TrainerCallback):
         def __init__(self, optimizer, results):
-            self.old_freeze_part_layers = False
+            self.old_freeze_part_layers = None
             self.optimizer = optimizer
             self.results = results
 
@@ -311,20 +280,21 @@ def train_model(params: dict, results: dict, device):
             freeze_layer_rate = params['freeze_layer_rate']
             freeze_part_layers = learning_rate > freeze_layer_rate
             if self.old_freeze_part_layers is not freeze_part_layers:
-                print(f"set freeze_part_layers: {freeze_part_layers}")
+                print(f"[{state.global_step}] set freeze_part_layers: {freeze_part_layers}")
                 to_freeze_count = params['to_freeze_count']
                 for name, param in named_parameters[:to_freeze_count * -1]:
                     param.requires_grad = not freeze_part_layers
                 self.old_freeze_part_layers = freeze_part_layers
 
     def train(model, dataset, trainer_callback):
+        model.train()
         training_args = TrainingArguments(
             params['model_folder'],
             seed=params['seed'],
             per_device_train_batch_size=batch_size,
             per_device_eval_batch_size=batch_size,
             num_train_epochs=num_epoch,
-            logging_steps=50,
+            logging_steps=250,
         )
         trainer = Trainer(
             model=model, 
