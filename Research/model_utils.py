@@ -303,7 +303,7 @@ def train_model(params: dict, results: dict, device):
             learning_rate_history = [h['learning_rate'] for h in state.log_history if 'learning_rate' in h]
             loss_history = [h['loss'] for h in state.log_history if 'loss' in h]
             self.results['loss_history'] = loss_history
-            self.results['last_loss'] = last_loss
+            self.results['learning_rate_history'] = learning_rate_history
 
         def on_step_begin(self, args, state, control, **kwargs):
             # Freeze a part
@@ -333,11 +333,19 @@ def train_model(params: dict, results: dict, device):
             optimizers=(optimizer, scheduler),
             callbacks=[trainer_callback]
         )
-        trainer.train()
+        checkpoint_dirs = [os.path.join(params['model_folder'], d) for d in os.listdir(params['model_folder']) if os.path.isdir(os.path.join(params['model_folder'], d))]
+        if len(checkpoint_dirs) > 0:
+            latest_checkpoint = max(checkpoint_dirs, key=os.path.getmtime)
+            trainer.train(latest_checkpoint)
+        else:
+            trainer.train()
         del training_args
         del trainer
         gc.collect()
-        torch.distributed.destroy_process_group()
+        try:
+            torch.distributed.destroy_process_group()
+        except:
+            pass
         torch.cuda.empty_cache()
         
     results['model'] = model
