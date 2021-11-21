@@ -22,15 +22,15 @@ from transformers import Trainer, TrainingArguments, TrainerCallback
 from config import Config
     
 def get_model(name):
-    tokenizer = GPT2Tokenizer.from_pretrained(name, eos_token='<|endoftext|>', pad_token='<|pad|>') #gpt2-medium
+    tokenizer = GPT2Tokenizer.from_pretrained(name, eos_token='<|endoftext|>', pad_token='<|pad|>')
     model = None
     if name == 'distilgpt2':
         model = GPT2LMHeadModel.from_pretrained(name, pad_token_id = tokenizer.pad_token_id, eos_token_id=tokenizer.eos_token_id)
     else:
         model = GPTNeoForCausalLM.from_pretrained(name, pad_token_id = tokenizer.pad_token_id, eos_token_id=tokenizer.eos_token_id)
     
-    model.config.attention_dropout = 0.5
-    model.config.embed_dropout = 0.5
+    model.config.attention_dropout = 0.01
+    model.config.embed_dropout = 0.01
     model.resize_token_embeddings(len(tokenizer))
     return model, tokenizer
 
@@ -48,8 +48,6 @@ def get_dataset(tokenizer, block_size):
         result = []
         attention_mask = []
         for item in batch['text']:
-            #tokens = [tokenizer.bos_token_id] + tokenizer.encode(item) + [tokenizer.eos_token_id]
-            #tokens = tokenizer.encode(item)
             tokens = tokenizer.encode(item) + [tokenizer.eos_token_id]
             result.append(tokens)
             attention_mask.append([1] * len(tokens))
