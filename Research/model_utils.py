@@ -273,12 +273,15 @@ def train_model(params: dict, results: dict, device):
             self.results['learning_rate_history'] = learning_rate_history
 
         def on_step_begin(self, args, state, control, **kwargs):
+            current_step = state.global_step
             # Freeze a part
             learning_rate = self.optimizer.param_groups[0]['lr']
             freeze_layer_rate = params['freeze_layer_rate']
             freeze_part_layers = learning_rate > freeze_layer_rate
+            if 'freeze_from_steps' in params:
+                freeze_part_layers = current_step > params['freeze_from_steps']
             if self.old_freeze_part_layers is not freeze_part_layers:
-                print(f"[{state.global_step}] set freeze_part_layers: {freeze_part_layers}")
+                print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers}")
                 to_freeze_count = params['to_freeze_count']
                 for name, param in named_parameters[:to_freeze_count * -1]:
                     param.requires_grad = not freeze_part_layers

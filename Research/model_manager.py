@@ -19,7 +19,6 @@ class ModelManager:
         model = GPTNeoForCausalLM.from_pretrained(self.path, pad_token_id = self.tokenizer.pad_token_id, eos_token_id=self.tokenizer.eos_token_id)
         model.to(self.device)
         model.resize_token_embeddings(len(self.tokenizer))
-        model.eval()
         self.model = model
     
     def say(self, past, prompt, top_k=None, top_p=None) -> str:
