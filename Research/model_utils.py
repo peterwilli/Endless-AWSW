@@ -281,9 +281,9 @@ def train_model(params: dict, results: dict, device):
             if 'freeze_from_steps' in params:
                 freeze_part_layers = current_step > params['freeze_from_steps']
             if self.old_freeze_part_layers is not freeze_part_layers:
-                print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers}")
+                print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (total layers: {len(named_parameters)})")
                 to_freeze_count = params['to_freeze_count']
-                for name, param in named_parameters[:to_freeze_count * -1]:
+                for name, param in named_parameters[:to_freeze_count]:
                     param.requires_grad = not freeze_part_layers
                 self.old_freeze_part_layers = freeze_part_layers
 
@@ -296,6 +296,7 @@ def train_model(params: dict, results: dict, device):
             per_device_eval_batch_size=batch_size,
             num_train_epochs=num_epoch,
             logging_steps=250,
+            save_total_limit=2
         )
         trainer = Trainer(
             model=model, 
