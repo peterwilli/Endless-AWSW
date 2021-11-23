@@ -176,7 +176,7 @@ def get_dataset(tokenizer, block_size):
         'train': AWSWDataset(dataset, 'train')
     }
 
-def split_data(txt_file: str):
+def split_data(txt_file: str, shuffle_output = False):
     with open(txt_file) as f:
         data = f.read()
     lines = data.split("\n")
@@ -241,8 +241,9 @@ def split_data(txt_file: str):
     print(f"eval_lines: {joined_eval_lines}")
     joined_train_lines = "\n".join(train_lines[:5])
     print(f"train_lines: {joined_train_lines}")
-
-    random.shuffle(train_lines)
+    
+    if shuffle_output:
+        random.shuffle(train_lines)
 
     if not os.path.isfile(os.path.join(Config.work_dir, "data_train.txt")):
         with open(os.path.join(Config.work_dir, "data_train.txt"), "w") as f:

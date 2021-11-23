@@ -14,6 +14,5 @@ class AWSWMod(Mod):
             .search_say("Just follow me.") \
             .link_from("pick_your_poison_end")
 
-
     def mod_complete(self):
         pass
