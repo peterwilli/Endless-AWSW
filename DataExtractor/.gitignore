@@ -1,0 +1,6 @@
+training_data.txt
+log.txt
+*.rpyc
+traceback.txt
+saves/
+cache/
