@@ -1,4 +1,6 @@
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
 import random
 import numpy as np
 import time
@@ -16,19 +18,25 @@ import multiprocessing
 import datasets
 from datasets import load_dataset
 from torch.utils.data import Dataset, DataLoader
-from transformers import GPT2LMHeadModel, GPT2Tokenizer, GPT2Config, GPT2LMHeadModel, GPTNeoForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import AdamW, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup, get_polynomial_decay_schedule_with_warmup
 from transformers import Trainer, TrainingArguments, TrainerCallback
 from config import Config
+
+class Model(nn.Module):
+    def __init__(self, base_model):
+        super(Model, self).__init__()
+        self.base_model = base_model
+        self.extension = nn.Sequential(
+            nn.Linear(100, 100)
+        )
+
+    def forward(self, x):
+        return self.base_model(x)
     
 def get_model(name):
-    tokenizer = GPT2Tokenizer.from_pretrained(name, eos_token='<|endoftext|>', pad_token='<|pad|>')
-    model = None
-    if name == 'distilgpt2':
-        model = GPT2LMHeadModel.from_pretrained(name, pad_token_id = tokenizer.pad_token_id, eos_token_id=tokenizer.eos_token_id)
-    else:
-        model = GPTNeoForCausalLM.from_pretrained(name, pad_token_id = tokenizer.pad_token_id, eos_token_id=tokenizer.eos_token_id)
-    
+    tokenizer = AutoTokenizer.from_pretrained(name, eos_token='<|endoftext|>', pad_token='<|pad|>')
+    model = AutoModelForCausalLM.from_pretrained(name, pad_token_id = tokenizer.pad_token_id, eos_token_id=tokenizer.eos_token_id)
     model.config.attention_dropout = 0.01
     model.config.embed_dropout = 0.01
     model.resize_token_embeddings(len(tokenizer))
@@ -119,27 +127,54 @@ def get_dataset(tokenizer, block_size):
     dataset_map_cores = min(multiprocessing.cpu_count(), 10)
     dataset_batch_size = 1000
 
-    dataset = dataset.map(
-        map_dragon_reply_text,
-        batched=True,
-        batch_size=dataset_batch_size,
-        num_proc=dataset_map_cores
-    )
+    class AWSWDataset(torch.utils.data.IterableDataset):
+        def __init__(self, dataset, dataset_type):
+            self.current_dataset = dataset
+            self.dataset_type = dataset_type
+            self.current_idx = 0
+            self.shuffle()
+
+        def shuffle(self):
+            #self.current_dataset = self.current_dataset.shuffle()
+            self.mapped_dataset = self.current_dataset.map(
+                group_texts,
+                batched=True,
+                batch_size=dataset_batch_size,
+                num_proc=dataset_map_cores
+            )
+
+        def __len__(self):
+            return len(self.mapped_dataset[self.dataset_type])
+
+        def __iter__(self):
+            self.shuffle()
+            return iter(self.mapped_dataset[self.dataset_type])
+
+#     dataset = dataset.map(
+#         map_dragon_reply_text,
+#         batched=True,
+#         batch_size=dataset_batch_size,
+#         num_proc=dataset_map_cores
+#     )
 
     dataset = dataset.map(
         encode,
         batched=True,
         batch_size=dataset_batch_size,
+        num_proc=dataset_map_cores,
         remove_columns=["text"],
-        num_proc=dataset_map_cores
     )
 
-    return dataset.map(
-        group_texts,
-        batched=True,
-        batch_size=dataset_batch_size,
-        num_proc=dataset_map_cores
-    )
+#     dataset = dataset.map(
+#         group_texts,
+#         batched=True,
+#         batch_size=dataset_batch_size,
+#         num_proc=dataset_map_cores
+#     )
+    
+    return {
+        'train': AWSWDataset(dataset, 'train')
+    }
 
 def split_data(txt_file: str):
     with open(txt_file) as f:
@@ -218,7 +253,7 @@ def split_data(txt_file: str):
         with open(os.path.join(Config.work_dir, "data_test.txt"), "w") as f:
             for l in eval_lines:
                 f.write(l + "\n")
-
+                
 def train_model(params: dict, results: dict, device):
     defaults = {
         "model_name": "distilgpt2",
@@ -281,8 +316,8 @@ def train_model(params: dict, results: dict, device):
             if 'freeze_from_steps' in params:
                 freeze_part_layers = current_step > params['freeze_from_steps']
             if self.old_freeze_part_layers is not freeze_part_layers:
-                print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (total layers: {len(named_parameters)})")
                 to_freeze_count = params['to_freeze_count']
+                print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (freezing {to_freeze_count} out of {len(named_parameters)} layers.)")
                 for name, param in named_parameters[:to_freeze_count]:
                     param.requires_grad = not freeze_part_layers
                 self.old_freeze_part_layers = freeze_part_layers

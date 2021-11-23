@@ -1,5 +1,5 @@
 import torch
-from transformers import GPT2LMHeadModel, GPT2Tokenizer, GPT2Config, GPT2LMHeadModel, GPTNeoForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM
 import re
 import logging
 
@@ -15,8 +15,8 @@ class ModelManager:
             self.load_model()
         
     def load_model(self):
-        self.tokenizer = GPT2Tokenizer.from_pretrained('EleutherAI/gpt-neo-125M', bos_token='<|startoftext|>', eos_token='<|endoftext|>', pad_token='<|pad|>')
-        model = GPTNeoForCausalLM.from_pretrained(self.path, pad_token_id = self.tokenizer.pad_token_id, eos_token_id=self.tokenizer.eos_token_id)
+        self.tokenizer = AutoTokenizer.from_pretrained('EleutherAI/gpt-neo-125M', bos_token='<|startoftext|>', eos_token='<|endoftext|>', pad_token='<|pad|>')
+        model = AutoModelForCausalLM.from_pretrained(self.path, pad_token_id = self.tokenizer.pad_token_id, eos_token_id=self.tokenizer.eos_token_id)
         model.to(self.device)
         model.resize_token_embeddings(len(self.tokenizer))
         self.model = model
