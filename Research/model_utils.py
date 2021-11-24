@@ -135,7 +135,7 @@ def get_dataset(tokenizer, block_size):
             self.shuffle()
 
         def shuffle(self):
-            #self.current_dataset = self.current_dataset.shuffle()
+            self.current_dataset = self.current_dataset.shuffle()
             self.mapped_dataset = self.current_dataset.map(
                 group_texts,
                 batched=True,
@@ -180,67 +180,8 @@ def split_data(txt_file: str, shuffle_output = False):
     with open(txt_file) as f:
         data = f.read()
     lines = data.split("\n")
-    player_dragon_pairs = {}
-    last_player_talk = []
-    closed_player_talk = False
-    re_player_talk = re.compile(r'c "(.*?)"')
-    for line in lines:
-        line = line.strip()
-        line_split = line.split(" ")
-        if len(line_split) <= 1:
-            continue
-
-        if line_split[0] == "c":
-            if closed_player_talk:
-                closed_player_talk = False
-                last_player_talk = []
-            last_player_talk.append(re.sub(re_player_talk, r"\1", line))
-        else:
-            if not closed_player_talk:
-                last_player_talk = json.dumps(last_player_talk)
-                if not last_player_talk in player_dragon_pairs:
-                    player_dragon_pairs[last_player_talk] = []
-                closed_player_talk = True
-
-            line = "DragonReply " + line
-            if last_player_talk is not None:
-                player_dragon_pairs[last_player_talk].append(line)
-
-    train_lines = []
+    train_lines = lines
     eval_lines = []
-    eval_per_character = 0
-
-    for player_line_str in player_dragon_pairs.keys():
-        player_lines = json.loads(player_line_str)
-        dragon_lines = player_dragon_pairs[player_line_str]
-        compiled_line = " ".join([f'PlayerReply c "{player_line}"' for player_line in player_lines]) + " " + " ".join(dragon_lines)
-        train_lines.append(compiled_line)
-
-    test_bucket = {}
-    for l in train_lines:
-        l_split = l.split(" ")
-        character = None
-        for i, ls in enumerate(l_split):
-            if ls == "DragonReply":
-                character = l_split[i + 1]
-                break
-        if not character in test_bucket:
-            test_bucket[character] = []
-        test_bucket[character].append(l)
-
-    for i in range(eval_per_character):
-        for character in test_bucket.keys():
-            random_line = test_bucket[character][randrange(len(test_bucket[character]))]
-            eval_lines.append(random_line)
-            for i2, t in enumerate(train_lines):
-                if t == random_line:
-                    del train_lines[i2]
-                    break
-
-    joined_eval_lines = "\n".join(eval_lines[:5])
-    print(f"eval_lines: {joined_eval_lines}")
-    joined_train_lines = "\n".join(train_lines[:5])
-    print(f"train_lines: {joined_train_lines}")
     
     if shuffle_output:
         random.shuffle(train_lines)
