@@ -82,48 +82,6 @@ def get_dataset(tokenizer, block_size):
         result["labels"] = result["input_ids"].copy()
         return result
 
-    def map_dragon_reply_text(batch):
-        result = {'text': []}
-        for item in batch['text']:
-            item_split = item.split(" ")
-            player_replies = []
-            dragon_replies = []
-            current_reply = []
-            handling_reply = None
-            for token in item_split:
-                if token == "PlayerReply":
-                    if handling_reply is None:
-                        handling_reply = "PlayerReply"
-                    else:
-                        if handling_reply == "PlayerReply":
-                            # We need to store the PlayerReply
-                            player_replies.append(" ".join(current_reply))
-                            current_reply = []
-                elif token == "DragonReply":
-                    if handling_reply == "DragonReply":
-                        # We need to store the DragonReply
-                        dragon_replies.append(" ".join(current_reply))
-                        current_reply = []
-
-                    if handling_reply == "PlayerReply":
-                        # We need to store the PlayerReply
-                        player_replies.append(" ".join(current_reply))
-                        current_reply = []
-
-                    handling_reply = "DragonReply"
-                    current_reply = []
-
-                if handling_reply is not None:
-                    current_reply.append(token)
-
-            # There's always a dragon reply at the end.
-            dragon_replies.append(" ".join(current_reply))
-            for player_idx in range(len(player_replies)):
-                for dragon_idx in range(len(dragon_replies)):
-                    result['text'].append(player_replies[player_idx] + " " + dragon_replies[dragon_idx])
-
-        return result
-
     dataset_map_cores = min(multiprocessing.cpu_count(), 10)
     dataset_batch_size = 1000
 
@@ -136,11 +94,14 @@ def get_dataset(tokenizer, block_size):
 
         def shuffle(self):
             self.current_dataset = self.current_dataset.shuffle()
+            # Hack to avoid log spam. Map() doesn't have a way to turn off the logging
+            # See: https://github.com/huggingface/datasets/issues/2651
+            datasets.utils.disable_progress_bar()
             self.mapped_dataset = self.current_dataset.map(
                 group_texts,
                 batched=True,
-                batch_size=dataset_batch_size,
-                num_proc=dataset_map_cores
+                batch_size=len(self.current_dataset),
+                num_proc=1
             )
 
         def __len__(self):
