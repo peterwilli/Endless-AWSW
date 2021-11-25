@@ -220,10 +220,10 @@ def train_model(params: dict, results: dict, device):
     lr = params['lr']
     batch_size = params['batch_size']
     train_len = len(dataset['train'])
-    num_training_steps = math.ceil(train_len / batch_size)
+    num_steps_per_epoch = math.ceil(train_len / batch_size)
     num_epoch = params['num_epoch']
-    num_total_steps = num_training_steps * num_epoch
-    num_warmup_steps = num_training_steps * params['warmup_factor']
+    num_total_steps = num_steps_per_epoch * num_epoch
+    num_warmup_steps = num_steps_per_epoch * params['warmup_factor']
     optimizer = AdamW(model.parameters(), lr=lr)
     scheduler_str = params['scheduler']
     scheduler = None
@@ -272,7 +272,7 @@ def train_model(params: dict, results: dict, device):
             per_device_train_batch_size=batch_size,
             per_device_eval_batch_size=batch_size,
             num_train_epochs=num_epoch,
-            logging_steps=250,
+            logging_steps=num_steps_per_epoch,
             save_total_limit=2
         )
         trainer = Trainer(
