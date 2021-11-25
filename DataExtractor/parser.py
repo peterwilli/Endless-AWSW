@@ -4,11 +4,9 @@ import json
 import re
 import glob
 
-def extract_for_training(nodes, clamp_branch = False, original_nodes = None):
+def extract_for_training(nodes):
     if nodes is None:
         return None
-    if original_nodes is None:
-        original_nodes = nodes
     result = []
     buffer = []
     last_speaker = None
@@ -51,11 +49,11 @@ def extract_for_training(nodes, clamp_branch = False, original_nodes = None):
                     safe_buffer_append("{} \"{}\"".format(player_prefix, menu_str))
                 else:
                     safe_buffer_append("{} {} \"{}\"".format(pre_menu, player_prefix, menu_str))
-                safe_buffer_append(extract_for_training(menu_item[2], False, original_nodes))
+                safe_buffer_append(extract_for_training(menu_item[2]))
                 safe_result_append(" ".join(buffer))
                 buffer = []
         elif isinstance(node, renpy.ast.Say):
-            allowed_lines = ["n", "m", "Rz", "Lo", "Ad", "c", "Ry", "Mv", "Br", "An", "Sb", "Wr", "Zh", "Kv", "Ka"]
+            allowed_lines = ["n", "m", "Rz", "Lo", "Ad", "c", "Ry", "Mv", "Br", "An", "Sb", "Wr", "Zh", "Kv", "Ka", "Em"]
             info = node.diff_info()
             if info[1] in allowed_lines:
                 prefix = ""
@@ -75,29 +73,11 @@ def extract_for_training(nodes, clamp_branch = False, original_nodes = None):
             last_speaker = info[1]
         elif isinstance(node, renpy.ast.If):
             for entry in node.entries:
-                extracted_if_result = extract_for_training(entry[1], False, original_nodes)
+                extracted_if_result = extract_for_training(entry[1])
                 safe_result_append(extracted_if_result)
-        # elif isinstance(node, renpy.ast.Jump):
-        #     # Follow the jump partially
-        #     info = node.diff_info()
-        #     jump_str = info[1][1]
-        #     print(jump_str)
-        #     for i in range(0, len(original_nodes)):
-        #         label_node = original_nodes[i]
-        #         print(label_node)
-        #         if isinstance(label_node, renpy.ast.Label):
-        #             label_node_info = label_node.diff_info()
-        #             label_str = label_node_info[1]
-        #             print(label_str, jump_str)
-        #             if label_str == jump_str:
-        #                 print("jump hit")
-
-    sep = "\n"
-    if clamp_branch:
-        sep = " "
         
     # add any excess replies to the last line...
-    return sep.join(result) + " " + " ".join(buffer)
+    return "\n".join(result) + " " + " ".join(buffer)
 
 def parse():
     script_folder = os.path.dirname(os.path.realpath(__file__))
