@@ -220,8 +220,9 @@ def train_model(params: dict, results: dict, device):
                 freeze_part_layers = current_step > params['freeze_from_steps']
             if self.old_freeze_part_layers is not freeze_part_layers:
                 to_freeze_count = params['to_freeze_count']
-                print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (freezing {to_freeze_count} out of {len(named_parameters)} layers.)")
-                for name, param in named_parameters[:to_freeze_count]:
+                param_slice = named_parameters[to_freeze_count * -1:]
+                print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (freezing {len(param_slice)} out of {len(named_parameters)} layers.)")
+                for name, param in param_slice:
                     param.requires_grad = not freeze_part_layers
                 self.old_freeze_part_layers = freeze_part_layers
 
