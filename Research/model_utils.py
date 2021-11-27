@@ -234,7 +234,7 @@ def train_model(params: dict, results: dict, device):
             per_device_train_batch_size=batch_size,
             per_device_eval_batch_size=batch_size,
             num_train_epochs=num_epoch,
-            logging_steps=num_steps_per_epoch,
+            logging_steps=max(1, math.floor(num_total_steps / 100)),
             save_total_limit=2
         )
         trainer = Trainer(
