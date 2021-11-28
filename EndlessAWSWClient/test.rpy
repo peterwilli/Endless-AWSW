@@ -22,6 +22,36 @@ label loop_eawsw:
         import urllib2, urllib
         import json
 
+        talk_functions = {
+            'Ry': Ry,
+            'Lo': Lo,
+            'Br': Br,
+            'Wr': Wr,
+            'Ka': Ka,
+            'Rz': Rz,
+            'Kv': Kv,
+            'Zh': Zh,
+            'm': m,
+            'An': An,
+            'Ad': Ad,
+            'Sb': Sb
+        }
+
+        talk_functions = {
+            'Ry': Ry,
+            'Lo': Lo,
+            'Br': Br,
+            'Wr': Wr,
+            'Ka': Ka,
+            'Rz': Rz,
+            'Kv': Kv,
+            'Zh': Zh,
+            'm': m,
+            'An': An,
+            'Ad': Ad,
+            'Sb': Sb
+        }
+
         while True:
             prompt = renpy.input(_("Enter your reply"), default="", exclude='{%,[,]}', length=512)
             prompt = prompt.strip()
@@ -38,20 +68,6 @@ label loop_eawsw:
                 json_str = response.read()
                 command_dict = json.loads(json_str)
                 cmd = command_dict['cmd']
-                talk_functions = {
-                    'Ry': Ry,
-                    'Lo': Lo,
-                    'Br': Br,
-                    'Wr': Wr,
-                    'Ka': Ka,
-                    'Rz': Rz,
-                    'Kv': Kv,
-                    'Zh': Zh,
-                    'm': m,
-                    'An': An,
-                    'Ad': Ad,
-                    'Sb': Sb
-                }
             
             if cmd == "msg":
                 msg_from = command_dict['from']

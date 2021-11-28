@@ -37,8 +37,8 @@ class Model(nn.Module):
 def get_model(name):
     tokenizer = AutoTokenizer.from_pretrained(name, eos_token='<|endoftext|>', pad_token='<|pad|>')
     model = AutoModelForCausalLM.from_pretrained(name, pad_token_id = tokenizer.pad_token_id, eos_token_id=tokenizer.eos_token_id)
-    model.config.attention_dropout = 0.01
-    model.config.embed_dropout = 0.01
+    model.config.attention_dropout = 0.1
+    model.config.embed_dropout = 0.1
     model.resize_token_embeddings(len(tokenizer))
     return model, tokenizer
 
@@ -168,6 +168,7 @@ def train_model(params: dict, results: dict, device):
         "freeze_layer_rate": 0.0009,
         "num_epoch": 10,
         "block_size": 128,
+        "save_model": True,
         "batch_size": 32,
         "model_folder": os.path.join(Config.work_dir, "models", "awsw_main")
     }
@@ -235,7 +236,9 @@ def train_model(params: dict, results: dict, device):
             per_device_eval_batch_size=batch_size,
             num_train_epochs=num_epoch,
             logging_steps=max(1, math.floor(num_total_steps / 100)),
-            save_total_limit=2
+            save_total_limit=2,
+            log_level="error",
+            save_strategy = "steps" if params['save_model'] else "no"
         )
         trainer = Trainer(
             model=model, 
@@ -250,6 +253,7 @@ def train_model(params: dict, results: dict, device):
             trainer.train(latest_checkpoint)
         else:
             trainer.train()
+        trainer.save_model()
         del training_args
         del trainer
         gc.collect()

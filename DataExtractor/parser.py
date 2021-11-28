@@ -52,6 +52,8 @@ def extract_for_training(nodes):
                 safe_buffer_append(extract_for_training(menu_item[2]))
                 safe_result_append(" ".join(buffer))
                 buffer = []
+                last_speaker = None
+                
         elif isinstance(node, renpy.ast.Say):
             allowed_lines = ["n", "m", "Rz", "Lo", "Ad", "c", "Ry", "Mv", "Br", "An", "Sb", "Wr", "Zh", "Kv", "Ka", "Em"]
             info = node.diff_info()
@@ -82,7 +84,7 @@ def extract_for_training(nodes):
 def parse():
     script_folder = os.path.dirname(os.path.realpath(__file__))
     awsw_path = os.path.join(script_folder, "..", "Angels with Scaly Wings", "game")
-    #awsw_path = "/home/peter/Downloads/test"
+    #awsw_path = os.path.join(script_folder, "test_rpy")
     rpy_files = glob.glob(os.path.join(awsw_path, "*.rpy"))
     with open("training_data.txt", 'w') as training_data_fd:
         for rpy_file in rpy_files:
