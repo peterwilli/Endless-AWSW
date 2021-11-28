@@ -1,85 +1,42 @@
-from transformers import Trainer, TrainingArguments
 import torch
-from transformers import GPT2LMHeadModel, GPT2Tokenizer, GPT2Config, GPT2LMHeadModel, GPTNeoForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM
 import re
-import sys
 import logging
 
 class ModelManager:
-    def __init__(self, path):
-        self.path = path
+    def __init__(self, path = None, model = None, tokenizer = None):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self.load_model()
-        self.allowed_tokens = {
-            'Ry': 'Remy',
-            'Lo': 'Lorem',
-            'Br': 'Bryce',
-            'Wr': 'Unknown name',
-            'Ka': 'Katsuharu',
-            'Rz': 'Reza',
-            'Kv': 'Kevin',
-            'Zh': 'Zhong',
-            'm': 'Narrator',
-            'An': 'Anna',
-            'Ad': 'Adine',
-            'Sb': 'Sebastian',
-            'Mv': 'Maverick'
-        }
-        self.end_token = "<|endoftext|>"
-        self.splitter = re.compile(r'\s|\"')
-
+        self.max_length = 128
+        if path is None:
+            self.model = model
+            self.tokenizer = tokenizer
+        else:
+            self.path = path
+            self.load_model()
+        
     def load_model(self):
-        training_args = TrainingArguments(
-            self.path,
-            do_train = False
-        )
-        self.tokenizer = GPT2Tokenizer.from_pretrained('EleutherAI/gpt-neo-125M', bos_token='<|startoftext|>', eos_token='<|endoftext|>', pad_token='<|pad|>')
-        model = GPTNeoForCausalLM.from_pretrained(self.path, pad_token_id = self.tokenizer.pad_token_id, eos_token_id=self.tokenizer.eos_token_id)
+        self.tokenizer = AutoTokenizer.from_pretrained('EleutherAI/gpt-neo-125M', bos_token='<|startoftext|>', eos_token='<|endoftext|>', pad_token='<|pad|>')
+        model = AutoModelForCausalLM.from_pretrained(self.path, pad_token_id = self.tokenizer.pad_token_id, eos_token_id=self.tokenizer.eos_token_id)
         model.to(self.device)
         model.resize_token_embeddings(len(self.tokenizer))
-        model.eval()
         self.model = model
-
-    def post_process_reply(self, reply):
-        tokens = self.splitter.split(reply)
-        from_character = None
-        msg = []
-        for token in tokens:
-            if from_character is None and token in self.allowed_tokens:
-                from_character = token
-            elif token == self.end_token:
-                break
-            else:
-                msg.append(token)
-        if from_character is None:
-            return None
-        result = {
-            'cmd': "msg",
-            'from': from_character,
-            'msg': " ".join(msg).strip()
-        }
-        return result
-
-    def say(self, past, prompt):
-        prompt = f'{past} PlayerReply c \"{prompt}\" DragonReply'
-        # Make sure we use the last 128 tokens to avoid issues.
-        prompt_tokens = self.tokenizer.encode(prompt)[-128:]
+    
+    def say(self, past, prompt, top_k=None, top_p=None) -> str:
+        prompt = f'{past} PlayerReply c "{prompt}" DragonReply'
+        generated = torch.tensor(self.tokenizer.encode(prompt)).unsqueeze(0)
+        generated = generated.to(self.device)
+        prompt_tokens = self.tokenizer.encode(prompt)[self.max_length * -1:]
         prompt_tensor = torch.tensor(prompt_tokens).unsqueeze(0)
         prompt_tensor = prompt_tensor.to(self.device)
 
-        while True:
-            sample_outputs = self.model.generate(
-                prompt_tensor, 
-                do_sample=True,   
-                top_p=0.95, 
-                top_k=50, 
-                max_length = 128,
-                num_return_sequences=1
-            )
-
-            text = self.tokenizer.decode(sample_outputs[0], skip_special_tokens=False)
-            text_trimmed = text[len(prompt):]
-            post_processed = self.post_process_reply(text_trimmed)
-            logging.debug(f"prompt: {prompt} reply: {text} (trimmed: {text_trimmed}) ({len(prompt_tokens)} tokens) post_processed: {post_processed}")
-            if post_processed is not None:
-                return post_processed
+        sample_outputs = self.model.generate(
+            generated, 
+            do_sample=(top_k is not None and top_p is not None),
+            top_p=top_p,
+            top_k=top_k,
+            eos_token_id=self.tokenizer.eos_token_id,
+            pad_token_id=self.tokenizer.pad_token_id,
+            max_length=self.max_length,
+            num_return_sequences=1
+        )
+        return self.tokenizer.decode(sample_outputs[0], skip_special_tokens=False)[len(prompt):].strip()
