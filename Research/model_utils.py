@@ -179,6 +179,9 @@ def train_model(params: dict, results: dict, device):
     model = model.to(device)
     named_parameters = list(model.named_parameters())
     dataset = get_dataset(tokenizer, params['block_size'])
+    for item in dataset['train']:
+        print(tokenizer.decode(item['input_ids']))
+        break
     lr = params['lr']
     batch_size = params['batch_size']
     train_len = len(dataset['train'])
