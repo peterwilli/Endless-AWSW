@@ -36,10 +36,14 @@ def extract_for_training(nodes, state = None):
             commands = []
             if info[1] != state['last_speaker']:
                 if info[1] == "c":
-                    prefix = "PlayerReply"
+                    prefix = "p"
                 else:
-                    prefix = "DragonReply"
+                    prefix = "d"
                 commands.append(prefix)
+            if state['last_scene'] is not None and info[1] != "c":
+                commands.append("scn {}".format(state['last_scene']))
+                state['last_scene'] = None
+            commands.append('msg')                
             commands.append(info[1])                
             should_end_buffer = False
             if info[1] == "c" and state['last_speaker'] != None and state['last_speaker'] != "c":
@@ -48,8 +52,6 @@ def extract_for_training(nodes, state = None):
                 safe_result_append(" ".join(state['buffer']))
                 state['buffer'] = []
             commands.append("\"{}\"".format(info[2]))
-            if state['last_scene'] is not None:
-                commands.append("scn {}".format(state['last_scene']))
             safe_buffer_append(" ".join(commands))
         state['last_speaker'] = info[1]
 
@@ -71,13 +73,14 @@ def extract_for_training(nodes, state = None):
                 menu_str = re.sub(character_images_regex, r"\1", menu_str)
                 menu_str = re.sub(regular_images_regex, r"", menu_str)
                 player_prefix = "c"
-                if state['last_speaker'] != "c":
-                    player_prefix = "PlayerReply " + player_prefix
+                if state['last_speaker'] != player_prefix:
+                    player_prefix = "p msg " + player_prefix
+                    state['last_speaker'] = player_prefix
                 if pre_menu is None:
                     safe_buffer_append("{} \"{}\"".format(player_prefix, menu_str))
                 else:
                     safe_buffer_append("{} {} \"{}\"".format(pre_menu, player_prefix, menu_str))
-                safe_buffer_append(extract_for_training(menu_item[2]))
+                safe_buffer_append(extract_for_training(menu_item[2], state))
                 safe_result_append(" ".join(state['buffer']))
                 state['buffer'] = []
                 state['last_speaker'] = None
@@ -109,7 +112,7 @@ def extract_for_training(nodes, state = None):
 def parse():
     script_folder = os.path.dirname(os.path.realpath(__file__))
     awsw_path = os.path.join(script_folder, "..", "Angels with Scaly Wings", "game")
-    # awsw_path = os.path.join(script_folder, "test_rpy")
+    #awsw_path = os.path.join(script_folder, "test_rpy")
     rpy_files = glob.glob(os.path.join(awsw_path, "*.rpy"))
     with open("training_data.txt", 'w') as training_data_fd:
         for rpy_file in rpy_files:

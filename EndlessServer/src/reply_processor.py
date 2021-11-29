@@ -7,10 +7,12 @@ import logging
 class ReplyProcessor:
     def __init__(self):
         self.end_token = "<|endoftext|>"
-        self.splitter = re.compile(r'\s|\"')
-        self.allowed_tokens = {
+        self.splitter = re.compile(r'\s')
+        self.allowed_characters = {
+            'c': 'Player',
             'Ry': 'Remy',
             'Lo': 'Lorem',
+            'Ip': 'Ipsum',
             'Br': 'Bryce',
             'Wr': 'Unknown name',
             'Ka': 'Katsuharu',
@@ -18,28 +20,65 @@ class ReplyProcessor:
             'Kv': 'Kevin',
             'Zh': 'Zhong',
             'm': 'Narrator',
+            'n': 'Back Story',
+            'Mv': 'Maverick',
             'An': 'Anna',
             'Ad': 'Adine',
-            'Sb': 'Sebastian',
-            'Mv': 'Maverick'
+            'Sb': 'Sebastian'
         }
+        self.allowed_commands = [
+            "msg",
+            "scn"
+        ]
 
     def post_process_reply(self, reply):
+        reply = f"msg d {reply}"
         tokens = self.splitter.split(reply)
         from_character = None
-        msg = []
+        commands = []
+        current_cmd = None
+
+        def skip_command():
+            nonlocal current_cmd
+            current_cmd = None
+
+        def save_command():
+            nonlocal current_cmd
+            commands.append(current_cmd)
+            current_cmd = None
+
         for token in tokens:
-            if from_character is None and token in self.allowed_tokens:
-                from_character = token
+            if len(token) == 0:
+                continue
+            if current_cmd is None:
+                if token in self.allowed_commands:
+                    current_cmd = {
+                        'cmd': token
+                    }
+            elif current_cmd['cmd'] == "scn":
+                if not 'scn' in current_cmd:
+                    current_cmd['scn'] = token
+                    save_command()
+            elif current_cmd['cmd'] == "msg":
+                if not 'type' in current_cmd:
+                    current_cmd['type'] = token
+                elif not 'from' in current_cmd:
+                    if token in self.allowed_characters:
+                        current_cmd['from'] = token
+                        current_cmd['msg'] = []
+                    else:
+                        skip_command()
+                        continue
+                elif token.startswith("\""):
+                    if token.endswith("\""):
+                        # edge case for 1 word sentences
+                        current_cmd['msg'].append(token[1:-1])
+                        save_command()
+                    else:
+                        current_cmd['msg'].append(token[1:])
+                elif token.endswith("\""):
+                    current_cmd['msg'].append(token[:-1])
+                    save_command()
             elif token == self.end_token:
                 break
-            else:
-                msg.append(token)
-        if from_character is None:
-            return None
-        result = {
-            'cmd': "msg",
-            'from': from_character,
-            'msg': " ".join(msg).strip()
-        }
-        return result
+        return { 'cmds': commands }

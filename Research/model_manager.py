@@ -22,7 +22,7 @@ class ModelManager:
         self.model = model
     
     def say(self, past, prompt, top_k=None, top_p=None) -> str:
-        prompt = f'{past} PlayerReply c "{prompt}" DragonReply'
+        prompt = f'{past} p msg c "{prompt}" d'
         generated = torch.tensor(self.tokenizer.encode(prompt)).unsqueeze(0)
         generated = generated.to(self.device)
         prompt_tokens = self.tokenizer.encode(prompt)[self.max_length * -1:]

@@ -100,7 +100,7 @@ def get_dataset(tokenizer, block_size):
             self.mapped_dataset = self.current_dataset.map(
                 group_texts,
                 batched=True,
-                batch_size=len(self.current_dataset),
+                batch_size=len(self.current_dataset['train']),
                 num_proc=1
             )
 
@@ -179,9 +179,14 @@ def train_model(params: dict, results: dict, device):
     model = model.to(device)
     named_parameters = list(model.named_parameters())
     dataset = get_dataset(tokenizer, params['block_size'])
+    print("Dataset demo snapshot:")
+    demo_idx = 0
     for item in dataset['train']:
         print(tokenizer.decode(item['input_ids']))
-        break
+        if demo_idx > 0:
+            break
+        demo_idx += 1
+    del demo_idx
     lr = params['lr']
     batch_size = params['batch_size']
     train_len = len(dataset['train'])
