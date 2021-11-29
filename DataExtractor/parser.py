@@ -54,9 +54,8 @@ def extract_for_training(nodes):
                 safe_result_append(" ".join(buffer))
                 buffer = []
                 last_speaker = None
-                
         elif isinstance(node, renpy.ast.Say):
-            allowed_lines = ["n", "m", "Rz", "Lo", "Ad", "c", "Ry", "Mv", "Br", "An", "Sb", "Wr", "Zh", "Kv", "Ka", "Em"]
+            allowed_lines = ["n", "m", "Rz", "Lo", "Ad", "c", "Ry", "Mv", "Br", "An", "Ip", "Sb", "Wr", "Zh", "Kv", "Ka", "Em"]
             info = node.diff_info()
             if info[1] in allowed_lines:
                 commands = []
