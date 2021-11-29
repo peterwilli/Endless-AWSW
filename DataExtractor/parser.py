@@ -34,31 +34,31 @@ def extract_for_training(nodes, state = None):
         info = node.diff_info()
         if info[1] in allowed_lines:
             commands = []
-            if info[1] != state['last_speaker']:
-                if info[1] == "c":
-                    prefix = "p"
-                else:
-                    prefix = "d"
-                commands.append(prefix)
+            #if info[1] != state['last_speaker']:
+            if info[1] == "c":
+                prefix = "<p>"
+            else:
+                prefix = "<d>"
+            commands.append(prefix)
             if state['last_scene'] is not None and info[1] != "c":
-                commands.append("scn {}".format(state['last_scene']))
+                commands.append("<scn>{}".format(state['last_scene']))
                 state['last_scene'] = None
-            commands.append('msg')                
-            commands.append(info[1])                
+            commands.append('<msg>')                
+            commands.append(info[1] + " ")                
             should_end_buffer = False
             if info[1] == "c" and state['last_speaker'] != None and state['last_speaker'] != "c":
                 should_end_buffer = True
             if should_end_buffer:
-                safe_result_append(" ".join(state['buffer']))
+                safe_result_append("".join(state['buffer']))
                 state['buffer'] = []
             commands.append("\"{}\"".format(info[2]))
-            safe_buffer_append(" ".join(commands))
+            safe_buffer_append("".join(commands))
         state['last_speaker'] = info[1]
 
     for node in nodes:
         if isinstance(node, renpy.ast.Menu):
             if len(state['buffer']) > 0:
-                pre_menu = " ".join(state['buffer'])
+                pre_menu = "".join(state['buffer'])
             else:
                 pre_menu = None
             state['buffer'] = []
@@ -73,15 +73,15 @@ def extract_for_training(nodes, state = None):
                 menu_str = re.sub(character_images_regex, r"\1", menu_str)
                 menu_str = re.sub(regular_images_regex, r"", menu_str)
                 player_prefix = "c"
-                if state['last_speaker'] != player_prefix:
-                    player_prefix = "p msg " + player_prefix
-                    state['last_speaker'] = player_prefix
+                #if state['last_speaker'] != player_prefix:
+                player_prefix = "<p><msg>" + player_prefix
+                state['last_speaker'] = player_prefix
                 if pre_menu is None:
-                    safe_buffer_append("{} \"{}\"".format(player_prefix, menu_str))
+                    safe_buffer_append("{}\"{}\"".format(player_prefix, menu_str))
                 else:
-                    safe_buffer_append("{} {} \"{}\"".format(pre_menu, player_prefix, menu_str))
+                    safe_buffer_append("{}{}\"{}\"".format(pre_menu, player_prefix, menu_str))
                 safe_buffer_append(extract_for_training(menu_item[2], state))
-                safe_result_append(" ".join(state['buffer']))
+                safe_result_append("".join(state['buffer']))
                 state['buffer'] = []
                 state['last_speaker'] = None
         elif isinstance(node, renpy.ast.Say):
@@ -101,12 +101,11 @@ def extract_for_training(nodes, state = None):
                     safe_result_append(extracted_if_result)
             elif len(filtered_nodes) > 0:
                 process_say(filtered_nodes[0])
-        
     # add any excess replies to the last line...
     excess = ""
     if len(result) > 0:
         excess += " "
-    excess += " ".join(state['buffer'])
+    excess += "".join(state['buffer'])
     return "\n".join(result) + excess
 
 def parse():
