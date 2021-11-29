@@ -52,30 +52,27 @@ label loop_eawsw:
             'Sb': Sb
         }
 
-        while True:
-            prompt = renpy.input(_("Enter your reply"), default="", exclude='{%,[,]}', length=512)
-            prompt = prompt.strip()
-            
-            if prompt == "clear":
-                cmd = "clear"
-            else:
-                query = urllib.urlencode({
-                    'past': " ".join(persistent.endless_awsw_past),
-                    'prompt': prompt
-                })
-                req = urllib2.Request('http://127.0.0.1:5000/get_command?%s' % query)
-                response = urllib2.urlopen(req)
-                json_str = response.read()
-                command_dict = json.loads(json_str)
-                cmd = command_dict['cmd']
-            
-            if cmd == "msg":
-                msg_from = command_dict['from']
-                msg = command_dict['msg']
-                persistent.endless_awsw_past += [msg]
-                # Only save the last 3
-                persistent.endless_awsw_past = persistent.endless_awsw_past[-3:]
-                talk_functions[msg_from](msg)
-            if cmd == "clear":
-                jump(pick_your_poison)
-                break
+        prompt = renpy.input(_("Enter your reply"), default="", exclude='{%,[,]}', length=512)
+        prompt = prompt.strip()
+        
+        if prompt == "clear":
+            jump(pick_your_poison)
+        else:
+            query = urllib.urlencode({
+                'past': " ".join(persistent.endless_awsw_past),
+                'prompt': prompt
+            })
+            req = urllib2.Request('http://127.0.0.1:5000/get_command?%s' % query)
+            response = urllib2.urlopen(req)
+            json_str = response.read()
+            command_dict = json.loads(json_str)
+            cmd = command_dict['cmd']
+        
+        if cmd == "msg":
+            msg_from = command_dict['from']
+            msg = command_dict['msg']
+            persistent.endless_awsw_past += [msg]
+            # Only save the last 3
+            persistent.endless_awsw_past = persistent.endless_awsw_past[-3:]
+            talk_functions[msg_from](msg)
+            jump(loop_eawsw)
