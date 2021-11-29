@@ -4,16 +4,14 @@ import json
 import re
 import glob
 
-def extract_for_training(nodes, state = None):
+def extract_for_training(nodes, last_scene = None):
     if nodes is None:
         return None
     result = []
-    if state is None:
-        state = {
-            'last_speaker': None,
-            'buffer': [],
-            'last_scene': None
-        }
+    state = {
+        'last_speaker': None,
+        'buffer': []
+    }
     action_menu_regex = re.compile(r'\[\[.*?\]')
     character_images_regex = re.compile(r'{#.*?}(.*)')
     regular_images_regex = re.compile(r'{image=.*?}')
@@ -48,8 +46,8 @@ def extract_for_training(nodes, state = None):
                 safe_result_append(" ".join(state['buffer']))
                 state['buffer'] = []
             commands.append("\"{}\"".format(info[2]))
-            if state['last_scene'] is not None:
-                commands.append("scn {}".format(state['last_scene']))
+            if last_scene is not None:
+                commands.append("scn {}".format(last_scene))
             safe_buffer_append(" ".join(commands))
         state['last_speaker'] = info[1]
 
@@ -84,7 +82,7 @@ def extract_for_training(nodes, state = None):
         elif isinstance(node, renpy.ast.Say):
             process_say(node)
         elif isinstance(node, renpy.ast.Scene):
-            state['last_scene'] = node.diff_info()[1][0]
+            last_scene = node.diff_info()[1][0]
         elif isinstance(node, renpy.ast.If):
             filtered_nodes = []
             for entry in node.entries:
@@ -94,7 +92,7 @@ def extract_for_training(nodes, state = None):
             if len(filtered_nodes) > 1:
                 # More than 1 say node means we probably have a branch
                 for entry in node.entries:
-                    extracted_if_result = extract_for_training(entry[1], state)
+                    extracted_if_result = extract_for_training(entry[1])
                     safe_result_append(extracted_if_result)
             elif len(filtered_nodes) > 0:
                 process_say(filtered_nodes[0])
