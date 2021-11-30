@@ -100,8 +100,8 @@ def get_dataset(tokenizer, block_size):
             self.mapped_dataset = self.current_dataset.map(
                 group_texts,
                 batched=True,
-                batch_size=len(self.current_dataset['train']),
-                num_proc=1
+                batch_size=100,
+                num_proc=dataset_map_cores
             )
 
         def __len__(self):
@@ -137,6 +137,21 @@ def get_dataset(tokenizer, block_size):
         'train': AWSWDataset(dataset, 'train')
     }
 
+def split_branches(data):
+    result = ""
+    quote_counter = 0
+    data = data.strip()
+    for i in range(len(data)):
+        if data[i] == "\n":
+            continue
+        result += data[i]
+        if data[i] == '"':
+            quote_counter += 1
+        if quote_counter == 2:
+            quote_counter = 0
+            result += "\n"
+    return result
+
 def split_data(txt_file: str, shuffle_output = False):
     with open(txt_file) as f:
         data = f.read()
@@ -151,11 +166,16 @@ def split_data(txt_file: str, shuffle_output = False):
         with open(os.path.join(Config.work_dir, "data_train.txt"), "w") as f:
             for l in train_lines:
                 f.write(l + "\n")
+                
+            flat_lines = split_branches(data).split("\n")
+            for l in flat_lines:
+                f.write(l + "\n")
 
     if not os.path.isfile(os.path.join(Config.work_dir, "data_test.txt")):
         with open(os.path.join(Config.work_dir, "data_test.txt"), "w") as f:
             for l in eval_lines:
                 f.write(l + "\n")
+    
                 
 def train_model(params: dict, results: dict, device):
     defaults = {
