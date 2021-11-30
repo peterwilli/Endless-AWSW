@@ -34,7 +34,7 @@ def extract_for_training(nodes, state = None):
         info = node.diff_info()
         if info[1] in allowed_lines:
             commands = []
-            if info[1] != state['last_speaker']:
+            if True or info[1] != state['last_speaker']:
                 if info[1] == "c":
                     prefix = "<p>"
                 else:
