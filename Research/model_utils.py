@@ -138,19 +138,20 @@ def get_dataset(tokenizer, block_size):
     }
 
 def split_branches(data):
-    result = ""
+    result = []
     quote_counter = 0
-    data = data.strip()
+    line = ""
     for i in range(len(data)):
         if data[i] == "\n":
             continue
-        result += data[i]
+        line += data[i]
         if data[i] == '"':
             quote_counter += 1
         if quote_counter == 2:
             quote_counter = 0
-            result += "\n"
-    return result
+            result.append(line.strip())
+            line = ""
+    return "\n".join(result)
 
 def split_data(txt_file: str, shuffle_output = False):
     with open(txt_file) as f:
@@ -263,7 +264,7 @@ def train_model(params: dict, results: dict, device):
             per_device_train_batch_size=batch_size,
             per_device_eval_batch_size=batch_size,
             num_train_epochs=num_epoch,
-            logging_steps=max(1, math.floor(num_total_steps / 100)),
+            logging_steps=math.floor(max(num_total_steps, 100) / min(num_total_steps, 100)),
             save_total_limit=2,
             log_level="error",
             save_strategy = "steps" if params['save_model'] else "no"
