@@ -22,24 +22,10 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import AdamW, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup, get_polynomial_decay_schedule_with_warmup
 from transformers import Trainer, TrainingArguments, TrainerCallback
 from config import Config
-
-class Model(nn.Module):
-    def __init__(self, base_model):
-        super(Model, self).__init__()
-        self.base_model = base_model
-        self.extension = nn.Sequential(
-            nn.Linear(100, 100)
-        )
-
-    def forward(self, x):
-        return self.base_model(x)
     
 def get_model(name):
-    tokenizer = AutoTokenizer.from_pretrained(name, eos_token='<|endoftext|>', pad_token='<|pad|>')
-    model = AutoModelForCausalLM.from_pretrained(name, pad_token_id = tokenizer.pad_token_id, eos_token_id=tokenizer.eos_token_id)
-    model.config.attention_dropout = 0.1
-    model.config.embed_dropout = 0.1
-    model.resize_token_embeddings(len(tokenizer))
+    tokenizer = AutoTokenizer.from_pretrained(name)
+    model = AutoModelForCausalLM.from_pretrained(name)
     return model, tokenizer
 
 def random_model_folder():
@@ -71,7 +57,7 @@ def get_dataset(tokenizer, block_size):
         # Pad the end
         to_add = (math.ceil(total_length / block_size) * block_size) - total_length
         if to_add > 0:
-            concatenated_examples['input_ids'] += [tokenizer.pad_token_id] * to_add
+            concatenated_examples['input_ids'] += [tokenizer.eos_token_id] * to_add
             concatenated_examples['attention_mask'] += [0] * to_add
             total_length += to_add
         # Split by chunks of block_size.
@@ -168,19 +154,22 @@ def split_data(txt_file: str, shuffle_output = False):
             for l in train_lines:
                 f.write(l + "\n")
                 
-            flat_lines = split_branches(data).split("\n")
-            for l in flat_lines:
-                f.write(l + "\n")
+            #flat_lines = split_branches(data).split("\n")
+            #for l in flat_lines:
+            #    f.write(l + "\n")
 
     if not os.path.isfile(os.path.join(Config.work_dir, "data_test.txt")):
         with open(os.path.join(Config.work_dir, "data_test.txt"), "w") as f:
             for l in eval_lines:
                 f.write(l + "\n")
     
-                
-def train_model(params: dict, results: dict, device):
+def set_pretrained_model_dropout(model, dropout):
+    for p in model.transformer.h:
+        p.attn.attention.attn_dropout.p = dropout
+        p.attn.attention.resid_dropout.p = dropout
+        
+def train_model(model, tokenizer, params: dict, results: dict):
     defaults = {
-        "model_name": "distilgpt2",
         "lr": 1e-4,
         "warmup_factor": 1,
         "scheduler": "polynomial_decay_schedule_with_warmup",
@@ -195,9 +184,6 @@ def train_model(params: dict, results: dict, device):
     }
     defaults.update(params)
     params = defaults
-    model_name = params['model_name']
-    model, tokenizer = get_model(model_name)
-    model = model.to(device)
     named_parameters = list(model.named_parameters())
     dataset = get_dataset(tokenizer, params['block_size'])
     print("Dataset demo snapshot:")
@@ -257,7 +243,6 @@ def train_model(params: dict, results: dict, device):
                 self.old_freeze_part_layers = freeze_part_layers
 
     def train(model, dataset, trainer_callback):
-        model.train()
         training_args = TrainingArguments(
             params['model_folder'],
             seed=params['seed'],
@@ -291,9 +276,6 @@ def train_model(params: dict, results: dict, device):
         except:
             pass
         torch.cuda.empty_cache()
-        
-    results['model'] = model
-    results['tokenizer'] = tokenizer
     trainer_callback = AWSWTrainerCallback(optimizer, results)
     train(model, dataset, trainer_callback)
     del model

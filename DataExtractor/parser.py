@@ -29,6 +29,14 @@ def extract_for_training(nodes, state = None):
             result.append(line)
         state['last_speaker'] = None
 
+    def clean_say_line(line):
+        line = line.strip()
+        split = line.split("\n")
+        result = []
+        for part in split:
+            result.append(part.strip())
+        return "\\n".join(result)
+
     def process_say(node):
         allowed_lines = ["n", "m", "Rz", "Lo", "Ad", "c", "Ry", "Mv", "Br", "An", "Ip", "Sb", "Wr", "Zh", "Kv", "Ka", "Em"]
         info = node.diff_info()
@@ -49,10 +57,9 @@ def extract_for_training(nodes, state = None):
             if info[1] == "c" and state['last_speaker'] != None and state['last_speaker'] != "c":
                 should_end_buffer = True
             if should_end_buffer:
-                print("".join(state['buffer']))
                 safe_result_append("".join(state['buffer']))
                 state['buffer'] = []
-            commands.append("\"{}\"".format(info[2]))
+            commands.append("\"{}\"".format(clean_say_line(info[2])))
             safe_buffer_append("".join(commands))
         state['last_speaker'] = info[1]
 

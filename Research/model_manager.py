@@ -15,14 +15,12 @@ class ModelManager:
             self.load_model()
         
     def load_model(self):
-        self.tokenizer = AutoTokenizer.from_pretrained('EleutherAI/gpt-neo-125M', bos_token='<|startoftext|>', eos_token='<|endoftext|>', pad_token='<|pad|>')
-        model = AutoModelForCausalLM.from_pretrained(self.path, pad_token_id = self.tokenizer.pad_token_id, eos_token_id=self.tokenizer.eos_token_id)
+        self.tokenizer = AutoTokenizer.from_pretrained('EleutherAI/gpt-neo-125M')
+        model = AutoModelForCausalLM.from_pretrained(self.path)
         model.to(self.device)
-        model.resize_token_embeddings(len(self.tokenizer))
         self.model = model
     
-    def say(self, past, prompt, top_k=None, top_p=None) -> str:
-        prompt = f'{past}<p><msg>c "{prompt}"<d><scn>'
+    def say_raw(self, prompt, top_k=None, top_p=None) -> str:
         generated = torch.tensor(self.tokenizer.encode(prompt)).unsqueeze(0)
         generated = generated.to(self.device)
         prompt_tokens = self.tokenizer.encode(prompt)[self.max_length * -1:]
@@ -35,8 +33,12 @@ class ModelManager:
             top_p=top_p,
             top_k=top_k,
             eos_token_id=self.tokenizer.eos_token_id,
-            pad_token_id=self.tokenizer.pad_token_id,
+            pad_token_id=self.tokenizer.eos_token_id,
             max_length=self.max_length,
             num_return_sequences=1
         )
-        return self.tokenizer.decode(sample_outputs[0], skip_special_tokens=False)[len(prompt):].strip()
+        return self.tokenizer.decode(sample_outputs[0], skip_special_tokens=False)
+    
+    def say(self, past, prompt, top_k=None, top_p=None) -> str:
+        prompt = f'{past}<p><msg>c "{prompt}"<d><scn>'
+        return self.say_raw(prompt)[len(prompt):].strip()
