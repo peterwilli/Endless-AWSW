@@ -49,6 +49,7 @@ def extract_for_training(nodes, state = None):
             if info[1] == "c" and state['last_speaker'] != None and state['last_speaker'] != "c":
                 should_end_buffer = True
             if should_end_buffer:
+                print("".join(state['buffer']))
                 safe_result_append("".join(state['buffer']))
                 state['buffer'] = []
             commands.append("\"{}\"".format(info[2]))
@@ -102,10 +103,7 @@ def extract_for_training(nodes, state = None):
             elif len(filtered_nodes) > 0:
                 process_say(filtered_nodes[0])
     # add any excess replies to the last line...
-    excess = ""
-    if len(result) > 0:
-        excess += " "
-    excess += "".join(state['buffer'])
+    excess = "".join(state['buffer'])
     return "\n".join(result) + excess
 
 def parse():
