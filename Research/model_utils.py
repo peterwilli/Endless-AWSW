@@ -163,8 +163,8 @@ def split_data(txt_file: str, shuffle_output = False):
             for l in eval_lines:
                 f.write(l + "\n")
     
-def set_pretrained_model_dropout(model, dropout):
-    for p in model.transformer.h:
+def set_pretrained_model_dropout(h, dropout):
+    for p in h:
         p.attn.attention.attn_dropout.p = dropout
         p.attn.attention.resid_dropout.p = dropout
         
@@ -235,11 +235,23 @@ def train_model(model, tokenizer, params: dict, results: dict):
             if 'freeze_from_steps' in params:
                 freeze_part_layers = current_step > params['freeze_from_steps']
             if self.old_freeze_part_layers is not freeze_part_layers:
-                to_freeze_count = params['to_freeze_count']
-                param_slice = named_parameters[:to_freeze_count]
-                print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (freezing {len(param_slice)} out of {len(named_parameters)} layers.)")
-                for name, param in param_slice:
-                    param.requires_grad = not freeze_part_layers
+                if 'to_freeze_gpt_blocks' in params:
+                    param_slice = named_parameters
+                    for name, param in param_slice:
+                        param.requires_grad = False
+                    for name, param in model.transformer.h.named_parameters():
+                        param.requires_grad = True
+                    to_freeze_gpt_blocks = params['to_freeze_gpt_blocks']
+                    param_slice = model.transformer.h[:to_freeze_gpt_blocks]
+                    print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (freezing {len(param_slice)} out of {len(model.transformer.h)} gpt blocks.)")
+                    for name, param in param_slice.named_parameters():
+                        param.requires_grad = not freeze_part_layers
+                if 'to_freeze_count' in params:
+                    to_freeze_count = params['to_freeze_count']
+                    param_slice = named_parameters[:to_freeze_count]
+                    print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (freezing {len(param_slice)} out of {len(named_parameters)} layers.)")
+                    for name, param in param_slice:
+                        param.requires_grad = not freeze_part_layers
                 self.old_freeze_part_layers = freeze_part_layers
 
     def train(model, dataset, trainer_callback):

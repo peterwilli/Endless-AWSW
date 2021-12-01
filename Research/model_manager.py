@@ -41,4 +41,4 @@ class ModelManager:
     
     def say(self, past, prompt, top_k=None, top_p=None) -> str:
         prompt = f'{past}<p><msg>c "{prompt}"<d><scn>'
-        return self.say_raw(prompt)[len(prompt):].strip()
+        return self.say_raw(prompt, top_k=top_k, top_p=top_p)[len(prompt):].strip()
