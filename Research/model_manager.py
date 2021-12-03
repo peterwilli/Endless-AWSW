@@ -7,6 +7,7 @@ class ModelManager:
     def __init__(self, path = None, model = None, tokenizer = None):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.max_length = 128
+        self.reply_prefix = "<d><scn>"
         if path is None:
             self.model = model
             self.tokenizer = tokenizer
@@ -40,5 +41,5 @@ class ModelManager:
         return self.tokenizer.decode(sample_outputs[0], skip_special_tokens=False)
     
     def say(self, past, prompt, top_k=None, top_p=None) -> str:
-        prompt = f'{past}<p><msg>c "{prompt}"<d><scn>'
+        prompt = f'{past}<p><msg>c "{prompt}"{self.reply_prefix}'
         return self.say_raw(prompt, top_k=top_k, top_p=top_p)[len(prompt):].strip()

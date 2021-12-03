@@ -184,7 +184,6 @@ def train_model(model, tokenizer, params: dict, results: dict):
     }
     defaults.update(params)
     params = defaults
-    named_parameters = list(model.named_parameters())
     dataset = get_dataset(tokenizer, params['block_size'])
     print("Dataset demo snapshot:")
     demo_idx = 0
@@ -219,6 +218,8 @@ def train_model(model, tokenizer, params: dict, results: dict):
             self.old_freeze_part_layers = None
             self.optimizer = optimizer
             self.results = results
+            self.named_parameters = list(model.named_parameters())
+            random.shuffle(self.named_parameters)
 
         def on_train_end(self, args, state, control, **kwargs):
             learning_rate_history = [h['learning_rate'] for h in state.log_history if 'learning_rate' in h]
@@ -236,7 +237,7 @@ def train_model(model, tokenizer, params: dict, results: dict):
                 freeze_part_layers = current_step > params['freeze_from_steps']
             if self.old_freeze_part_layers is not freeze_part_layers:
                 if 'to_freeze_gpt_blocks' in params:
-                    param_slice = named_parameters
+                    param_slice = self.named_parameters
                     for name, param in param_slice:
                         param.requires_grad = False
                     for name, param in model.transformer.h.named_parameters():
@@ -248,8 +249,8 @@ def train_model(model, tokenizer, params: dict, results: dict):
                         param.requires_grad = not freeze_part_layers
                 if 'to_freeze_count' in params:
                     to_freeze_count = params['to_freeze_count']
-                    param_slice = named_parameters[:to_freeze_count]
-                    print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (freezing {len(param_slice)} out of {len(named_parameters)} layers.)")
+                    param_slice = self.named_parameters[:to_freeze_count]
+                    print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (freezing {len(param_slice)} out of {len(self.named_parameters)} layers.)")
                     for name, param in param_slice:
                         param.requires_grad = not freeze_part_layers
                 self.old_freeze_part_layers = freeze_part_layers
