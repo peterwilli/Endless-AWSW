@@ -35,6 +35,24 @@ class ReplyProcessor:
             "scn"
         ]
 
+    def commands_to_string(self, commands) -> str:
+        result = []
+        for cmd in commands:
+            result_item = ""
+            if cmd['cmd'] == "msg":
+                result_item += f"<{cmd['cmd']}>"
+                type_prefix = ""
+                if cmd['from'] == "c":
+                    type_prefix = "<p>"
+                result_item += f"{type_prefix}{cmd['from']} \"{cmd['msg']}\""
+            if cmd['cmd'] == "scn":
+                # only dragons have scn so we can safely prefix a dragon reply token here
+                result_item += "<d>"
+                result_item += f"<{cmd['cmd']}>"
+                result_item += cmd['scn']
+            result.append(result_item)
+        return "".join(result)
+
     def post_process_reply(self, reply):
         result = []
         current_cmd = None
