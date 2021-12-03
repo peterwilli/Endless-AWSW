@@ -43,15 +43,16 @@ class ReplyProcessor:
             if cmd_match is None:
                 if current_cmd['cmd'] == 'scn':
                     current_cmd['scn'] = token
+                    result.append(current_cmd)
                 elif current_cmd['cmd'] == 'msg':
                     msg_match = self.re_msg.match(token)
                     if msg_match is not None:
                         current_cmd['from'] = msg_match.group(1)
                         current_cmd['msg'] = msg_match.group(2)
+                        result.append(current_cmd)
             else:
                 if cmd_match.group(1) in self.allowed_commands:
                     current_cmd = {
                         'cmd': cmd_match.group(1)
                     }
-                    result.append(current_cmd)
         return result
