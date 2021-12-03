@@ -8,7 +8,9 @@ class ReplyProcessor:
     def __init__(self):
         self.end_token = "<|endoftext|>"
         self.splitter = re.compile(r'\s')
-        self.token_parser = re.compile(r'(<.*?>|[^<]*)')
+        self.re_token = re.compile(r'(<.*?>|[^<]*)')
+        self.re_command = re.compile(r'^<(.*?)>$')
+        self.re_msg = re.compile(r'([a-zA-Z]{1,2})\s"(.*?)"')
         self.allowed_characters = {
             'c': 'Player',
             'Ry': 'Remy',
@@ -34,5 +36,22 @@ class ReplyProcessor:
         ]
 
     def post_process_reply(self, reply):
-        reply = f"{reply}"
-        tokens = self.splitter.split(reply)
+        result = []
+        current_cmd = None
+        for token in self.re_token.findall(reply):
+            cmd_match = self.re_command.match(token)
+            if cmd_match is None:
+                if current_cmd['cmd'] == 'scn':
+                    current_cmd['scn'] = token
+                elif current_cmd['cmd'] == 'msg':
+                    msg_match = self.re_msg.match(token)
+                    if msg_match is not None:
+                        current_cmd['from'] = msg_match.group(1)
+                        current_cmd['msg'] = msg_match.group(2)
+            else:
+                if cmd_match.group(1) in self.allowed_commands:
+                    current_cmd = {
+                        'cmd': cmd_match.group(1)
+                    }
+                    result.append(current_cmd)
+        return result

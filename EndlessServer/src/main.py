@@ -13,9 +13,12 @@ reply_processor = ReplyProcessor()
 def get_command():
   past = request.args.get("past")
   prompt = request.args.get("prompt")
-  reply = model_manager.say(past, prompt)
-  result = reply_processor.post_process_reply(reply)
-  return result
+  reply = model_manager.say(past, prompt, top_k = 50, top_p = 0.7)
+  result = reply_processor.post_process_reply(model_manager.reply_prefix + reply)
+  return {
+    'raw_reply': model_manager.reply_prefix + reply,
+    'cmds': result
+  }
 
 if __name__ == '__main__':
   api.run(host="0.0.0.0") 

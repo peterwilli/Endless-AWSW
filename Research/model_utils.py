@@ -154,9 +154,9 @@ def split_data(txt_file: str, shuffle_output = False):
             for l in train_lines:
                 f.write(l + "\n")
                 
-            flat_lines = split_branches(data).split("\n")
-            for l in flat_lines:
-                f.write(l + "\n")
+            #flat_lines = split_branches(data).split("\n")
+            #for l in flat_lines:
+            #    f.write(l + "\n")
 
     if not os.path.isfile(os.path.join(Config.work_dir, "data_test.txt")):
         with open(os.path.join(Config.work_dir, "data_test.txt"), "w") as f:
@@ -215,11 +215,12 @@ def train_model(model, tokenizer, params: dict, results: dict):
 
     class AWSWTrainerCallback(TrainerCallback):
         def __init__(self, optimizer, results):
+            self.random = np.random.RandomState(params['seed'])
             self.old_freeze_part_layers = None
             self.optimizer = optimizer
             self.results = results
             self.named_parameters = list(model.named_parameters())
-            random.shuffle(self.named_parameters)
+            self.random.shuffle(self.named_parameters)
 
         def on_train_end(self, args, state, control, **kwargs):
             learning_rate_history = [h['learning_rate'] for h in state.log_history if 'learning_rate' in h]
