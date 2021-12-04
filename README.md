@@ -7,3 +7,11 @@ I'm working on a mod called Endless AWSW that will mix the normal AWSW game with
 This is still in a heavy research and pre-alpha phase. I don't really feel like writing installation docs to software that's likely going to change so heavily. This repo mainly functions for backup keeping for now!
 
 If you want to help out, please [ping me on my Discord](https://discord.gg/gKcb5U3) (You can also DM me at EmeraldOdin🔒#1991 but sometimes change the name, so it's a gamble hehe)
+
+## Todo & Bugs
+
+- [ ] Make sure repeated texts are filtered out
+- [ ] Fix a bug I made a screenshot of
+- [ ] Teach AI to repeat itself less
+- [ ] Moving forward in story makes requests to the server
+- [ ] Rp stuff: allow actions like "go into loremapt"

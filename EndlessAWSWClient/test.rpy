@@ -14,17 +14,25 @@ label pick_your_poison:
                 { 'cmd': 'msg', 'from': 'Ry', 'msg': "Hey!" },
             ]
         "You're with Lorem in the forest.":
-            $ persistent.endless_awsw_past = ['<d><scn>forest1<msg>m "Lorem approached me in the forest."', '<d><scn>forest1<msg>Lo "Hey!"']
-            scene forest1 at Pan ((0, 360), (0,0), 8.0) with dissolveslow
-            show lorem happy with dissolve
-            Lo happy "Hey!"
-        #"You're in a fight with Maverick.":
-            # # persistent.endless_awsw_past = 'DragonReply m "Maverick growled heavily at me." DragonReply M "Hey!"'
-            # scene forest1 at Pan ((0, 360), (0,0), 8.0) with dissolveslow
+            $ start_narrative = [
+                { 'cmd': 'scn', 'scn': 'forest1' },
+                { 'cmd': 'msg', 'from': 'm', 'msg': "Lorem approached me in the forest." },
+                { 'cmd': 'scn', 'scn': 'forest1' },
+                { 'cmd': 'msg', 'from': 'Lo', 'msg': "Hey!" },
+            ]
+        "You're in a fight with Maverick.":
+            # persistent.endless_awsw_past = 'DragonReply m "Maverick growled heavily at me." DragonReply M "Hey!"'
+            $ start_narrative = [
+                { 'cmd': 'scn', 'scn': 'np1r' },
+                { 'cmd': 'msg', 'from': 'm', 'msg': "Maverick growled heavily at me." },
+                { 'cmd': 'scn', 'scn': 'np1r' },
+                { 'cmd': 'msg', 'from': 'Mv', 'msg': "I'll slice you open!" },
+            ]
     jump loop_eawsw
 
 label loop_eawsw:
     python:
+        save_past_amount = 6
         class CommandExecutor:
             def __init__(self):
                 self.last_scene = None
@@ -110,17 +118,15 @@ label loop_eawsw:
                 cmds = command_dict['cmds']
                 command_executor.execute_commands(cmds)
 
-                # Only save the last 3
                 eawsw_state['endless_awsw_past'] += cmds
-                eawsw_state['endless_awsw_past'] = eawsw_state['endless_awsw_past'][-3:]
+                eawsw_state['endless_awsw_past'] = eawsw_state['endless_awsw_past'][save_past_amount * -1:]
             
             renpy.jump("loop_eawsw")
         if eawsw_state['did_run_start_narrative']:
             await_command()
         else:
             command_executor.execute_commands(start_narrative)
-            # Only save the last 3
             eawsw_state['endless_awsw_past'] += start_narrative
-            eawsw_state['endless_awsw_past'] = eawsw_state['endless_awsw_past'][-3:]
+            eawsw_state['endless_awsw_past'] = eawsw_state['endless_awsw_past'][save_past_amount * -1:]
             eawsw_state['did_run_start_narrative'] = True
             renpy.jump("loop_eawsw")
