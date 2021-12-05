@@ -2,12 +2,11 @@ from transformers import Trainer, TrainingArguments
 import torch
 import re
 import sys
+import Levenshtein
 import logging
 
 class ReplyProcessor:
     def __init__(self):
-        self.end_token = "<|endoftext|>"
-        self.splitter = re.compile(r'\s')
         self.re_token = re.compile(r'(<.*?>|[^<]*)')
         self.re_command = re.compile(r'^<(.*?)>$')
         self.re_msg = re.compile(r'([a-zA-Z]{1,2})\s"(.*?)"')
@@ -30,6 +29,7 @@ class ReplyProcessor:
             'Ad': 'Adine',
             'Sb': 'Sebastian'
         }
+        self.allowed_scenes = ['park2', 'black', 'loremapt', 'office', 'bare', 'bareblur', 'bareblur2', 'pad', 'facin2', 'facinx', 'facin3', 'alley', 'farm', 'town4', 'beach', 'adineapt', 'corridor', 'emeraroom', 'o4', 'park3', 'np3x', 'np2x', 'np1x', 'buildingoutside', 'o2', 'np3', 'store2', 'remyapt', 'cafe', 'viewingspot', 'np1r', 'hallway', 'np2y', 'np1n', 'o']
         self.allowed_commands = [
             "msg",
             "scn"
@@ -60,13 +60,24 @@ class ReplyProcessor:
             cmd_match = self.re_command.match(token)
             if cmd_match is None:
                 if current_cmd['cmd'] == 'scn':
+                    if not token in self.allowed_scenes:
+                        return None
                     current_cmd['scn'] = token
                     result.append(current_cmd)
                 elif current_cmd['cmd'] == 'msg':
                     msg_match = self.re_msg.match(token)
                     if msg_match is not None:
-                        current_cmd['from'] = msg_match.group(1)
+                        msg_from = msg_match.group(1)
+                        if not msg_from in self.allowed_characters:
+                            return None
+                        current_cmd['from'] = msg_from
                         current_cmd['msg'] = msg_match.group(2)
+                        for old_cmd in result:
+                            if old_cmd['cmd'] == 'msg':
+                                ratio = Levenshtein.ratio(current_cmd['msg'], old_cmd['msg'])
+                                logging.debug(f"ratio: {ratio} {current_cmd['msg']} <> {old_cmd['msg']}")
+                                if ratio > 0.7:
+                                    return None
                         result.append(current_cmd)
             else:
                 if cmd_match.group(1) in self.allowed_commands:

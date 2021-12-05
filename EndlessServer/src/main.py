@@ -9,6 +9,7 @@ logging.basicConfig(level=logging.DEBUG)
 api = Flask(__name__)
 model_manager = ModelManager(os.path.join("/", "opt", "awsw", "model"))
 reply_processor = ReplyProcessor()
+command_retries = 5
 
 @api.route('/get_command', methods=['GET'])
 def get_command():
@@ -16,12 +17,15 @@ def get_command():
   past = json.loads(past)
   past_str = reply_processor.commands_to_string(past)
   prompt = request.args.get("prompt")
-  reply = model_manager.say(past_str, prompt, top_k = 50, top_p = 0.7)
-  result = reply_processor.post_process_reply(model_manager.reply_prefix + reply)
+  result = []
+  for i in range(command_retries):
+    reply = model_manager.say(past_str, prompt, top_k = 50, top_p = 0.7)
+    possible_result = reply_processor.post_process_reply(model_manager.reply_prefix + reply)
+    if possible_result is not None:
+      result = possible_result
+      break
   return {
-    'cmds': result,
-    'past_str': past_str,
-    'raw_reply': model_manager.reply_prefix + reply
+    'cmds': result
   }
 
 if __name__ == '__main__':
