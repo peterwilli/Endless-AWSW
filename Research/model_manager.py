@@ -4,8 +4,11 @@ import re
 import logging
 
 class ModelManager:
-    def __init__(self, path = None, model = None, tokenizer = None):
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    def __init__(self, path = None, model = None, tokenizer = None, device = None):
+        if device is None:
+            self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        else:
+            self.device = device
         self.max_length = 128
         self.reply_prefix = "<d><scn>"
         if path is None:

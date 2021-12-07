@@ -49,6 +49,40 @@ def get_dataset(tokenizer, block_size):
             'attention_mask': attention_mask,
             'input_ids': result
         }
+    
+    def parse_variables(batch):
+        last_scene = None
+        last_character = None
+        result = []
+        
+        re_token = re.compile(r'(<.*?>|[^<]*)')
+        re_command = re.compile(r'^<(.*?)>$')
+        re_msg = re.compile(r'([a-zA-Z]{1,2})\s"(.*?)"')
+        
+        for item in batch['text']:
+            current_cmd = None
+            for token in re_token.findall(item):
+                cmd_match = re_command.match(token)
+                if cmd_match is None:
+                    if current_cmd == 'scn':
+                        if not token.startswith("%"):
+                            last_scene = token
+                    elif current_cmd == 'msg':
+                        msg_match = re_msg.match(token)
+                        if msg_match is not None:
+                            msg_from = msg_match.group(1)
+                            if not msg_from.startswith("%") and msg_from != 'c' and msg_from != 'm':
+                                last_character = msg_from
+                else:
+                    current_cmd = cmd_match.group(1)
+                        
+            if last_scene is not None:
+                item = item.replace("%lastscene", last_scene)
+            if last_character is not None:
+                item = item.replace("%lastcharacter", Config.interactable_characters[last_character])
+            if not '%lastcharacter' in item and not '%lastscene' in item:
+                result.append(item)
+        return { 'text': result }
 
     def group_texts(examples):
         # Concatenate all texts.
@@ -83,7 +117,21 @@ def get_dataset(tokenizer, block_size):
             # Hack to avoid log spam. Map() doesn't have a way to turn off the logging
             # See: https://github.com/huggingface/datasets/issues/2651
             datasets.utils.disable_progress_bar()
-            self.mapped_dataset = self.current_dataset.map(
+            
+            dataset = self.current_dataset.map(
+                parse_variables,
+                batched=True,
+                batch_size=dataset_batch_size,
+                num_proc=dataset_map_cores
+            )
+            dataset = dataset.map(
+                encode,
+                batched=True,
+                batch_size=dataset_batch_size,
+                num_proc=dataset_map_cores,
+                remove_columns=["text"],
+            )
+            self.mapped_dataset = dataset.map(
                 group_texts,
                 batched=True,
                 batch_size=100,
@@ -96,28 +144,6 @@ def get_dataset(tokenizer, block_size):
         def __iter__(self):
             self.shuffle()
             return iter(self.mapped_dataset[self.dataset_type])
-
-#     dataset = dataset.map(
-#         map_dragon_reply_text,
-#         batched=True,
-#         batch_size=dataset_batch_size,
-#         num_proc=dataset_map_cores
-#     )
-
-    dataset = dataset.map(
-        encode,
-        batched=True,
-        batch_size=dataset_batch_size,
-        num_proc=dataset_map_cores,
-        remove_columns=["text"],
-    )
-
-#     dataset = dataset.map(
-#         group_texts,
-#         batched=True,
-#         batch_size=dataset_batch_size,
-#         num_proc=dataset_map_cores
-#     )
     
     return {
         'train': AWSWDataset(dataset, 'train')
@@ -255,9 +281,14 @@ def train_model(model, tokenizer, params: dict, results: dict):
                     for name, param in param_slice:
                         param.requires_grad = not freeze_part_layers
                 self.old_freeze_part_layers = freeze_part_layers
+                
+    class AWSWTrainingArguments(TrainingArguments):
+        @property
+        def place_model_on_device(self):
+            return False
 
     def train(model, dataset, trainer_callback):
-        training_args = TrainingArguments(
+        training_args = AWSWTrainingArguments(
             params['model_folder'],
             seed=params['seed'],
             per_device_train_batch_size=batch_size,
@@ -289,7 +320,7 @@ def train_model(model, tokenizer, params: dict, results: dict):
             torch.distributed.destroy_process_group()
         except:
             pass
-        torch.cuda.empty_cache()
+        torch.cuda.empty_cafche()
     trainer_callback = AWSWTrainerCallback(optimizer, results)
     train(model, dataset, trainer_callback)
     del model
