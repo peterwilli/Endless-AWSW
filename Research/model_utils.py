@@ -315,7 +315,7 @@ def train_model(model, tokenizer, params: dict, results: dict):
             torch.distributed.destroy_process_group()
         except:
             pass
-        torch.cuda.empty_cafche()
+        torch.cuda.empty_cache()
     trainer_callback = AWSWTrainerCallback(optimizer, results)
     train(model, dataset, trainer_callback)
     del model
