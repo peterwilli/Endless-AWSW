@@ -71,7 +71,7 @@ def get_dataset(tokenizer, block_size):
                         msg_match = re_msg.match(token)
                         if msg_match is not None:
                             msg_from = msg_match.group(1)
-                            if not msg_from.startswith("%") and msg_from != 'c' and msg_from != 'm':
+                            if msg_from in Config.interactable_characters:
                                 last_character = msg_from
                 else:
                     current_cmd = cmd_match.group(1)
@@ -282,13 +282,8 @@ def train_model(model, tokenizer, params: dict, results: dict):
                         param.requires_grad = not freeze_part_layers
                 self.old_freeze_part_layers = freeze_part_layers
                 
-    class AWSWTrainingArguments(TrainingArguments):
-        @property
-        def place_model_on_device(self):
-            return False
-
     def train(model, dataset, trainer_callback):
-        training_args = AWSWTrainingArguments(
+        training_args = TrainingArguments(
             params['model_folder'],
             seed=params['seed'],
             per_device_train_batch_size=batch_size,
