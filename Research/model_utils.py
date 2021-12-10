@@ -35,7 +35,7 @@ def random_model_folder():
         pathlib.Path(models_dir).mkdir(parents=True, exist_ok=True)
     return models_dir
 
-def get_dataset(tokenizer, block_size):
+def get_dataset(tokenizer, block_size = 128):
     dataset = load_dataset('text', data_files={'train': os.path.join(Config.work_dir, "data_train.txt"), 'test': os.path.join(Config.work_dir, "data_test.txt")})
 
     def encode(batch):
@@ -116,8 +116,7 @@ def get_dataset(tokenizer, block_size):
             self.current_dataset = self.current_dataset.shuffle()
             # Hack to avoid log spam. Map() doesn't have a way to turn off the logging
             # See: https://github.com/huggingface/datasets/issues/2651
-            datasets.utils.disable_progress_bar()
-            
+            datasets.utils.set_progress_bar_enabled(False)
             dataset = self.current_dataset.map(
                 parse_variables,
                 batched=True,
@@ -194,7 +193,7 @@ def set_pretrained_model_dropout(h, dropout):
         p.attn.attention.attn_dropout.p = dropout
         p.attn.attention.resid_dropout.p = dropout
         
-def train_model(model, tokenizer, params: dict, results: dict):
+def train_model(model, tokenizer, dataset, params: dict, results: dict):
     defaults = {
         "lr": 1e-4,
         "warmup_factor": 1,
@@ -203,22 +202,12 @@ def train_model(model, tokenizer, params: dict, results: dict):
         "power": 0.6,
         "freeze_layer_rate": 0.0009,
         "num_epoch": 10,
-        "block_size": 128,
         "save_model": True,
         "batch_size": 32,
         "model_folder": os.path.join(Config.work_dir, "models", "awsw_main")
     }
     defaults.update(params)
     params = defaults
-    dataset = get_dataset(tokenizer, params['block_size'])
-    print("Dataset demo snapshot:")
-    demo_idx = 0
-    for item in dataset['train']:
-        print(tokenizer.decode(item['input_ids']))
-        if demo_idx > 0:
-            break
-        demo_idx += 1
-    del demo_idx
     lr = params['lr']
     batch_size = params['batch_size']
     train_len = len(dataset['train'])
