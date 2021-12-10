@@ -296,7 +296,6 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             trainer.train(latest_checkpoint)
         else:
             trainer.train()
-        trainer.save_model()
         del training_args
         del trainer
         gc.collect()
