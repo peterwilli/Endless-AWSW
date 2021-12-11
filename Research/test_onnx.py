@@ -5,7 +5,7 @@ import torch
 import numpy as np
 
 tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neo-125M")
-ort_session = ort.InferenceSession("models/onnx/eawsw/model.onnx")
+ort_session = ort.InferenceSession("models/onnx/model.onnx")
 
 print("Loaded model")
 
@@ -15,9 +15,9 @@ batch_size = 1
 hidden_size = 768
 
 def sample(session, input_text, num_tokens_to_produce = 30):    
-    inputs = tokenizer(input_text, return_tensors="np")
+    inputs = dict(tokenizer(input_text, return_tensors="np"))
     for step in range(num_tokens_to_produce):
-        outputs = ort_session.run(None, dict(inputs))
+        outputs = ort_session.run(None, inputs)
         next_token_logits = torch.from_numpy(outputs[0][:, -1, :])
         # Greedy approach is used here. You can easily extend it to use beam search and sampling to pick next tokens.
         next_tokens = torch.argmax(next_token_logits, dim=-1)

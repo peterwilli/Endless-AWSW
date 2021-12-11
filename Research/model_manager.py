@@ -27,9 +27,6 @@ class ModelManager:
     def say_raw(self, prompt, top_k=None, top_p=None) -> str:
         generated = torch.tensor(self.tokenizer.encode(prompt)).unsqueeze(0)
         generated = generated.to(self.device)
-        prompt_tokens = self.tokenizer.encode(prompt)[self.max_length * -1:]
-        prompt_tensor = torch.tensor(prompt_tokens).unsqueeze(0)
-        prompt_tensor = prompt_tensor.to(self.device)
 
         sample_outputs = self.model.generate(
             generated, 
