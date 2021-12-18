@@ -5,7 +5,7 @@ import torch
 import numpy as np
 
 tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neo-125M")
-ort_session = ort.InferenceSession("models/onnx/model.onnx")
+ort_session = ort.InferenceSession("./model.onnx")
 
 print("Loaded model")
 
