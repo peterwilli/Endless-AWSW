@@ -18,6 +18,11 @@ class OnnxModelManager:
         else:
             self.path = path
             self.load_model()
+            
+    def normalize(self, x):
+        if np.all(x == x[0]):
+            return np.ones(len(x))
+        return (x-min(x)) / (max(x)-min(x))
         
     def load_model(self):
         self.tokenizer = AutoTokenizer.from_pretrained('EleutherAI/gpt-neo-125M')
@@ -39,11 +44,11 @@ class OnnxModelManager:
 
         return input_ids, attention_mask, empty_past
     
-    def say_raw(self, prompt, top_k=None, top_p=None) -> str:
+    def say_raw(self, prompt, do_sample = False) -> str:
         input_ids, attention_mask, past = self.get_model_input([prompt])
         eos_token_id = self.tokenizer.eos_token_id
         batch_size = input_ids.shape[0]
-        all_token_ids = input_ids.copy()
+        all_token_ids = input_ids
 
         for step in range(self.max_length):
             inputs = {}
@@ -54,10 +59,19 @@ class OnnxModelManager:
             inputs['input_ids'] = input_ids
             outputs = self.model.run(None, inputs)
             next_token_logits = outputs[0][:, -1, :]
-            # Greedy approach is used here. You can easily extend it to use beam search and sampling to pick next tokens.
-            next_tokens = np.argmax(next_token_logits, axis=-1)
+            if do_sample:
+                next_tokens = np.argpartition(-next_token_logits, 10).flatten()[:10]
+                chances = next_token_logits.flatten()[next_tokens]
+                chances = self.normalize(chances)
+                random_selection = np.random.uniform()
+                chance_mask = np.where(chances > random_selection, 1, 0)
+                next_tokens = next_tokens[chance_mask == 1]
+                next_tokens = np.array([np.random.choice(next_tokens)])
+            else:
+                # Greedy approach is used here. You can easily extend it to use beam search and sampling to pick next tokens.
+                next_tokens = np.argmax(next_token_logits, axis=-1)
             all_token_ids = np.concatenate((all_token_ids, np.expand_dims(next_tokens, -1)), axis=-1)
-            # Update input_ids, attention_mask, position_ids and past
+            # Update input_ids, attention_mask and past
             input_ids = next_tokens.reshape((batch_size, 1))   
             attention_mask = np.ones((batch_size, 1), dtype=np.float32)
 
@@ -75,7 +89,7 @@ class OnnxModelManager:
         return self.say_raw(prompt, top_k=top_k, top_p=top_p)[len(prompt):].strip()
     
 if __name__ == "__main__":
-    manager = OnnxModelManager("models/onnx/gpt-neo-default-past-lm.onnx")
+    manager = OnnxModelManager("models/awsw_onnx/model_quant.onnx")
     test_prompt = "Hey sweetie!"
     reply = manager.say_raw(test_prompt)
     print(f"Test prompt: {test_prompt} Test reply: {reply}")

@@ -11,7 +11,9 @@ import os
 import gc
 import pathlib
 import json
+import queue
 import math
+import threading
 import re
 from random import randrange
 import multiprocessing
@@ -22,6 +24,9 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import AdamW, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup, get_polynomial_decay_schedule_with_warmup
 from transformers import Trainer, TrainingArguments, TrainerCallback
 from config import Config
+import onnx
+from onnx_model_manager import OnnxModelManager
+from onnxruntime.quantization import quantize_dynamic, QuantType
     
 def get_model(name):
     tokenizer = AutoTokenizer.from_pretrained(name)
@@ -35,44 +40,57 @@ def random_model_folder():
         pathlib.Path(models_dir).mkdir(parents=True, exist_ok=True)
     return models_dir
 
+class ModelSeeder:
+    def __init__(self, tokenizer):
+        self.main_model_path = os.path.join("models", "main_gptneo_onnx")
+        if not os.path.exists(os.path.join(self.main_model_path, "model_quant.onnx")):
+            os.system(f"python3 -m transformers.onnx --model='EleutherAI/gpt-neo-125M' --feature=causal-lm-with-past {self.main_model_path} --atol=0.0002")
+            self.optimize_onnx()
+        self.onnx_model_manager = OnnxModelManager(os.path.join(self.main_model_path, "model_quant.onnx"))
+        self.tokenizer = tokenizer
+        self.buffer = []
+        self.done_queue = queue.Queue(maxsize = 10000)
+        self.buffer_thread = threading.Thread(target=self.buffer_worker)
+        
+    def start_worker(self):
+        self.buffer_thread.start()
+        
+    def buffer_worker(self):
+        num_tokens = len(self.tokenizer)
+        while True:
+            random_input_id = random.randint(0, num_tokens)
+            output = self.onnx_model_manager.say_raw(self.tokenizer.decode([random_input_id])[0])
+            self.done_queue.put(output)
+
+    def optimize_onnx(self):
+        model_fp32 = os.path.join(self.main_model_path, "model.onnx")
+        model_quant = os.path.join(self.main_model_path, "model_quant.onnx")
+        model_opt = os.path.join(self.main_model_path, "model-opt.onnx")
+        quantized_model = quantize_dynamic(model_fp32, model_quant, weight_type=QuantType.QUInt8)
+        os.system(f"rm {model_opt}")
+        
+    def seed_model(self, batch):
+        input_ids = []
+        attention_mask = []
+        for i in range(len(batch['input_ids'])):
+            input_ids.append(batch['input_ids'][i])
+            attention_mask.append(batch['attention_mask'][i])
+            # Add a text from the main model
+            output = self.done_queue.get()
+            output = self.tokenizer.encode(output)
+            input_ids.append(output)
+            attention_mask.append([1] * len(output))
+        return {
+            'attention_mask': attention_mask,
+            'input_ids': input_ids
+        }
+        
 def get_dataset(tokenizer, block_size = 128):
     dataset = load_dataset('text', data_files={'train': os.path.join(Config.work_dir, "data_train.txt"), 'test': os.path.join(Config.work_dir, "data_test.txt")})
-    
-    # Tell pytorch to run this model on the GPU.
-    device_name = "cuda:0" if torch.cuda.is_available() else "cpu"
-    # device_name = "cpu"
-    device = torch.device(device_name)
-    
-    main_model, main_tokenizer = get_model("EleutherAI/gpt-neo-125M")
-    main_model = main_model.to(device)
-    def seed_main_model(batch):
-        with torch.no_grad():
-            input_ids = []
-            attention_mask = []
-            for i in range(len(batch['input_ids'])):
-                input_ids.append(batch['input_ids'][i])
-                attention_mask.append(batch['attention_mask'][i])
-                # Add a text from the main model
-                random_input_id = random.choice(batch['input_ids'][i])
-                generated = torch.tensor([random_input_id]).unsqueeze(0)
-                generated = generated.to(device)
-                sample_outputs = main_model.generate(
-                    generated, 
-                    do_sample=True,
-                    ftop_p=0.7,
-                    top_k=50,
-                    eos_token_id=main_tokenizer.eos_token_id,
-                    pad_token_id=main_tokenizer.eos_token_id,
-                    max_length=block_size,
-                    num_return_sequences=1
-                )
-                input_ids.append(sample_outputs[0].cpu().numpy())
-                attention_mask.append([1] * len(sample_outputs[0]))
-            return {
-                'attention_mask': attention_mask,
-                'input_ids': input_ids
-            }
-            
+       
+    model_seeder = ModelSeeder(tokenizer)
+    model_seeder.start_worker()
+        
     def encode(batch):
         result = []
         attention_mask = []
@@ -166,7 +184,7 @@ def get_dataset(tokenizer, block_size = 128):
                 remove_columns=["text"],
             )
             dataset = dataset.map(
-                seed_main_model,
+                model_seeder.seed_model,
                 batched=True,
                 batch_size=dataset_batch_size,
                 num_proc=1,
