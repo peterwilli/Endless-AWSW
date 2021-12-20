@@ -44,7 +44,6 @@ class OnnxModelManager:
         eos_token_id = self.tokenizer.eos_token_id
         batch_size = input_ids.shape[0]
         all_token_ids = input_ids.copy()
-        
         shape_name_mapping = {
             'sequence': input_ids.shape[1],
             'batch': batch_size,
