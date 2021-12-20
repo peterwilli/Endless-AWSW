@@ -44,29 +44,9 @@ class OnnxModelManager:
         eos_token_id = self.tokenizer.eos_token_id
         batch_size = input_ids.shape[0]
         all_token_ids = input_ids.copy()
-        shape_name_mapping = {
-            'sequence': input_ids.shape[1],
-            'batch': batch_size,
-            'past_sequence': 0,
-            'past_sequence + sequence': input_ids.shape[1]
-        }
-        type_name_mapping = {
-            'tensor(int64)': np.int64,
-            'tensor(float)': np.float32
-        }
-        def map_shape(x):
-            if type(x) is str:
-                return shape_name_mapping[x]
-            return x
 
         for step in range(self.max_length):
-            inputs = {
-
-            }
-            for input in self.model.get_inputs():
-                processed_shape = list(map(map_shape, input.shape))
-                inputs[input.name] = np.zeros(processed_shape, dtype = type_name_mapping[input.type])
-
+            inputs = {}
             for i in range(0, self.num_layer):
                 inputs[f'past_key_values.{i}.key'] = np.ascontiguousarray(past[i * 2])
                 inputs[f'past_key_values.{i}.value'] = np.ascontiguousarray(past[(i * 2) + 1])
@@ -88,7 +68,7 @@ class OnnxModelManager:
                 
             if eos_token_id in next_tokens:
                 break
-        return self.tokenizer.decode(all_token_ids[0], skip_special_tokens=True)
+        return self.tokenizer.decode(all_token_ids[0], skip_special_tokens=False)
     
     def say(self, past, prompt, top_k=None, top_p=None) -> str:
         prompt = f'{past}<p><msg>c "{prompt}"{self.reply_prefix}'
