@@ -50,16 +50,21 @@ class ModelSeeder:
         self.tokenizer = tokenizer
         self.buffer = []
         self.done_queue = queue.Queue(maxsize = 10000)
+        self.running = False
         self.buffer_thread = threading.Thread(target=self.buffer_worker)
         
     def start_worker(self):
+        self.running = True
         self.buffer_thread.start()
+        
+    def stop_worker(self):
+        self.running = False
         
     def buffer_worker(self):
         num_tokens = len(self.tokenizer)
-        while True:
+        while self.running:
             random_input_id = random.randint(0, num_tokens)
-            output = self.onnx_model_manager.say_raw(self.tokenizer.decode([random_input_id])[0])
+            output = self.onnx_model_manager.say_raw(self.tokenizer.decode([random_input_id])[0], do_sample=True)
             self.done_queue.put(output)
 
     def optimize_onnx(self):
@@ -85,9 +90,8 @@ class ModelSeeder:
             'input_ids': input_ids
         }
         
-def get_dataset(tokenizer, block_size = 128):
-    dataset = load_dataset('text', data_files={'train': os.path.join(Config.work_dir, "data_train.txt"), 'test': os.path.join(Config.work_dir, "data_test.txt")})
-       
+def get_dataset(tokenizer, path_train, block_size = 128):
+    dataset = load_dataset('text', data_files={'train': path_train, 'test': os.path.join(Config.work_dir, "data_test.txt")})
     model_seeder = ModelSeeder(tokenizer)
     model_seeder.start_worker()
         
@@ -204,6 +208,7 @@ def get_dataset(tokenizer, block_size = 128):
             return iter(self.mapped_dataset[self.dataset_type])
     
     return {
+        'model_seeder': model_seeder,
         'train': AWSWDataset(dataset, 'train')
     }
 
@@ -233,6 +238,11 @@ def split_data(txt_file: str, shuffle_output = False):
     if shuffle_output:
         random.shuffle(train_lines)
 
+    if not os.path.isfile(os.path.join(Config.work_dir, "data_train_sample.txt")):
+        with open(os.path.join(Config.work_dir, "data_train_sample.txt"), "w") as f:
+            for l in train_lines[:10]:
+                f.write(l + "\n")
+                
     if not os.path.isfile(os.path.join(Config.work_dir, "data_train.txt")):
         with open(os.path.join(Config.work_dir, "data_train.txt"), "w") as f:
             for l in train_lines:

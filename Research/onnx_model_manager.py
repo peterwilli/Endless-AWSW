@@ -49,7 +49,6 @@ class OnnxModelManager:
         eos_token_id = self.tokenizer.eos_token_id
         batch_size = input_ids.shape[0]
         all_token_ids = input_ids
-
         for step in range(self.max_length):
             inputs = {}
             for i in range(0, self.num_layer):
@@ -60,6 +59,8 @@ class OnnxModelManager:
             outputs = self.model.run(None, inputs)
             next_token_logits = outputs[0][:, -1, :]
             if do_sample:
+                noise = np.random.uniform(low = 0.9, high = 1, size = next_token_logits.shape)
+                next_token_logits = next_token_logits * noise
                 next_tokens = np.argpartition(-next_token_logits, 10).flatten()[:10]
                 chances = next_token_logits.flatten()[next_tokens]
                 chances = self.normalize(chances)
@@ -68,7 +69,6 @@ class OnnxModelManager:
                 next_tokens = next_tokens[chance_mask == 1]
                 next_tokens = np.array([np.random.choice(next_tokens)])
             else:
-                # Greedy approach is used here. You can easily extend it to use beam search and sampling to pick next tokens.
                 next_tokens = np.argmax(next_token_logits, axis=-1)
             all_token_ids = np.concatenate((all_token_ids, np.expand_dims(next_tokens, -1)), axis=-1)
             # Update input_ids, attention_mask and past
@@ -84,9 +84,9 @@ class OnnxModelManager:
                 break
         return self.tokenizer.decode(all_token_ids[0], skip_special_tokens=False)
     
-    def say(self, past, prompt, top_k=None, top_p=None) -> str:
+    def say(self, past, prompt, do_sample=False) -> str:
         prompt = f'{past}<p><msg>c "{prompt}"{self.reply_prefix}'
-        return self.say_raw(prompt, top_k=top_k, top_p=top_p)[len(prompt):].strip()
+        return self.say_raw(prompt, do_sample = do_sample)[len(prompt):].strip()
     
 if __name__ == "__main__":
     manager = OnnxModelManager("models/awsw_onnx/model_quant.onnx")
