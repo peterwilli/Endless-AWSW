@@ -92,8 +92,8 @@ class ModelSeeder:
         
 def get_dataset(tokenizer, path_train, block_size = 128):
     dataset = load_dataset('text', data_files={'train': path_train, 'test': os.path.join(Config.work_dir, "data_test.txt")})
-    model_seeder = ModelSeeder(tokenizer)
-    model_seeder.start_worker()
+    # model_seeder = ModelSeeder(tokenizer)
+    # model_seeder.start_worker()
         
     def encode(batch):
         result = []
@@ -187,16 +187,16 @@ def get_dataset(tokenizer, path_train, block_size = 128):
                 num_proc=dataset_map_cores,
                 remove_columns=["text"],
             )
-            dataset = dataset.map(
-                model_seeder.seed_model,
-                batched=True,
-                batch_size=dataset_batch_size,
-                num_proc=1,
-            )
+            # dataset = dataset.map(
+            #     model_seeder.seed_model,
+            #     batched=True,
+            #     batch_size=dataset_batch_size,
+            #     num_proc=1,
+            # )
             self.mapped_dataset = dataset.map(
                 group_texts,
                 batched=True,
-                batch_size=100,
+                batch_size=dataset_batch_size,
                 num_proc=dataset_map_cores
             )
 
@@ -208,7 +208,7 @@ def get_dataset(tokenizer, path_train, block_size = 128):
             return iter(self.mapped_dataset[self.dataset_type])
     
     return {
-        'model_seeder': model_seeder,
+        # 'model_seeder': model_seeder,
         'train': AWSWDataset(dataset, 'train')
     }
 
@@ -248,9 +248,9 @@ def split_data(txt_file: str, shuffle_output = False):
             for l in train_lines:
                 f.write(l + "\n")
                 
-            # flat_lines = split_branches(data).split("\n")
-            # for l in flat_lines:
-            #     f.write(l + "\n")
+            flat_lines = split_branches(data).split("\n")
+            for l in flat_lines:
+                f.write(l + "\n")
 
     if not os.path.isfile(os.path.join(Config.work_dir, "data_test.txt")):
         with open(os.path.join(Config.work_dir, "data_test.txt"), "w") as f:
@@ -305,6 +305,9 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             self.results = results
             self.named_parameters = list(model.named_parameters())
             self.random.shuffle(self.named_parameters)
+            main_model, _ = get_model("EleutherAI/gpt-neo-125M")
+            main_model.to(model.device)
+            self.main_model = main_model
 
         def on_train_end(self, args, state, control, **kwargs):
             learning_rate_history = [h['learning_rate'] for h in state.log_history if 'learning_rate' in h]
@@ -313,6 +316,15 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             self.results['learning_rate_history'] = learning_rate_history
 
         def on_step_begin(self, args, state, control, **kwargs):
+            with torch.no_grad():
+                # max_diff = 0
+                for p1, p2 in zip(model.parameters(), self.main_model.parameters()):
+                    diff = abs(p1.data - p2.data)
+                    diff_mean = diff.mean()
+                    # max_diff = max(max_diff, diff_mean)
+                    if diff_mean > 0.005:
+                        p1.data = torch.lerp(p1.data, p2.data, 0.5)
+                # print('max_diff', max_diff)
             current_step = state.global_step
             # Freeze a part
             learning_rate = self.optimizer.param_groups[0]['lr']
