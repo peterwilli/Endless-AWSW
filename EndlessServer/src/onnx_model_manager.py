@@ -4,9 +4,6 @@ import logging
 import numpy as np
 import onnxruntime as ort
 import torch
-import random
-import math
-from scipy.stats import norm
 
 class OnnxModelManager:
     def __init__(self, path = None, model = None, tokenizer = None, device = None):
@@ -23,8 +20,7 @@ class OnnxModelManager:
             self.load_model()
             
     def normalize(self, x):
-        x = abs(np.min(x)) + x
-        return x / x.sum(axis=0,keepdims=1)
+        return x / x.sum(axis=0, keepdims=1)
         
     def load_model(self):
         self.tokenizer = AutoTokenizer.from_pretrained('EleutherAI/gpt-neo-125M')
@@ -46,21 +42,11 @@ class OnnxModelManager:
 
         return input_ids, attention_mask, empty_past
     
-    def word_chance(self, x, scale):
-        c = 1.0 - (scale * 0.5)
-        for i in range(x.shape[0]):
-            x[i] = c
-            c *= scale
-        return x
-    
     def say_raw(self, prompt, do_sample = False) -> str:
         input_ids, attention_mask, past = self.get_model_input([prompt])
         eos_token_id = self.tokenizer.eos_token_id
         batch_size = input_ids.shape[0]
         all_token_ids = input_ids
-        half_block = math.floor(self.max_length / 2)
-        curve = np.linspace(-0.5, 0.5, self.max_length)
-        curve = norm.pdf(curve, scale=0.2) * 0.2
         for step in range(self.max_length):
             inputs = {}
             for i in range(0, self.num_layer):
@@ -68,27 +54,25 @@ class OnnxModelManager:
                 inputs[f'past_key_values.{i}.value'] = np.ascontiguousarray(past[(i * 2) + 1])
             inputs['attention_mask'] = attention_mask
             inputs['input_ids'] = input_ids
-            outputs = self.model.run(None, inputs)                
+            outputs = self.model.run(None, inputs)
             next_token_logits = outputs[0][:, -1, :]
-            
             if do_sample:
                 noise = np.random.uniform(low = 0.9, high = 1, size = next_token_logits.shape)
-                next_token_logits = next_token_logits# * noise
+                next_token_logits = next_token_logits * noise
                 next_tokens = np.argpartition(-next_token_logits, 10).flatten()[:10]
+                next_tokens[::-1].sort()
+                logging.debug(next_tokens)
                 chances = next_token_logits.flatten()[next_tokens]
-                chances_list = []
+                chances = self.normalize(chances)
+                # logging.debug(f"chances: {chances}")
+                random_selection = np.float64(np.random.uniform())
+                c_sum = np.float64(0.0)
                 for i, c in enumerate(chances):
-                    chances_list.append({
-                        'c': c,
-                        'i': next_tokens[i]
-                    })
-                chances_list.sort(key=lambda x: x['c'], reverse=True)
-                new_chances = np.linspace(0, 10, 10)
-                self.word_chance(new_chances, curve[step])
-                print("weights: ", [f"{n:.2f}" for n in new_chances])
-                selection = random.choices(chances_list, weights=new_chances, k=1)[0]['i']
-                next_tokens = np.array([selection])
-                # next_tokens = np.array([chances_list[0]['i']])
+                    c_sum += c
+                    stuff = random_selection <= c_sum
+                    if stuff:
+                        next_tokens = np.array([next_tokens[i]])
+                        break
             else:
                 next_tokens = np.argmax(next_token_logits, axis=-1)
             all_token_ids = np.concatenate((all_token_ids, np.expand_dims(next_tokens, -1)), axis=-1)

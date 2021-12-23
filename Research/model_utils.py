@@ -322,7 +322,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
                     diff = abs(p1.data - p2.data)
                     diff_mean = diff.mean()
                     # max_diff = max(max_diff, diff_mean)
-                    if diff_mean > 0.005:
+                    if diff_mean > 0.0005:
                         p1.data = torch.lerp(p1.data, p2.data, 0.5)
                 # print('max_diff', max_diff)
             current_step = state.global_step
