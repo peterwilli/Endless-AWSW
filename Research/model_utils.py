@@ -305,9 +305,6 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             self.results = results
             self.named_parameters = list(model.named_parameters())
             self.random.shuffle(self.named_parameters)
-            main_model, _ = get_model("EleutherAI/gpt-neo-125M")
-            main_model.to(model.device)
-            self.main_model = main_model
 
         def on_train_end(self, args, state, control, **kwargs):
             learning_rate_history = [h['learning_rate'] for h in state.log_history if 'learning_rate' in h]
@@ -316,15 +313,6 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             self.results['learning_rate_history'] = learning_rate_history
 
         def on_step_begin(self, args, state, control, **kwargs):
-            with torch.no_grad():
-                # max_diff = 0
-                for p1, p2 in zip(model.parameters(), self.main_model.parameters()):
-                    diff = abs(p1.data - p2.data)
-                    diff_mean = diff.mean()
-                    # max_diff = max(max_diff, diff_mean)
-                    if diff_mean > 0.0005:
-                        p1.data = torch.lerp(p1.data, p2.data, 0.5)
-                # print('max_diff', max_diff)
             current_step = state.global_step
             # Freeze a part
             learning_rate = self.optimizer.param_groups[0]['lr']
@@ -352,6 +340,26 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
                         param.requires_grad = not freeze_part_layers
                 self.old_freeze_part_layers = freeze_part_layers
                 
+    class AWSWTrainer(Trainer):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            main_model, _ = get_model("EleutherAI/gpt-neo-125M")
+            main_model.to(model.device)
+            self.main_model = main_model
+            self.params_len = len(list(model.parameters()))
+            
+        def compute_loss(self, model, inputs, return_outputs=False):
+            outputs = model(**inputs)
+            avg_diff = 0
+            for p1, p2 in zip(model.parameters(), self.main_model.parameters()):
+                diff = abs(p1.data - p2.data)
+                avg_diff += diff.mean()
+            avg_diff = avg_diff / self.params_len
+            loss = outputs.get("loss")
+            loss = (loss + avg_diff) / 2
+            
+            return (loss, outputs) if return_outputs else loss
+                
     def train(model, dataset, trainer_callback):
         training_args = TrainingArguments(
             params['model_folder'],
@@ -364,7 +372,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             log_level="error",
             save_strategy = "steps" if params['save_model'] else "no"
         )
-        trainer = Trainer(
+        trainer = AWSWTrainer(
             model=model, 
             args=training_args, 
             train_dataset=dataset['train'],

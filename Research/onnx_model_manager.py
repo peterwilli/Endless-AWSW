@@ -6,7 +6,6 @@ import onnxruntime as ort
 import torch
 import random
 import math
-from scipy.stats import norm
 
 class OnnxModelManager:
     def __init__(self, path = None, model = None, tokenizer = None, device = None):
@@ -58,9 +57,7 @@ class OnnxModelManager:
         eos_token_id = self.tokenizer.eos_token_id
         batch_size = input_ids.shape[0]
         all_token_ids = input_ids
-        half_block = math.floor(self.max_length / 2)
-        curve = np.linspace(-0.5, 0.5, self.max_length)
-        curve = norm.pdf(curve, scale=0.2) * 0.2
+        is_in_message = False
         for step in range(self.max_length):
             inputs = {}
             for i in range(0, self.num_layer):
@@ -73,9 +70,10 @@ class OnnxModelManager:
             
             if do_sample:
                 noise = np.random.uniform(low = 0.9, high = 1, size = next_token_logits.shape)
-                next_token_logits = next_token_logits# * noise
-                next_tokens = np.argpartition(-next_token_logits, 10).flatten()[:10]
+                next_token_logits = next_token_logits * noise
+                next_tokens = np.argpartition(-next_token_logits, 20).flatten()[:20]
                 chances = next_token_logits.flatten()[next_tokens]
+                chances = self.normalize(chances)
                 chances_list = []
                 for i, c in enumerate(chances):
                     chances_list.append({
@@ -83,12 +81,20 @@ class OnnxModelManager:
                         'i': next_tokens[i]
                     })
                 chances_list.sort(key=lambda x: x['c'], reverse=True)
-                new_chances = np.linspace(0, 10, 10)
-                self.word_chance(new_chances, curve[step])
-                print("weights: ", [f"{n:.2f}" for n in new_chances])
+                dyn_chance = 0.0
+                if is_in_message:
+                    dyn_chance = 0.5
+                new_chances = np.linspace(0, 1, 20)
+                self.word_chance(new_chances, dyn_chance)
+                if is_in_message:
+                    for i in range(len(new_chances)):
+                        new_chances[i] = new_chances[i] * chances_list[i]['c']
                 selection = random.choices(chances_list, weights=new_chances, k=1)[0]['i']
                 next_tokens = np.array([selection])
-                # next_tokens = np.array([chances_list[0]['i']])
+                #print([f"{self.tokenizer.decode(c['i'])} {new_chances[i]:.2f}" for i, c in enumerate(chances_list)], self.tokenizer.decode(next_tokens))
+                if '"' in self.tokenizer.decode(next_tokens):
+                    is_in_message = not is_in_message
+                # print("weights: ", [f"{n:.2f}" for n in new_chances], self.tokenizer.decode(next_tokens), dyn_chance)
             else:
                 next_tokens = np.argmax(next_token_logits, axis=-1)
             all_token_ids = np.concatenate((all_token_ids, np.expand_dims(next_tokens, -1)), axis=-1)
