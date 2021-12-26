@@ -347,17 +347,26 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             main_model.to(model.device)
             self.main_model = main_model
             self.params_len = len(list(model.parameters()))
+            self.main_model_loss = torch.nn.MSELoss()
+            for p1 in model.parameters():
+                p1.data *= torch.randn(p1.data.shape).to(model.device)
             
         def compute_loss(self, model, inputs, return_outputs=False):
             outputs = model(**inputs)
-            avg_diff = 0
+            avg_main_loss = None
             for p1, p2 in zip(model.parameters(), self.main_model.parameters()):
-                diff = abs(p1.data - p2.data)
-                avg_diff += diff.mean()
-            avg_diff = avg_diff / self.params_len
+                diff = self.main_model_loss(p1.data, p2.data)
+                if avg_main_loss is None:
+                    avg_main_loss = diff
+                else:
+                    avg_main_loss += diff
+            avg_main_loss /= self.params_len
             loss = outputs.get("loss")
-            loss = (loss + avg_diff) / 2
-            
+            #print(loss, avg_main_loss)
+            loss += avg_main_loss
+            if not 'model_closeness_loss' in results:
+                results['model_closeness_loss'] = []
+            results['model_closeness_loss'].append(avg_main_loss.detach().cpu().numpy())
             return (loss, outputs) if return_outputs else loss
                 
     def train(model, dataset, trainer_callback):
