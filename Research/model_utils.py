@@ -17,6 +17,7 @@ import threading
 import re
 from random import randrange
 import multiprocessing
+from scipy import interpolate
 import datasets
 from datasets import load_dataset
 from torch.utils.data import Dataset, DataLoader
@@ -347,20 +348,31 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             main_model.to(model.device)
             self.main_model = main_model
             self.params_len = len(list(model.parameters()))
-            self.main_model_loss = torch.nn.MSELoss()
-            for p1 in model.parameters():
-                p1.data *= torch.randn(p1.data.shape).to(model.device)
+            self.init_diff_loss_curve()
+            # for p1 in model.parameters():
+            #     p1.data *= torch.randn(p1.data.shape).to(model.device)
+            
+        def init_diff_loss_curve(self):
+            x = np.linspace(0, 0.0005, 10)
+            weights = [
+                i ** 3 for i in range(0, 10)
+            ]
+            y = np.array([w for w in weights])
+            self.diff_loss = interpolate.interp1d(x, y, kind = 'quadratic', fill_value = 'extrapolate')
             
         def compute_loss(self, model, inputs, return_outputs=False):
             outputs = model(**inputs)
             avg_main_loss = None
             for p1, p2 in zip(model.parameters(), self.main_model.parameters()):
-                diff = self.main_model_loss(p1.data, p2.data)
+                # diff = self.main_model_loss(p1.data, p2.data)
+                diff = abs(p1.data - p2.data).mean()
                 if avg_main_loss is None:
                     avg_main_loss = diff
                 else:
                     avg_main_loss += diff
             avg_main_loss /= self.params_len
+            avg_main_loss = self.diff_loss(avg_main_loss.cpu().numpy())
+            avg_main_loss = torch.Tensor(avg_main_loss).to(model.device)
             loss = outputs.get("loss")
             #print(loss, avg_main_loss)
             loss += avg_main_loss
