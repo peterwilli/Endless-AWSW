@@ -350,21 +350,18 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             self.params_len = len(list(model.parameters()))
                 
         def compute_loss(self, model, inputs, return_outputs=False):
-            diff_avg = 0
-            with torch.no_grad():
-                for p1, p2 in zip(model.parameters(), self.main_model.parameters()):
-                    diff = abs(p1.data - p2.data)
-                    diff_mean = diff.mean()
-                    diff_avg += diff_mean
-                diff_avg /= self.params_len
-            if diff_avg > 0.002:
-                for p1, p2 in zip(model.parameters(), self.main_model.parameters()):
-                    p1.data = torch.lerp(p1.data, p2.data, diff_avg * 100)
             outputs = model(**inputs)
             loss = outputs.get("loss")
+            wd = 0.2
+            with torch.no_grad():
+                for p1, p2 in zip(model.parameters(), self.main_model.parameters()):
+                    weights_diff = p2.data - p1.data
+                    break
+                weight_loss = wd * weights_diff.pow(2).sum() / 2
+                loss += weight_loss
             if not 'model_closeness_loss' in results:
                 results['model_closeness_loss'] = []
-            results['model_closeness_loss'].append(diff_avg.cpu().numpy())
+            results['model_closeness_loss'].append(weight_loss.cpu().numpy())
             return (loss, outputs) if return_outputs else loss
                 
     def train(model, dataset, trainer_callback):

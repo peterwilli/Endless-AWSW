@@ -71,6 +71,7 @@ nest-asyncio==1.5.4
 ninja==1.10.2.3
 notebook==6.4.6
 numpy==1.21.5
+onnx==1.10.2
 onnxruntime==1.10.0
 optuna==2.10.0
 optuna-dashboard==0.5.0

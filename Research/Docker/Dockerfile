@@ -7,7 +7,8 @@ RUN echo "Installing dependencies..." && \
 	rm -rf /var/lib/apt/lists/*
 
 # RTX 3080 support
-RUN pip install torch==1.10.0+cu113 -f https://download.pytorch.org/whl/torch_stable.html
+RUN pip3 install torch==1.10.1+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+
 ADD requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt && rm /requirements.txt
 WORKDIR /opt/awsw
