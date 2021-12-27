@@ -91,10 +91,8 @@ class OnnxModelManager:
                         new_chances[i] = new_chances[i] * chances_list[i]['c']
                 selection = random.choices(chances_list, weights=new_chances, k=1)[0]['i']
                 next_tokens = np.array([selection])
-                #print([f"{self.tokenizer.decode(c['i'])} {new_chances[i]:.2f}" for i, c in enumerate(chances_list)], self.tokenizer.decode(next_tokens))
                 if '"' in self.tokenizer.decode(next_tokens):
                     is_in_message = not is_in_message
-                # print("weights: ", [f"{n:.2f}" for n in new_chances], self.tokenizer.decode(next_tokens), dyn_chance)
             else:
                 next_tokens = np.argmax(next_token_logits, axis=-1)
             all_token_ids = np.concatenate((all_token_ids, np.expand_dims(next_tokens, -1)), axis=-1)
