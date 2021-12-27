@@ -354,8 +354,8 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
                 for p1, p2 in zip(model.parameters(), self.main_model.parameters()):
                     diff = abs(p1.data - p2.data)
                     diff_mean = diff.mean()
-                    if diff_mean > 0.001:
-                        p1.data = torch.lerp(p1.data, p2.data, diff_mean * 100)
+                    learning_rate = optimizer.param_groups[0]['lr']
+                    p1.data = torch.lerp(p1.data, p2.data, learning_rate * 200)
                     
             outputs = model(**inputs)
             loss = outputs.get("loss")
