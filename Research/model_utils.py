@@ -348,6 +348,11 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             main_model.to(model.device)
             self.main_model = main_model
             self.params_len = len(list(model.parameters()))
+            self.avg_loss_tries = 10
+            self.last_avg_loss = None
+            self.tick = 0
+            self.mix_rate = 0.1
+            self.loss_log = []
                 
         def compute_loss(self, model, inputs, return_outputs=False):
             with torch.no_grad():
@@ -355,12 +360,29 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
                     diff = abs(p1.data - p2.data)
                     diff_mean = diff.mean()
                     learning_rate = optimizer.param_groups[0]['lr']
-                    p1.data = torch.lerp(p1.data, p2.data, learning_rate * 200)
+                    p1.data = torch.lerp(p1.data, p2.data, self.mix_rate)
                     
             outputs = model(**inputs)
             loss = outputs.get("loss")
+            self.loss_log.append(loss.detach().cpu().numpy())
+            if len(self.loss_log) == self.avg_loss_tries:
+                avg_loss = sum(self.loss_log) / len(self.loss_log)
+                if self.last_avg_loss is not None:
+                    avg_loss_diff = abs(avg_loss - self.last_avg_loss)
+                    if avg_loss_diff > 0.001:
+                        if self.last_avg_loss > avg_loss:
+                            # Loss gone up, time to stop mixing so much
+                            self.mix_rate = 10 * optimizer.param_groups[0]['lr']
+                        else:
+                            # Loss gone down, we can keep mixing
+                            self.mix_rate = min(0.5, self.mix_rate + 0.01)
+                self.loss_log = []
+                self.last_avg_loss = avg_loss
             if not 'model_closeness_loss' in results:
                 results['model_closeness_loss'] = []
+            if not 'mix_rate' in results:
+                results['mix_rate'] = []
+            results['mix_rate'].append(self.mix_rate)
             results['model_closeness_loss'].append(diff_mean.cpu().numpy())
             return (loss, outputs) if return_outputs else loss
                 
