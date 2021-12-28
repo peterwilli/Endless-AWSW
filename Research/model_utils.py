@@ -367,15 +367,18 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             self.loss_log.append(loss.detach().cpu().numpy())
             if len(self.loss_log) == self.avg_loss_tries:
                 avg_loss = sum(self.loss_log) / len(self.loss_log)
-                if self.last_avg_loss is not None:
+                if self.last_avg_loss is None:
+                    self.last_avg_loss = avg_loss
+                else:
                     avg_loss_diff = abs(avg_loss - self.last_avg_loss)
-                    if self.last_avg_loss > avg_loss:
-                        # Loss gone up, time to stop mixing so much
-                        self.mix_rate = 0
-                    else:
-                        # Loss gone down, we can keep mixing
-                        self.mix_rate = min(0.5, self.mix_rate + 0.01)
-                self.last_avg_loss = avg_loss
+                    if avg_loss_diff > 0.001:
+                        if self.last_avg_loss > avg_loss:
+                            # Loss gone up, time to stop mixing so much
+                            self.mix_rate *= 0.5
+                        else:
+                            # Loss gone down, we can keep mixing
+                            self.mix_rate = min(0.5, self.mix_rate + 0.01)
+                        self.last_avg_loss = avg_loss
                 self.loss_log.pop(0)
             if not 'model_closeness_loss' in results:
                 results['model_closeness_loss'] = []
