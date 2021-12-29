@@ -348,7 +348,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             main_model.to(model.device)
             self.main_model = main_model
             self.params_len = len(list(model.parameters()))
-            self.avg_loss_tries = 10
+            self.avg_loss_tries = 50
             self.last_avg_loss = None
             self.tick = 0
             self.mix_rate = 0.1
@@ -365,25 +365,29 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             outputs = model(**inputs)
             loss = outputs.get("loss")
             self.loss_log.append(loss.detach().cpu().numpy())
+            avg_loss = 0
             if len(self.loss_log) == self.avg_loss_tries:
                 avg_loss = sum(self.loss_log) / len(self.loss_log)
                 if self.last_avg_loss is None:
                     self.last_avg_loss = avg_loss
                 else:
-                    avg_loss_diff = abs(avg_loss - self.last_avg_loss)
-                    if avg_loss_diff > 0.001:
-                        if self.last_avg_loss > avg_loss:
-                            # Loss gone up, time to stop mixing so much
-                            self.mix_rate *= 0.5
-                        else:
-                            # Loss gone down, we can keep mixing
-                            self.mix_rate = min(0.5, self.mix_rate + 0.01)
-                        self.last_avg_loss = avg_loss
+                    #avg_loss_diff = abs(avg_loss - self.last_avg_loss)
+                    #if avg_loss_diff > 0.0001:
+                    if self.last_avg_loss < avg_loss:
+                        # Loss gone up, time to stop mixing so much
+                        self.mix_rate = max(0.0001, self.mix_rate * 0.5)
+                    else:
+                        # Loss gone down, we can keep mixing
+                        self.mix_rate = min(0.5, self.mix_rate * 1.5)
+                    self.last_avg_loss = avg_loss
                 self.loss_log.pop(0)
             if not 'model_closeness_loss' in results:
                 results['model_closeness_loss'] = []
             if not 'mix_rate' in results:
                 results['mix_rate'] = []
+            if not 'avg_loss' in results:
+                results['avg_loss'] = []
+            results['avg_loss'].append(avg_loss)
             results['mix_rate'].append(self.mix_rate)
             results['model_closeness_loss'].append(diff_mean.cpu().numpy())
             return (loss, outputs) if return_outputs else loss
@@ -400,7 +404,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             log_level="error",
             save_strategy = "steps" if params['save_model'] else "no"
         )
-        trainer = AWSWTrainer(
+        trainer = Trainer(
             model=model, 
             args=training_args, 
             train_dataset=dataset['train'],
