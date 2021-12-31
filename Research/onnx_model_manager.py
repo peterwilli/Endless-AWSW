@@ -52,7 +52,7 @@ class OnnxModelManager:
             c *= scale
         return x
     
-    def say_raw(self, prompt, do_sample = False) -> str:
+    def say_raw(self, prompt, do_sample = False, reply_as = None) -> str:
         input_ids, attention_mask, past = self.get_model_input([prompt])
         eos_token_id = self.tokenizer.eos_token_id
         batch_size = input_ids.shape[0]

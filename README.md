@@ -11,7 +11,7 @@ If you want to help out, please [ping me on my Discord](https://discord.gg/gKcb5
 ## Todo & Bugs
 
 - [ ] Moving forward in story makes requests to the server
-- [ ] Fix RP bug: "Meet Lorem" works but "meet Lorem" doesn't
+- [x] Fix RP bug: "Meet Lorem" works but "meet Lorem" doesn't
 - [x] Make sure repeated texts are filtered out
 - [x] Fix a bug I made a screenshot of
 - [x] Teach AI to repeat itself less
