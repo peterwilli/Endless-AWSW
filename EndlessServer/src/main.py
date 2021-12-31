@@ -7,7 +7,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 api = Flask(__name__)
-model_manager = OnnxModelManager(os.path.join("/", "opt", "awsw", "model", "model.onnx"))
+model_manager = OnnxModelManager(os.path.join("/", "opt", "awsw", "model", "model_quant.onnx"))
 reply_processor = ReplyProcessor()
 command_retries = 5
 
