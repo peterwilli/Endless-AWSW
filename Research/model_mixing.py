@@ -13,8 +13,12 @@ class ModelMixing:
         self.cold_zone_loss = cold_zone_loss
         
     def diffuse_cold_zone(self, cold_zone, diffusion):
-        result = gaussian_filter(cold_zone + ((1 - cold_zone)  * diffusion), sigma = 1)
+        result = torch.clone(cold_zone)
+        result += diffusion
+        result[result > 1] = 1
+        result = gaussian_filter(result, sigma = 1)
         result = np.where(cold_zone > 0, cold_zone, result)
+        
         return torch.Tensor(result)
     
     def calculate_cold_zones(self):
@@ -55,7 +59,7 @@ class ModelMixing:
             if restart_tries == 25:
                 return None
             
-            if successful_tries == 30:
+            if successful_tries == 1000:
                 return None
             
     def normalize_cold_zone(self):
@@ -68,6 +72,6 @@ class ModelMixing:
             if self.cold_zones is None:
                 mask = amount
             else:
-                mask = self.diffuse_cold_zone((1 - self.cold_zones[i]), cold_zone_diffusion) * amount
+                mask = self.diffuse_cold_zone(self.cold_zones[i], cold_zone_diffusion) * amount
                 
             p_target.data = torch.lerp(p_main.data, p_base.data, mask)
