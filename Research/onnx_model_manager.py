@@ -71,7 +71,7 @@ class OnnxModelManager:
             if do_sample:
                 noise = np.random.uniform(low = 0.9, high = 1, size = next_token_logits.shape)
                 next_token_logits = next_token_logits * noise
-                next_tokens = np.argpartition(-next_token_logits, 20).flatten()[:20]
+                next_tokens = np.argpartition(-next_token_logits, 10).flatten()[:10]
                 chances = next_token_logits.flatten()[next_tokens]
                 chances = self.normalize(chances)
                 chances_list = []
@@ -84,7 +84,7 @@ class OnnxModelManager:
                 dyn_chance = 0.0
                 if is_in_message:
                     dyn_chance = 0.5
-                new_chances = np.linspace(0, 1, 20)
+                new_chances = np.linspace(0, 1, 10)
                 self.word_chance(new_chances, dyn_chance)
                 if is_in_message:
                     for i in range(len(new_chances)):

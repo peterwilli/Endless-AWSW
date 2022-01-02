@@ -249,9 +249,9 @@ def split_data(txt_file: str, shuffle_output = False):
             for l in train_lines:
                 f.write(l + "\n")
                 
-            flat_lines = split_branches(data).split("\n")
-            for l in flat_lines:
-                f.write(l + "\n")
+            # flat_lines = split_branches(data).split("\n")
+            # for l in flat_lines:
+            #     f.write(l + "\n")
 
     if not os.path.isfile(os.path.join(Config.work_dir, "data_test.txt")):
         with open(os.path.join(Config.work_dir, "data_test.txt"), "w") as f:
