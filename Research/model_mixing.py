@@ -8,13 +8,15 @@ class ModelMixing:
         self.main_model = main_model
         self.target_model = target_model
         self.random_state = np.random.RandomState(seed)
+        self.torch_rng = torch.Generator()
+        self.torch_rng.manual_seed(seed)
         self.tokenizer = tokenizer
         self.cold_zones = None
         self.cold_zone_loss = cold_zone_loss
         
-    def diffuse_cold_zone(self, cold_zone, diffusion, lower_bound):
+    def diffuse_cold_zone(self, cold_zone, diffusion, upper_bound):
         result = torch.clone(cold_zone).numpy()
-        result[result <= lower_bound] = diffusion
+        result[result >= upper_bound] += diffusion
         result[result > 1] = 1
         
         return torch.Tensor(result)
@@ -31,7 +33,7 @@ class ModelMixing:
         amplification = 0.90
         while True:
             for i in range(len(cold_zone_tmp)):
-                r = torch.rand(*cold_zone_tmp[i].shape) - amplification
+                r = torch.rand(*cold_zone_tmp[i].shape, generator = self.torch_rng) - amplification
                 r[r < 0] = 0
                 cold_zone_tmp[i] += r
                 cold_zone_tmp[i][cold_zone_tmp[i] > 1] = 1
@@ -57,7 +59,7 @@ class ModelMixing:
             if restart_tries == 25:
                 return None
             
-    def mix(self, amount, cold_zone_diffusion = None, lower_bound = 0.2, normalize_cold_zone = False):
+    def mix(self, amount, cold_zone_diffusion = None, upper_bound = 0.2, normalize_cold_zone = False):
         for i, (p_base, p_main, p_target) in enumerate(zip(self.base_model.parameters(), self.main_model.parameters(), self.target_model.parameters())):
             if cold_zone_diffusion is None or self.cold_zones is None:
                 mask = amount
@@ -66,6 +68,6 @@ class ModelMixing:
                 if normalize_cold_zone:            
                     cold_zone -= torch.min(cold_zone)
                     cold_zone /= torch.max(cold_zone)
-                mask = self.diffuse_cold_zone(cold_zone, cold_zone_diffusion, lower_bound) * amount
+                mask = self.diffuse_cold_zone(cold_zone, cold_zone_diffusion, upper_bound) * amount
                 del cold_zone
             p_target.data = torch.lerp(p_main.data, p_base.data, mask)
