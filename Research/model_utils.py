@@ -108,6 +108,21 @@ def get_dataset(tokenizer, path_train, block_size = 128):
             'input_ids': result
         }
     
+    inject_rp_chance_pct = 0.2
+    rp_list = None
+    with open('rp_data.txt', 'r') as f:
+        rp_list = f.readlines()
+    def inject_random_rp(batch):
+        result = []
+        for item in batch['text']:
+            if random.random() <= inject_rp_chance_pct:
+                rp = random.choice(rp_list)
+                item += rp.strip()
+            result.append(item)
+        return {
+            'text': result
+        }
+    
     def parse_variables(batch):
         last_scene = None
         last_character = None
@@ -137,6 +152,7 @@ def get_dataset(tokenizer, path_train, block_size = 128):
             if last_scene is not None:
                 item = item.replace("%lastscene", last_scene)
             if last_character is not None:
+                item = item.replace("%lastcharactercode", last_character)
                 item = item.replace("%lastcharacter", Config.interactable_characters[last_character])
             if not '%lastcharacter' in item and not '%lastscene' in item:
                 result.append(item)
@@ -176,6 +192,12 @@ def get_dataset(tokenizer, path_train, block_size = 128):
             # See: https://github.com/huggingface/datasets/issues/2651
             datasets.utils.set_progress_bar_enabled(False)
             dataset = self.current_dataset.map(
+                inject_random_rp,
+                batched=True,
+                batch_size=dataset_batch_size,
+                num_proc=dataset_map_cores
+            )
+            dataset = dataset.map(
                 parse_variables,
                 batched=True,
                 batch_size=dataset_batch_size,
@@ -285,7 +307,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
     num_epoch = params['num_epoch']
     num_total_steps = num_steps_per_epoch * num_epoch
     num_warmup_steps = num_steps_per_epoch * params['warmup_factor']
-    optimizer = AdamW(model.parameters(), lr=lr, weight_decay=0.1)
+    optimizer = AdamW(model.parameters(), lr=lr)
     scheduler_str = params['scheduler']
     scheduler = None
     if scheduler_str == "cosine_schedule_with_warmup":
@@ -304,43 +326,30 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             self.old_freeze_part_layers = None
             self.optimizer = optimizer
             self.results = results
-            self.named_parameters = list(model.named_parameters())
-            self.random.shuffle(self.named_parameters)
-
+            self.no_grad_masks = self.make_no_grad_masks(0.01)
+            
         def on_train_end(self, args, state, control, **kwargs):
             learning_rate_history = [h['learning_rate'] for h in state.log_history if 'learning_rate' in h]
             loss_history = [h['loss'] for h in state.log_history if 'loss' in h]
             self.results['loss_history'] = loss_history
             self.results['learning_rate_history'] = learning_rate_history
 
-        def on_step_begin(self, args, state, control, **kwargs):
-            current_step = state.global_step
-            # Freeze a part
-            learning_rate = self.optimizer.param_groups[0]['lr']
-            freeze_layer_rate = params['freeze_layer_rate']
-            freeze_part_layers = learning_rate > freeze_layer_rate
-            if 'freeze_from_steps' in params:
-                freeze_part_layers = current_step > params['freeze_from_steps']
-            if self.old_freeze_part_layers is not freeze_part_layers:
-                if 'to_freeze_gpt_blocks' in params:
-                    param_slice = self.named_parameters
-                    for name, param in param_slice:
-                        param.requires_grad = False
-                    for name, param in model.transformer.h.named_parameters():
-                        param.requires_grad = True
-                    to_freeze_gpt_blocks = params['to_freeze_gpt_blocks']
-                    param_slice = model.transformer.h[:to_freeze_gpt_blocks]
-                    print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (freezing {len(param_slice)} out of {len(model.transformer.h)} gpt blocks.)")
-                    for name, param in param_slice.named_parameters():
-                        param.requires_grad = not freeze_part_layers
-                if 'to_freeze_count' in params:
-                    to_freeze_count = params['to_freeze_count']
-                    param_slice = self.named_parameters[:to_freeze_count]
-                    print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (freezing {len(param_slice)} out of {len(self.named_parameters)} layers.)")
-                    for name, param in param_slice:
-                        param.requires_grad = not freeze_part_layers
-                self.old_freeze_part_layers = freeze_part_layers
-                
+        def make_no_grad_masks(self, model_train_pct):
+            masks = []
+            for p in model.parameters():
+                mask = torch.zeros(*p.shape)
+                flattened_view = torch.flatten(mask)
+                to_pick_len = math.floor(len(flattened_view) * model_train_pct)
+                flattened_view[0:to_pick_len] = 1
+                mask = mask.int().to(model.device)
+                masks.append(mask)
+            return masks
+        
+        def on_before_optimizer_step(self, args, state, control, **kwargs):
+            for i, w in enumerate(model.parameters()):    
+                if w.grad is not None:
+                    w.grad *= self.no_grad_masks[i]
+                    
     class AWSWTrainer(Trainer):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
