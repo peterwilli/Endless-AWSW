@@ -5,6 +5,7 @@ import numpy as np
 import onnxruntime as ort
 import torch
 import random
+import os
 import math
 
 class OnnxModelManager:
@@ -26,7 +27,7 @@ class OnnxModelManager:
         return x / x.sum(axis=0,keepdims=1)
         
     def load_model(self):
-        self.tokenizer = AutoTokenizer.from_pretrained('EleutherAI/gpt-neo-125M')
+        self.tokenizer = AutoTokenizer.from_pretrained(os.path.dirname(self.path))
         self.tokenizer.padding_side = "right"
         self.tokenizer.pad_token = self.tokenizer.eos_token
         self.model = ort.InferenceSession(self.path)
@@ -69,9 +70,10 @@ class OnnxModelManager:
             next_token_logits = outputs[0][:, -1, :]
             
             if do_sample:
+                amount_word_samples = 10
                 noise = np.random.uniform(low = 0.9, high = 1, size = next_token_logits.shape)
                 next_token_logits = next_token_logits * noise
-                next_tokens = np.argpartition(-next_token_logits, 20).flatten()[:20]
+                next_tokens = np.argpartition(-next_token_logits, amount_word_samples).flatten()[:amount_word_samples]
                 chances = next_token_logits.flatten()[next_tokens]
                 chances = self.normalize(chances)
                 chances_list = []
@@ -84,7 +86,7 @@ class OnnxModelManager:
                 dyn_chance = 0.0
                 if is_in_message:
                     dyn_chance = 0.5
-                new_chances = np.linspace(0, 1, 20)
+                new_chances = np.linspace(0, 1, amount_word_samples)
                 self.word_chance(new_chances, dyn_chance)
                 if is_in_message:
                     for i in range(len(new_chances)):

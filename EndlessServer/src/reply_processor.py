@@ -53,6 +53,21 @@ class ReplyProcessor:
             result.append(result_item)
         return "".join(result)
 
+    def has_unclosed_or_nested_brackets(self, text) -> bool:
+        is_ok = True
+        for char in text:
+            if char == '[':
+                if is_ok:
+                    is_ok = False
+                else:
+                    return True
+            elif char == ']':
+                if is_ok:
+                    return True
+                else:
+                    is_ok = True
+        return not is_ok
+
     def post_process_reply(self, reply):
         result = []
         current_cmd = None
@@ -72,6 +87,8 @@ class ReplyProcessor:
                             return None
                         current_cmd['from'] = msg_from
                         current_cmd['msg'] = msg_match.group(2)
+                        if self.has_unclosed_or_nested_brackets(current_cmd['msg']):
+                            return None
                         for old_cmd in result:
                             if old_cmd['cmd'] == 'msg':
                                 ratio = Levenshtein.ratio(current_cmd['msg'], old_cmd['msg'])
