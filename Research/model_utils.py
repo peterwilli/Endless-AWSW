@@ -326,8 +326,8 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             self.old_freeze_part_layers = None
             self.optimizer = optimizer
             self.results = results
-            self.no_grad_masks = self.make_no_grad_masks(0.01)
-            self.named_parameters = list(model.named_parameters())
+            self.no_grad_masks = self.make_no_grad_masks(0.03)
+            #self.named_parameters = list(model.named_parameters())
             
         def on_train_end(self, args, state, control, **kwargs):
             learning_rate_history = [h['learning_rate'] for h in state.log_history if 'learning_rate' in h]
@@ -335,6 +335,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             self.results['loss_history'] = loss_history
             self.results['learning_rate_history'] = learning_rate_history
             
+        """
         def on_step_begin(self, args, state, control, **kwargs):
             current_step = state.global_step
             # Freeze a part
@@ -361,23 +362,25 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
                     print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (freezing {len(param_slice)} out of {len(self.named_parameters)} layers.)")
                     for name, param in param_slice:
                         param.requires_grad = not freeze_part_layers
-                self.old_freeze_part_layers = freeze_part_layers        
+                self.old_freeze_part_layers = freeze_part_layers
+        """
 
         def make_no_grad_masks(self, model_train_pct):
             masks = []
             for p in model.parameters():
-                mask = torch.zeros(*p.shape)
-                flattened_view = torch.flatten(mask)
-                to_pick_len = math.floor(len(flattened_view) * model_train_pct)
-                flattened_view[0:to_pick_len] = 1
+                # mask = torch.zeros(*p.shape)
+                # flattened_view = torch.flatten(mask)
+                # to_pick_len = math.floor(len(flattened_view) * model_train_pct)
+                # flattened_view[0:to_pick_len] = 1
+                mask = torch.rand(*p.shape) < model_train_pct
                 mask = mask.int().to(model.device)
                 masks.append(mask)
             return masks
         
-        # def on_before_optimizer_step(self, args, state, control, **kwargs):
-        #     for i, w in enumerate(model.parameters()):    
-        #         if w.grad is not None:
-        #             w.grad *= self.no_grad_masks[i]
+        def on_before_optimizer_step(self, args, state, control, **kwargs):
+            for i, w in enumerate(model.parameters()):    
+                if w.grad is not None:
+                    w.grad *= self.no_grad_masks[i]
                     
     class AWSWTrainer(Trainer):
         def __init__(self, *args, **kwargs):
