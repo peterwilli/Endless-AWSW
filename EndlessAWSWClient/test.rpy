@@ -21,7 +21,6 @@ label pick_your_poison:
                 { 'cmd': 'msg', 'from': 'Lo', 'msg': "Hey!" },
             ]
         "You're in a fight with Maverick.":
-            # persistent.endless_awsw_past = 'DragonReply m "Maverick growled heavily at me." DragonReply M "Hey!"'
             $ start_narrative = [
                 { 'cmd': 'scn', 'scn': 'np1r' },
                 { 'cmd': 'msg', 'from': 'm', 'msg': "Maverick growled heavily at me." },
@@ -32,6 +31,7 @@ label pick_your_poison:
 
 label loop_eawsw:
     python:
+        renpy.fix_rollback()
         save_past_amount = 6
         class CommandExecutor:
             def __init__(self):
@@ -93,7 +93,9 @@ label loop_eawsw:
                             renpy.show(self.last_scene)
                         if self.last_character is not None:
                             renpy.show(self.last_character)
-                        self.talk_functions[msg_from](msg)
+                        if msg_from in self.talk_functions:
+                            talk_fn = self.talk_functions[msg_from]
+                            talk_fn(msg)
                     
         command_executor = CommandExecutor()
 
