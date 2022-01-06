@@ -10,6 +10,7 @@ class ReplyProcessor:
         self.re_token = re.compile(r'(<.*?>|[^<]*)')
         self.re_command = re.compile(r'^<(.*?)>$')
         self.re_msg = re.compile(r'([a-zA-Z]{1,2})\s"(.*?)"')
+        self.re_brackets = re.compile(r'\[(.*?)]')
         self.allowed_characters = {
             'c': 'Player',
             'Ry': 'Remy',
@@ -68,6 +69,15 @@ class ReplyProcessor:
                     is_ok = True
         return not is_ok
 
+    def has_valid_bracket_vars(self, text) -> bool:
+        valid_var_names = ['player_name']
+
+        for var_name in self.re_brackets.findall(text):
+            if var_name not in valid_var_names:
+                return False
+                
+        return True
+
     def post_process_reply(self, reply):
         result = []
         current_cmd = None
@@ -85,9 +95,23 @@ class ReplyProcessor:
                         msg_from = msg_match.group(1)
                         if not msg_from in self.allowed_characters:
                             return None
+                        if msg_from == 'c':
+                            # From player, we end if a dragon has been before us,
+                            # otherwise we see it as invalid
+                            has_old_msg = False
+                            for old_cmd in result:
+                                if old_cmd['cmd'] == 'msg':
+                                    has_old_msg = True
+                                    break
+                            if has_old_msg:
+                                return result
+                            else:
+                                return None
                         current_cmd['from'] = msg_from
                         current_cmd['msg'] = msg_match.group(2)
                         if self.has_unclosed_or_nested_brackets(current_cmd['msg']):
+                            return None
+                        if not self.has_valid_bracket_vars(current_cmd['msg']):
                             return None
                         for old_cmd in result:
                             if old_cmd['cmd'] == 'msg':
