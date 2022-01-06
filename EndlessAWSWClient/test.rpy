@@ -31,7 +31,6 @@ label pick_your_poison:
 
 label loop_eawsw:
     python:
-        renpy.fix_rollback()
         save_past_amount = 6
         class CommandExecutor:
             def __init__(self):
@@ -96,9 +95,8 @@ label loop_eawsw:
                         if msg_from in self.talk_functions:
                             talk_fn = self.talk_functions[msg_from]
                             talk_fn(msg)
-                    
+                        
         command_executor = CommandExecutor()
-
         def await_command():
             import urllib2, urllib
             import json
@@ -122,7 +120,7 @@ label loop_eawsw:
 
                 eawsw_state['endless_awsw_past'] += cmds
                 eawsw_state['endless_awsw_past'] = eawsw_state['endless_awsw_past'][save_past_amount * -1:]
-            
+            renpy.block_rollback()
             renpy.jump("loop_eawsw")
         if eawsw_state['did_run_start_narrative']:
             await_command()
@@ -131,4 +129,5 @@ label loop_eawsw:
             eawsw_state['endless_awsw_past'] += start_narrative
             eawsw_state['endless_awsw_past'] = eawsw_state['endless_awsw_past'][save_past_amount * -1:]
             eawsw_state['did_run_start_narrative'] = True
+            renpy.block_rollback()
             renpy.jump("loop_eawsw")
