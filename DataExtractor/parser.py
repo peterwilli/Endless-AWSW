@@ -30,13 +30,14 @@ def extract_sentiment(nodes, state = None):
                         'dragon': info[1],
                         'sentiment': sentiment 
                     })
-            
     for node in nodes:
         if isinstance(node, renpy.ast.Say):
             process_say(node)
         elif isinstance(node, renpy.ast.If):
             for entry in node.entries:
                 extract_sentiment(entry[1], state)
+        elif isinstance(node, renpy.ast.Label):
+            extract_sentiment(node.block, state)
         elif isinstance(node, renpy.ast.Menu):
             for menu_item in node.items:
                 extract_sentiment(menu_item[2], state)
@@ -57,9 +58,10 @@ def extract_for_training(nodes, state = None):
     regular_images_regex = re.compile(r'{image=.*?}')
     
     def safe_buffer_append(line):
-        line = line.strip()
-        if len(line) > 0:
-            state['buffer'].append(line)
+        if line is not None:
+            line = line.strip()
+            if len(line) > 0:
+                state['buffer'].append(line)
 
     def safe_result_append(line):
         line = line.strip()
@@ -132,6 +134,9 @@ def extract_for_training(nodes, state = None):
                 # state['last_speaker'] = None
         elif isinstance(node, renpy.ast.Say):
             process_say(node)
+        elif isinstance(node, renpy.ast.Label):
+            extracted_label = extract_for_training(node.block, state)
+            safe_result_append(extracted_label)
         elif isinstance(node, renpy.ast.Scene):
             state['last_scene'] = node.diff_info()[1][0]
         elif isinstance(node, renpy.ast.If):
@@ -154,16 +159,22 @@ def extract_for_training(nodes, state = None):
 def parse():
     script_folder = os.path.dirname(os.path.realpath(__file__))
     awsw_path = os.path.join(script_folder, "..", "Angels with Scaly Wings", "game")
-    # awsw_path = os.path.join(script_folder, "test_rpy")
+    #awsw_path = os.path.join(script_folder, "test_rpy")
     rpy_files = glob.glob(os.path.join(awsw_path, "*.rpy"))
     with open("training_data.txt", 'w') as training_data_fd:
         with open("sentiment_training_data.txt", 'w') as sentiment_data_fd:
+            blacklist = ["screens.rpy", "status.rpy", "help.rpy", "achievements.rpy", "gallery.rpy"]
             for rpy_file in rpy_files:
-                print("Parsing %s" % rpy_file)
-                ast = renpy.parser.parse(rpy_file)
-                result_data = extract_for_training(ast)
-                if result_data is not None:
-                    training_data_fd.write(result_data)
-                result_sentiment = extract_sentiment(ast)
-                if result_sentiment is not None:
-                    sentiment_data_fd.write(result_sentiment + "\n")
+                file_name = os.path.basename(rpy_file)
+                if not file_name in blacklist:
+                    ast = renpy.parser.parse(rpy_file)
+                    print("Parsing %s" % rpy_file)
+                    if ast is None:
+                        print("%s has empty AST..." % rpy_file)
+                    else:
+                        result_data = extract_for_training(ast)
+                        if result_data is not None:
+                            training_data_fd.write(result_data)
+                        result_sentiment = extract_sentiment(ast)
+                        if result_sentiment is not None:
+                            sentiment_data_fd.write(result_sentiment + "\n")
