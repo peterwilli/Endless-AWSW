@@ -4,6 +4,44 @@ import json
 import re
 import glob
 
+def extract_sentiment(nodes, state = None):
+    if nodes is None:
+        return None
+        
+    if state is None:
+        state = {
+            'sentiment_pairs': []
+        }
+
+    def process_say(node):
+        allowed_lines = ["n", "m", "Rz", "Lo", "Ad", "c", "Ry", "Mv", "Br", "An", "Ip", "Sb", "Wr", "Zh", "Kv", "Ka", "Em"]
+        info = node.diff_info()
+        if info[1] in allowed_lines:
+            sentiment = None
+            skip_attrs = ['flip']
+            if node.attributes is not None:
+                for attr in node.attributes:
+                    if not attr in skip_attrs:
+                        sentiment = attr
+                        break
+                if sentiment is not None:
+                    state['sentiment_pairs'].append({
+                        'text': info[2],
+                        'dragon': info[1],
+                        'sentiment': sentiment 
+                    })
+            
+    for node in nodes:
+        if isinstance(node, renpy.ast.Say):
+            process_say(node)
+        elif isinstance(node, renpy.ast.If):
+            for entry in node.entries:
+                extract_sentiment(entry[1], state)
+        elif isinstance(node, renpy.ast.Menu):
+            for menu_item in node.items:
+                extract_sentiment(menu_item[2], state)
+    return "\n".join(["%s %s %s" % (sp['dragon'], sp['sentiment'], sp['text']) for sp in state['sentiment_pairs']])
+    
 def extract_for_training(nodes, state = None):
     if nodes is None:
         return None
@@ -116,12 +154,16 @@ def extract_for_training(nodes, state = None):
 def parse():
     script_folder = os.path.dirname(os.path.realpath(__file__))
     awsw_path = os.path.join(script_folder, "..", "Angels with Scaly Wings", "game")
-    #awsw_path = os.path.join(script_folder, "test_rpy")
+    # awsw_path = os.path.join(script_folder, "test_rpy")
     rpy_files = glob.glob(os.path.join(awsw_path, "*.rpy"))
     with open("training_data.txt", 'w') as training_data_fd:
-        for rpy_file in rpy_files:
-            print("Parsing %s" % rpy_file)
-            ast = renpy.parser.parse(rpy_file)
-            result = extract_for_training(ast)
-            if result is not None:
-                training_data_fd.write(result)
+        with open("sentiment_training_data.txt", 'w') as sentiment_data_fd:
+            for rpy_file in rpy_files:
+                print("Parsing %s" % rpy_file)
+                ast = renpy.parser.parse(rpy_file)
+                result_data = extract_for_training(ast)
+                if result_data is not None:
+                    training_data_fd.write(result_data)
+                result_sentiment = extract_sentiment(ast)
+                if result_sentiment is not None:
+                    sentiment_data_fd.write(result_sentiment + "\n")

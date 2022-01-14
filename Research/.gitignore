@@ -3,4 +3,5 @@ data_*.txt.lock
 cached_*.lock
 cached_*.txt
 awsw_story_input.txt
+sentiment_training_data.txt
 models/

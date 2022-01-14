@@ -1,4 +1,5 @@
 training_data.txt
+sentiment_training_data.txt
 log.txt
 *.rpyc
 traceback.txt
