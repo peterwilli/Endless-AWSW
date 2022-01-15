@@ -9,6 +9,7 @@ label pick_your_poison:
     menu:
         "You meet Remy at the park.":
             $ start_narrative = [
+                { 'cmd': 'scn', 'scn': 'park2' },
                 { 'cmd': 'msg', 'from': 'c', 'msg': "Hey Remy!" },
                 { 'cmd': 'scn', 'scn': 'park2' },
                 { 'cmd': 'msg', 'from': 'Ry', 'msg': "Hey!" },
