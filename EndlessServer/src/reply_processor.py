@@ -30,7 +30,7 @@ class ReplyProcessor:
             'Ad': 'Adine',
             'Sb': 'Sebastian'
         }
-        self.allowed_scenes = ['forest1', 'park2', 'black', 'loremapt', 'office', 'bare', 'bareblur', 'bareblur2', 'pad', 'facin2', 'facinx', 'facin3', 'alley', 'farm', 'town4', 'beach', 'adineapt', 'corridor', 'emeraroom', 'o4', 'park3', 'np3x', 'np2x', 'np1x', 'buildingoutside', 'o2', 'np3', 'store2', 'remyapt', 'cafe', 'viewingspot', 'np1r', 'hallway', 'np2y', 'np1n', 'o']
+        self.allowed_scenes = ['park2', 'black', 'loremapt', 'office', 'bare', 'bareblur', 'bareblur2', 'pad', 'facin2', 'facinx', 'facin3', 'alley', 'farm', 'town4', 'beach', 'adineapt', 'corridor', 'emeraroom', 'o4', 'park3', 'np3x', 'np2x', 'np1x', 'buildingoutside', 'o2', 'np3', 'np2', 'store2', 'town1x', 'forestx', 'cave', 'o', 'remyapt', 'cafe', 'viewingspot', 'np1r', 'hallway', 'np2y', 'np1n', 'town2', 'stairs', 'darker', 'town1', 'store', 'library', 'school', 'forest1', 'forest2', 'storex', 'np5e', 'port1', 'beachx', 'padx', 'intro1', 'intro2', 'np4', 'np5', 'fac1', 'facin', 'town3', 'kitchen', 'np1', 'stars', 'o3', 'town7', 'town6', 'deadbody', 'whiteroom', 'office2', 'cave2', 'table', 'starsrx', 'hatchery', 'farm2', 'gate', 'testingroom', 'np6', 'fac12', 'adineapt2']
         self.allowed_commands = [
             "msg",
             "scn"
