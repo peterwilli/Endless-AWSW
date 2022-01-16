@@ -21,12 +21,26 @@ label pick_your_poison:
                 { 'cmd': 'scn', 'scn': 'forest1' },
                 { 'cmd': 'msg', 'from': 'Lo', 'msg': "Hey!" },
             ]
+        "You're with Lorem and Ipsum in their apartment.":
+            $ start_narrative = [
+                { 'cmd': 'scn', 'scn': 'loremapt' },
+                { 'cmd': 'msg', 'from': 'Lo', 'msg': "I'm glad you came!" },
+                { 'cmd': 'scn', 'scn': 'loremapt' },
+                { 'cmd': 'msg', 'from': 'Ip', 'msg': "I heard all about you." },
+            ]
         "You're in a fight with Maverick.":
             $ start_narrative = [
                 { 'cmd': 'scn', 'scn': 'np1r' },
                 { 'cmd': 'msg', 'from': 'm', 'msg': "Maverick growled heavily at me." },
                 { 'cmd': 'scn', 'scn': 'np1r' },
                 { 'cmd': 'msg', 'from': 'Mv', 'msg': "I'll slice you open!" },
+            ]
+        "On a picnic with Bryce":
+            $ start_narrative = [
+                { 'cmd': 'scn', 'scn': 'np2' },
+                { 'cmd': 'msg', 'from': 'm', 'msg': "I sat down with Bryce. During our trip to the picnic place he carried a large basket." },
+                { 'cmd': 'scn', 'scn': 'np2' },
+                { 'cmd': 'msg', 'from': 'Br', 'msg': "If you're hungry, you can grab something from the fun basket." },
             ]
     jump loop_eawsw
 
