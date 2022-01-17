@@ -10,7 +10,7 @@ class AWSWMod(Mod):
         ml = modinfo.get_mods()["MagmaLink"].import_ml()
         ml.find_label("seccont") \
             .search_say("He seemed a lot smaller than Remy, and when he somewhat") \
-            .hook_to("pick_your_poison") \
+            .hook_to("eawsw_intro") \
             .search_say("Just follow me.") \
             .link_from("pick_your_poison_end")
 

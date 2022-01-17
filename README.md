@@ -10,6 +10,8 @@ If you want to help out, please [ping me on my Discord](https://discord.gg/gKcb5
 
 ## Todo & Bugs
 
+- [ ] You can send an empty message
+- [ ] Prevent dragons from replying in a loop
 - [x] Moving forward in story makes requests to the server (thanks 4onen!)
 - [x] Fix RP bug: "Meet Lorem" works but "meet Lorem" doesn't
 - [x] Make sure repeated texts are filtered out
