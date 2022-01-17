@@ -73,6 +73,13 @@ label eawsw_pick_your_poison:
             ]
     jump eawsw_loop
 
+label eawsw_empty_warning:
+    show maverick angry with dissolve
+    Mv "How are dragons supposed to reply to an empty message?!"
+    hide maverick with dissolve
+    pause(0.5)
+    jump eawsw_loop
+
 label eawsw_loop:
     python:
         # If you maintain a public server, feel free to add it.
@@ -150,6 +157,9 @@ label eawsw_loop:
 
             prompt = renpy.input(_("Enter your reply"), default="", exclude='{%[]}', length=512)
             prompt = prompt.strip()
+            if len(prompt) == 0:
+                renpy.jump("eawsw_empty_warning")
+                return
             
             if prompt == "clear":
                 renpy.jump("eawsw_pick_your_poison")
