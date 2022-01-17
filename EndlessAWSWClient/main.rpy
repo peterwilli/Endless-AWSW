@@ -8,7 +8,7 @@ label eawsw_intro:
             jump eawsw_intro_return
 
 label eawsw_server_selection:
-    if len(persistent.eawsw_server) > 0:
+    if persistent.eawsw_server is not None:
         Zh shy b "It seems you already selected a custom server before. Do you wish to use your last selected server?"
         menu:
             "Use '[persistent.eawsw_server]'":
@@ -19,7 +19,7 @@ label eawsw_server_selection:
     Zh "That's great! Do you wish to use one of our public servers or host your own? The servers are used for hosting the AI-model, no data except your prompts are sent. If you use your own server, no data is sent, but you need to have a beefy computer and some computer skills to run it."
     menu:
         "Use a public / free server":
-            $ persistent.eawsw_server = ""
+            $ persistent.eawsw_server = None
         "Use my own":
             python:
                 server_input = renpy.input(_("Type your server URL"), default="http://localhost:5000", exclude='{%[]}', length=512)
@@ -71,9 +71,9 @@ label eawsw_pick_your_poison:
                 { 'cmd': 'scn', 'scn': 'np2' },
                 { 'cmd': 'msg', 'from': 'Br', 'msg': "If you're hungry, you can grab something from the fun basket." },
             ]
-    jump loop_eawsw
+    jump eawsw_loop
 
-label loop_eawsw:
+label eawsw_loop:
     python:
         # If you maintain a public server, feel free to add it.
         public_servers = ['https://eawsw_api.emeraldodin.com']
@@ -152,18 +152,18 @@ label loop_eawsw:
             prompt = prompt.strip()
             
             if prompt == "clear":
-                renpy.jump("pick_your_poison")
+                renpy.jump("eawsw_pick_your_poison")
             else:
                 query = urllib.urlencode({
                     'past': json.dumps(eawsw_state['endless_awsw_past']),
                     'prompt': prompt
                 })
                 selected_server = None
-                if len(persistent.eawsw_server) > 0:
-                    selected_server = persistent.eawsw_server
-                else:
+                if persistent.eawsw_server is None:
                     # Use a public server from a list
                     selected_server = random.choice(public_servers)
+                else:
+                    selected_server = persistent.eawsw_server
                 req = urllib2.Request('%s/get_command?%s' % (selected_server, query))
                 response = urllib2.urlopen(req)
                 json_str = response.read()
@@ -174,7 +174,7 @@ label loop_eawsw:
                 eawsw_state['endless_awsw_past'] += cmds
                 eawsw_state['endless_awsw_past'] = eawsw_state['endless_awsw_past'][save_past_amount * -1:]
             renpy.block_rollback()
-            renpy.jump("loop_eawsw")
+            renpy.jump("eawsw_loop")
         if eawsw_state['did_run_start_narrative']:
             await_command()
         else:
@@ -183,4 +183,4 @@ label loop_eawsw:
             eawsw_state['endless_awsw_past'] = eawsw_state['endless_awsw_past'][save_past_amount * -1:]
             eawsw_state['did_run_start_narrative'] = True
             renpy.block_rollback()
-            renpy.jump("loop_eawsw")
+            renpy.jump("eawsw_loop")
