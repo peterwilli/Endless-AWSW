@@ -3,7 +3,6 @@ import re
 import logging
 import numpy as np
 import onnxruntime as ort
-import torch
 import random
 import os
 import math

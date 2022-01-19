@@ -4,9 +4,10 @@ from reply_processor import ReplyProcessor
 import os
 import json
 import logging
-logging.basicConfig(level=logging.DEBUG)
 
 api = Flask(__name__)
+if api.debug:
+  logging.basicConfig(level=logging.DEBUG)
 model_manager = OnnxModelManager(os.path.join("/", "opt", "awsw", "model", "model.onnx"))
 reply_processor = ReplyProcessor()
 command_retries = 5

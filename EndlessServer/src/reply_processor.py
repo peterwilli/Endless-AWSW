@@ -1,5 +1,4 @@
 from transformers import Trainer, TrainingArguments
-import torch
 import re
 import sys
 import Levenshtein
