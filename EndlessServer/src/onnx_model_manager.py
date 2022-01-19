@@ -94,6 +94,7 @@ class OnnxModelManager:
                 next_tokens = np.array([selection])
                 if '"' in self.tokenizer.decode(next_tokens):
                     is_in_message = not is_in_message
+                    
             else:
                 next_tokens = np.argmax(next_token_logits, axis=-1)
             all_token_ids = np.concatenate((all_token_ids, np.expand_dims(next_tokens, -1)), axis=-1)
