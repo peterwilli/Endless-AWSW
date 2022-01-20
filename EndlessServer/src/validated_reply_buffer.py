@@ -1,14 +1,19 @@
 import re
+import operator
 
 tokens_to_expect = {
-    'cmd_scn': "<scn>".split(),
-    'cmd_msg': "<msg>".split(),
-    'cmd_p': "<p>".split(),
-    'cmd_d': "<d>".split(),
+    'cmd_scn': "<scn>",
+    'cmd_msg': "<msg>",
+    'cmd_p': "<p>",
+    'cmd_d': "<d>",
 }
+for k in tokens_to_expect:
+    tokens_to_expect[k] = list(tokens_to_expect[k])
 allowed_commands = [
     "msg",
-    "scn"
+    "scn",
+    "p",
+    "d"
 ]
 allowed_characters = {
     'c': 'Player',
@@ -32,7 +37,7 @@ allowed_characters = {
 re_token = re.compile(r'(<.*?>|[^<]*)')
 re_command = re.compile(r'^<(.*?)>$')
 re_alphanumeric_whitespace = re.compile(r'[A-Za-z0-9\s]')
-re_within_message = re.compile(r'[\sa-zA-Z0-\[\]\-\+]')
+re_within_message = re.compile(r'[\sa-zA-Z0-\[\]\-\+\?\"]')
 
 class ValidationException(Exception):
     pass
@@ -61,11 +66,17 @@ class ValidatedReplyBuffer:
         self.tokens.append(token)
         self.expect_tokens_idx += 1
         if self.expect_tokens_idx == len(self.expect_tokens):
-            cmd_match = re_command.match("".join(self.expect_tokens))
-            if cmd_match is not None:
-                self.last_cmd = cmd_match.group(1)
-                if not self.last_cmd in allowed_commands:
-                    raise ValidationException(f"add_token: {self.last_cmd} is not an allowed command!")
+            try_cmd_match = True
+            for t in self.expect_tokens:
+                if type(t) == re.Pattern:
+                    try_cmd_match = False
+                    break
+            if try_cmd_match:
+                cmd_match = re_command.match("".join(self.expect_tokens))
+                if cmd_match is not None:
+                    self.last_cmd = cmd_match.group(1)
+                    if not self.last_cmd in allowed_commands:
+                        raise ValidationException(f"add_token: {self.last_cmd} is not an allowed command!")
             if self.last_cmd == 'p':
                 self.expect_new_tokens(tokens_to_expect['cmd_msg'])
             elif self.last_cmd == 'd':
@@ -73,13 +84,13 @@ class ValidatedReplyBuffer:
             elif self.last_cmd == 'msg':
                 if token == ' ':
                     # with a space we check the character that came before
-                    character = "".join(self.tokens[self.token_last_index(">"):])
+                    character = "".join(self.tokens[self.token_last_index(">") + 1:len(self.tokens) - 1])
                     if not character in allowed_characters:
                         raise ValidationException(f"add_token: character '{character}' not in allowed_characters!")
                     self.expect_new_tokens(['"'])
                 elif token == '"':
                     self.in_message = not self.in_message
-                    if self.is_in_message:
+                    if self.in_message:
                         self.expect_new_tokens([re_within_message])
                     else:
                         if self.last_side == 'p':
@@ -87,7 +98,10 @@ class ValidatedReplyBuffer:
                         elif self.last_side == 'd':
                             self.expect_new_tokens(tokens_to_expect['cmd_p'])
                         else:
-                            raise Exception(f"invalid last side: {self.last_side} can either be d or p!")
+                            # TODO: fix the side issue
+                            raise Exception(f"invalid last side: {self.last_side} can either be d or p! (side given: {token})")
+                elif self.in_message:
+                    self.expect_new_tokens([re_within_message])
                 else:
                     self.expect_new_tokens([re_alphanumeric_whitespace])
 
@@ -96,3 +110,12 @@ class ValidatedReplyBuffer:
 
     def squeeze(self) -> str:
         return "".join(self.tokens)
+
+if __name__ == '__main__':
+    def test_tokens(tokens):
+        buffer = ValidatedReplyBuffer()
+        for t in tokens:
+            buffer.add_token(t)
+        assert buffer.squeeze() == tokens
+
+    test_tokens('<p><msg>c "Flooding?"<d><scn>o2<msg>Sb "Yes."')
