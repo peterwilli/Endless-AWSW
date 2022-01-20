@@ -40,11 +40,10 @@ class ReplyProcessor:
         for cmd in commands:
             result_item = ""
             if cmd['cmd'] == "msg":
-                result_item += f"<{cmd['cmd']}>"
-                type_prefix = ""
                 if cmd['from'] == "c":
-                    type_prefix = "<p>"
-                result_item += f"{type_prefix}{cmd['from']} \"{cmd['msg']}\""
+                    result_item += "<p>"
+                result_item += f"<{cmd['cmd']}>"
+                result_item += f"{cmd['from']} \"{cmd['msg']}\""
             if cmd['cmd'] == "scn":
                 # only dragons have scn so we can safely prefix a dragon reply token here
                 result_item += "<d>"
@@ -84,40 +83,14 @@ class ReplyProcessor:
             cmd_match = self.re_command.match(token)
             if cmd_match is None:
                 if current_cmd['cmd'] == 'scn':
-                    if not token in self.allowed_scenes:
-                        return None
                     current_cmd['scn'] = token
                     result.append(current_cmd)
                 elif current_cmd['cmd'] == 'msg':
                     msg_match = self.re_msg.match(token)
                     if msg_match is not None:
                         msg_from = msg_match.group(1)
-                        if not msg_from in self.allowed_characters:
-                            return None
-                        if msg_from == 'c':
-                            # From player, we end if a dragon has been before us,
-                            # otherwise we see it as invalid
-                            has_old_msg = False
-                            for old_cmd in result:
-                                if old_cmd['cmd'] == 'msg':
-                                    has_old_msg = True
-                                    break
-                            if has_old_msg:
-                                return result
-                            else:
-                                return None
                         current_cmd['from'] = msg_from
                         current_cmd['msg'] = msg_match.group(2)
-                        if self.has_unclosed_or_nested_brackets(current_cmd['msg']):
-                            return None
-                        if not self.has_valid_bracket_vars(current_cmd['msg']):
-                            return None
-                        for old_cmd in result:
-                            if old_cmd['cmd'] == 'msg':
-                                ratio = Levenshtein.ratio(current_cmd['msg'], old_cmd['msg'])
-                                logging.debug(f"ratio: {ratio} {current_cmd['msg']} <> {old_cmd['msg']}")
-                                if ratio > 0.7:
-                                    return None
                         result.append(current_cmd)
             else:
                 if cmd_match.group(1) in self.allowed_commands:
@@ -125,3 +98,14 @@ class ReplyProcessor:
                         'cmd': cmd_match.group(1)
                     }
         return result
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+    test_tokens = '<p><msg>c "Flooding?"<d><scn>o2<msg>Sb "Yes."'
+    rp = ReplyProcessor()
+    cmd_json = rp.post_process_reply(test_tokens)
+    cmd_raw = rp.commands_to_string(cmd_json)
+    if test_tokens == cmd_raw:
+        logging.info("testing ok")
+    else:
+        logging.error(f"test_tokens != cmd_raw\n{test_tokens}\n{cmd_raw}")

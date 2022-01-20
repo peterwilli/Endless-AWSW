@@ -6,6 +6,7 @@ import onnxruntime as ort
 import random
 import os
 import math
+from validated_reply_buffer import ValidatedReplyBuffer, ValidationException
 
 class OnnxModelManager:
     def __init__(self, path = None, model = None, tokenizer = None, device = None):
@@ -23,7 +24,7 @@ class OnnxModelManager:
             
     def normalize(self, x):
         x = abs(np.min(x)) + x
-        return x / x.sum(axis=0,keepdims=1)
+        return x / x.sum(axis=0, keepdims=1)
         
     def load_model(self):
         self.tokenizer = AutoTokenizer.from_pretrained(os.path.dirname(self.path))
@@ -57,7 +58,11 @@ class OnnxModelManager:
         eos_token_id = self.tokenizer.eos_token_id
         batch_size = input_ids.shape[0]
         all_token_ids = input_ids
-        is_in_message = False
+        validated_reply_buffer = ValidatedReplyBuffer()
+        logging.debug("prompt: " + prompt)
+        for t in prompt:
+            logging.debug("begin: " + t)
+            validated_reply_buffer.add_token(t)
         for step in range(self.max_length):
             inputs = {}
             for i in range(0, self.num_layer):
@@ -83,25 +88,25 @@ class OnnxModelManager:
                     })
                 chances_list.sort(key=lambda x: x['c'], reverse=True)
                 dyn_chance = 0.0
-                if is_in_message:
+                if validated_reply_buffer.in_message:
                     dyn_chance = 0.5
                 new_chances = np.linspace(0, 1, amount_word_samples)
                 self.word_chance(new_chances, dyn_chance)
-                if is_in_message:
+                if validated_reply_buffer.in_message:
                     for i in range(len(new_chances)):
                         new_chances[i] = new_chances[i] * chances_list[i]['c']
                 selection = random.choices(chances_list, weights=new_chances, k=1)[0]['i']
                 next_tokens = np.array([selection])
-                if '"' in self.tokenizer.decode(next_tokens):
-                    is_in_message = not is_in_message
-                    
+                token_str = self.tokenizer.decode(next_tokens)
+                for t in token_str:
+                    logging.debug(t)
+                    validated_reply_buffer.add_token(t)
             else:
                 next_tokens = np.argmax(next_token_logits, axis=-1)
             all_token_ids = np.concatenate((all_token_ids, np.expand_dims(next_tokens, -1)), axis=-1)
             # Update input_ids, attention_mask and past
             input_ids = next_tokens.reshape((batch_size, 1))   
             attention_mask = np.ones((batch_size, 1), dtype=np.float32)
-
             past = []
             for i in range(self.num_layer * 2):
                 past_i = outputs[i + 1]

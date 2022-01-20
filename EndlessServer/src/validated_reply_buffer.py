@@ -40,7 +40,7 @@ re_token = re.compile(r'(<.*?>|[^<]*)')
 re_command = re.compile(r'^<(.*?)>$')
 re_alphanumeric_whitespace = re.compile(r'[A-Za-z0-9\s]')
 re_alphanumeric_scn = re.compile(r'[a-z0-9<>]')
-re_within_message = re.compile(r'[\sa-zA-Z0-\[\]\-\+\?\"\.]')
+re_within_message = re.compile(r'[\sa-zA-Z0-\[\]\-\+\?\"\.!\']')
 
 class ValidationException(Exception):
     pass
@@ -58,6 +58,7 @@ class ValidatedReplyBuffer:
         self.expect_tokens_idx = index_override
     
     def add_token(self, token):
+        print(token, self.expect_tokens)
         if self.expect_tokens_idx >= len(self.expect_tokens):
             raise Exception(f"expect_tokens_idx({self.expect_tokens_idx}) > expect_tokens {self.expect_tokens} ({len(self.expect_tokens)})")
         expected_token = self.expect_tokens[self.expect_tokens_idx]
@@ -99,13 +100,7 @@ class ValidatedReplyBuffer:
                 else:
                     self.expect_new_tokens([re_alphanumeric_scn])
             elif self.last_cmd == 'msg':
-                if token == ' ':
-                    # with a space we check the character that came before
-                    character = "".join(self.tokens[self.token_last_index(">") + 1:len(self.tokens) - 1])
-                    if not character in allowed_characters:
-                        raise ValidationException(f"add_token: character '{character}' not in allowed_characters!")
-                    self.expect_new_tokens(['"'])
-                elif token == '"':
+                if token == '"':
                     self.in_message = not self.in_message
                     if self.in_message:
                         self.expect_new_tokens([re_within_message])
@@ -119,7 +114,14 @@ class ValidatedReplyBuffer:
                 elif self.in_message:
                     self.expect_new_tokens([re_within_message])
                 else:
-                    self.expect_new_tokens([re_alphanumeric_whitespace])
+                    if token == ' ':
+                        # with a space we check the character that came before
+                        character = "".join(self.tokens[self.token_last_index(">") + 1:len(self.tokens) - 1])
+                        if not character in allowed_characters:
+                            raise ValidationException(f"add_token: character '{character}' not in allowed_characters!")
+                        self.expect_new_tokens(['"'])
+                    else:
+                        self.expect_new_tokens([re_alphanumeric_whitespace])
 
     def token_last_index(self, token) -> int:
         return len(self.tokens) - operator.indexOf(reversed(self.tokens), token) - 1
@@ -144,4 +146,4 @@ if __name__ == '__main__':
         test_tokens('<p><msg>c "Floodi"ng?"<d><scn>o2<msg>Sb "Yes."')
     except ValidationException as e:
         print(e)
-    
+    test_tokens('<p><msg>c "Hey Remy!"')
