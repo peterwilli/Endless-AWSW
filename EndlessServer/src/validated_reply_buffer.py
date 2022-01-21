@@ -73,31 +73,34 @@ def has_valid_bracket_vars(text) -> bool:
     return True
 
 class ValidatedReplyBuffer:
-    def __init__(self):
-        self.tokens = []
+    def __init__(self, initial_state: str = None):
+        self.tokens = ""
         self.last_cmd = None
         self.last_side = None
         self.last_character = None
         self.expect_new_tokens(tokens_to_expect['cmd_p'])
         self.in_message = False
+        if initial_state is not None:
+            for t in initial_state:
+                self.add_token(t, False)
 
     def expect_new_tokens(self, tokens, index_override = 0):
         self.expect_tokens = tokens
         self.expect_tokens_idx = index_override
     
-    def add_token(self, token) -> int:
+    def add_token(self, token: str, is_computer_generated: bool) -> int:
         expect_tokens_len = len(self.expect_tokens)
         if self.expect_tokens_idx >= expect_tokens_len:
             raise Exception(f"expect_tokens_idx({self.expect_tokens_idx}) > expect_tokens {self.expect_tokens} ({len(self.expect_tokens)})")
         expected_token = self.expect_tokens[self.expect_tokens_idx]
         if type(expected_token) == re.Pattern:
             if expected_token.match(token) is None:
-                raise ValidationException(f"add_token[re]: expected '{expected_token}', got '{token}' (hex: {ord(token)})! (full text so far: {self.squeeze()})")
+                raise ValidationException(f"add_token[re]: expected '{expected_token}', got '{token}' (hex: {ord(token)})! (full text so far: {self.tokens})")
         else:
             if token != expected_token:
-                raise ValidationException(f"add_token[str]: expected '{expected_token}', got '{token}' (hex: {ord(token)})! (full text so far: {self.squeeze()})")
+                raise ValidationException(f"add_token[str]: expected '{expected_token}', got '{token}' (hex: {ord(token)})! (full text so far: {self.tokens})")
 
-        self.tokens.append(token)
+        self.tokens += token
         self.expect_tokens_idx += 1
         if self.expect_tokens_idx == expect_tokens_len:
             cmd_match = re_command.match("".join(self.tokens[expect_tokens_len * -1:]))
@@ -114,7 +117,7 @@ class ValidatedReplyBuffer:
             elif self.last_cmd == 'scn':
                 if token == '<':
                     # The scene ended
-                    scene = "".join(self.tokens[self.token_last_index(">") + 1:len(self.tokens) - 1])
+                    scene = "".join(self.tokens[self.tokens_last_index(">") + 1:len(self.tokens) - 1])
                     if not scene in allowed_scenes:
                         raise ValidationException(f"add_token: scene '{scene}' is not in allowed_scenes!")
                     # We already have the <
@@ -127,6 +130,11 @@ class ValidatedReplyBuffer:
                     if self.in_message:
                         self.expect_new_tokens([re_within_message])
                     else:
+                        new_message = self.tokens[self.tokens_last_index("<msg>"):-1]
+                        if not has_valid_bracket_vars(new_message):
+                            raise ValidationException(f"add_token: new_message has invalid bracket vars! (Message: '{new_message}')")
+                        if has_unclosed_or_nested_brackets(new_message):
+                            raise ValidationException(f"add_token: new_message has unclosed or nested brackets! (Message: '{new_message}')")
                         if self.last_side == 'p':
                             self.expect_new_tokens(tokens_to_expect['cmd_d'])
                         elif self.last_side == 'd':
@@ -138,11 +146,13 @@ class ValidatedReplyBuffer:
                 else:
                     if token == ' ':
                         # with a space we check the character that came before
-                        character = ''.join(self.tokens[self.token_last_index('>') + 1:len(self.tokens) - 1])
+                        character = ''.join(self.tokens[self.tokens_last_index('>') + 1:len(self.tokens) - 1])
                         if character == self.last_character:
                             # We don't allow the same dragon to reply twice.
                             self.tokens = self.tokens[:self.tokens_last_index("<d>")]
                             return 1
+                        if is_computer_generated and character == 'c':
+                            raise ValidationException("AI cannot respond as player!")
                         if not character in allowed_characters:
                             raise ValidationException(f"add_token: character '{character}' not in allowed_characters!")
                         self.last_character = character
@@ -152,14 +162,7 @@ class ValidatedReplyBuffer:
         return 0
 
     def tokens_last_index(self, tokens: str) -> int:
-        squeezed = self.squeeze()
-        return squeezed.rfind(tokens)
-
-    def token_last_index(self, token) -> int:
-        return len(self.tokens) - operator.indexOf(reversed(self.tokens), token) - 1
-
-    def squeeze(self) -> str:
-        return "".join(self.tokens)
+        return self.tokens.rfind(tokens)
 
 if __name__ == '__main__':
     def test_tokens(tokens):

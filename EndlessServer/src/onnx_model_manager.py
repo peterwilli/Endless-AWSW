@@ -57,11 +57,10 @@ class OnnxModelManager:
         input_ids, attention_mask, past = self.get_model_input([prompt])
         eos_token_id = self.tokenizer.eos_token_id
         batch_size = input_ids.shape[0]
-        all_token_ids = input_ids
         validated_reply_buffer = ValidatedReplyBuffer()
         logging.debug("prompt: " + prompt)
         for t in prompt:
-            validated_reply_buffer.add_token(t)
+            validated_reply_buffer.add_token(t, is_computer_generated = False)
         for step in range(self.max_length):
             inputs = {}
             for i in range(0, self.num_layer):
@@ -69,11 +68,11 @@ class OnnxModelManager:
                 inputs[f'past_key_values.{i}.value'] = np.ascontiguousarray(past[(i * 2) + 1])
             inputs['attention_mask'] = attention_mask
             inputs['input_ids'] = input_ids
-            outputs = self.model.run(None, inputs)                
-            next_token_logits = outputs[0][:, -1, :]
-            
-            if do_sample:
+            outputs = self.model.run(None, inputs)
+            sample_tries_left = 15           
+            while True:    
                 amount_word_samples = 10
+                next_token_logits = outputs[0][:, -1, :]
                 noise = np.random.uniform(low = 0.9, high = 1, size = next_token_logits.shape)
                 next_token_logits = next_token_logits * noise
                 next_tokens = np.argpartition(-next_token_logits, amount_word_samples).flatten()[:amount_word_samples]
@@ -97,16 +96,26 @@ class OnnxModelManager:
                 selection = random.choices(chances_list, weights=new_chances, k=1)[0]['i']
                 if selection == self.tokenizer.eos_token_id:
                     # We end at eos_token as validated_reply_buffer doesn't track this token
-                    return validated_reply_buffer.squeeze()
+                    return validated_reply_buffer.tokens
                 next_tokens = np.array([selection])
                 token_str = self.tokenizer.decode(next_tokens)
-                for t in token_str:
-                    if validated_reply_buffer.add_token(t) == 1:
-                        # Early stop
-                        return validated_reply_buffer.squeeze()
-            else:
-                next_tokens = np.argmax(next_token_logits, axis=-1)
-            all_token_ids = np.concatenate((all_token_ids, np.expand_dims(next_tokens, -1)), axis=-1)
+                old_tokens = validated_reply_buffer.tokens
+                try:
+                    for t in token_str:
+                        if validated_reply_buffer.add_token(t, is_computer_generated = True) == 1:
+                            # Early stop
+                            return validated_reply_buffer.tokens
+                    break
+                except ValidationException as e:
+                    logging.error(e)
+                    logging.warn(f"Validation exception with last tokens {validated_reply_buffer.tokens} (retrying generate with last known working tokens {old_tokens})...")
+                    validated_reply_buffer = ValidatedReplyBuffer(old_tokens)
+                sample_tries_left -= 1
+                if sample_tries_left == 0:
+                    logging.warning("Can't find valid samples for message!")
+                    return None
+            # else:
+            #     next_tokens = np.argmax(next_token_logits, axis=-1)
             # Update input_ids, attention_mask and past
             input_ids = next_tokens.reshape((batch_size, 1))   
             attention_mask = np.ones((batch_size, 1), dtype=np.float32)
@@ -117,11 +126,14 @@ class OnnxModelManager:
                 
             if eos_token_id in next_tokens:
                 break
-        return self.tokenizer.decode(all_token_ids[0], skip_special_tokens=False)
+        return validated_reply_buffer.tokens
     
     def say(self, past, prompt, do_sample=False) -> str:
         prompt = f'{past}<p><msg>c "{prompt}"{self.reply_prefix}'
-        return self.say_raw(prompt, do_sample = do_sample)[len(prompt):].strip()
+        raw_reply = self.say_raw(prompt, do_sample = do_sample)
+        if raw_reply is None:
+            return None
+        return raw_reply[len(prompt):].strip()
     
 if __name__ == "__main__":
     manager = OnnxModelManager("models/awsw_onnx/model_quant.onnx")

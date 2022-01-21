@@ -21,10 +21,9 @@ def get_command():
   result = []
   for i in range(command_retries):
     reply = model_manager.say(past_str, prompt, do_sample=True)
-    logging.debug(f"Reply before processing: {reply}")
-    possible_result = reply_processor.post_process_reply(model_manager.reply_prefix + reply)
-    if possible_result is not None:
-      result = possible_result
+    if reply is not None:
+      logging.debug(f"Reply before processing: {reply}")
+      result = reply_processor.post_process_reply(model_manager.reply_prefix + reply)
       break
   return {
     'cmds': result
