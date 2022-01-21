@@ -1,10 +1,12 @@
 import re
 import operator
+import logging
 
 tokens_to_expect = {
     'cmd_scn': "<scn>",
     'cmd_msg': "<msg>",
     'cmd_p': "<p>",
+    "cmd_p_or_d": ['<', re.compile(r'p|d'), '>'],
     'cmd_d': "<d>",
 }
 for k in tokens_to_expect:
@@ -40,16 +42,42 @@ re_token = re.compile(r'(<.*?>|[^<]*)')
 re_command = re.compile(r'^<(.*?)>$')
 re_alphanumeric_whitespace = re.compile(r'[A-Za-z0-9\s]')
 re_alphanumeric_scn = re.compile(r'[a-z0-9<>]')
-re_within_message = re.compile(r'[\sa-zA-Z0-\[\]\-\+\?\"\.!\']')
+re_within_message = re.compile(r'[\sa-zA-Z0-\[\]\-\+\?\"\.!\',]')
+re_brackets = re.compile(r'\[(.*?)]')
 
 class ValidationException(Exception):
     pass
+
+def has_unclosed_or_nested_brackets(text) -> bool:
+    is_ok = True
+    for char in text:
+        if char == '[':
+            if is_ok:
+                is_ok = False
+            else:
+                return True
+        elif char == ']':
+            if is_ok:
+                return True
+            else:
+                is_ok = True
+    return not is_ok
+
+def has_valid_bracket_vars(text) -> bool:
+    valid_var_names = ['player_name']
+
+    for var_name in re_brackets.findall(text):
+        if var_name not in valid_var_names:
+            return False
+            
+    return True
 
 class ValidatedReplyBuffer:
     def __init__(self):
         self.tokens = []
         self.last_cmd = None
         self.last_side = None
+        self.last_character = None
         self.expect_new_tokens(tokens_to_expect['cmd_p'])
         self.in_message = False
 
@@ -57,32 +85,26 @@ class ValidatedReplyBuffer:
         self.expect_tokens = tokens
         self.expect_tokens_idx = index_override
     
-    def add_token(self, token):
-        print(token, self.expect_tokens)
-        if self.expect_tokens_idx >= len(self.expect_tokens):
+    def add_token(self, token) -> int:
+        expect_tokens_len = len(self.expect_tokens)
+        if self.expect_tokens_idx >= expect_tokens_len:
             raise Exception(f"expect_tokens_idx({self.expect_tokens_idx}) > expect_tokens {self.expect_tokens} ({len(self.expect_tokens)})")
         expected_token = self.expect_tokens[self.expect_tokens_idx]
         if type(expected_token) == re.Pattern:
             if expected_token.match(token) is None:
-                raise ValidationException(f"add_token[re]: expected '{expected_token}', got '{token}'!")
+                raise ValidationException(f"add_token[re]: expected '{expected_token}', got '{token}' (hex: {ord(token)})! (full text so far: {self.squeeze()})")
         else:
             if token != expected_token:
-                raise ValidationException(f"add_token[str]: expected '{expected_token}', got '{token}'!")
+                raise ValidationException(f"add_token[str]: expected '{expected_token}', got '{token}' (hex: {ord(token)})! (full text so far: {self.squeeze()})")
 
         self.tokens.append(token)
         self.expect_tokens_idx += 1
-        if self.expect_tokens_idx == len(self.expect_tokens):
-            try_cmd_match = True
-            for t in self.expect_tokens:
-                if type(t) == re.Pattern:
-                    try_cmd_match = False
-                    break
-            if try_cmd_match:
-                cmd_match = re_command.match("".join(self.expect_tokens))
-                if cmd_match is not None:
-                    self.last_cmd = cmd_match.group(1)
-                    if not self.last_cmd in allowed_commands:
-                        raise ValidationException(f"add_token: {self.last_cmd} is not an allowed command!")
+        if self.expect_tokens_idx == expect_tokens_len:
+            cmd_match = re_command.match("".join(self.tokens[expect_tokens_len * -1:]))
+            if cmd_match is not None:
+                self.last_cmd = cmd_match.group(1)
+                if not self.last_cmd in allowed_commands:
+                    raise ValidationException(f"add_token: {self.last_cmd} is not an allowed command!")
             if self.last_cmd == 'p':
                 self.last_side = 'p'
                 self.expect_new_tokens(tokens_to_expect['cmd_msg'])
@@ -108,7 +130,7 @@ class ValidatedReplyBuffer:
                         if self.last_side == 'p':
                             self.expect_new_tokens(tokens_to_expect['cmd_d'])
                         elif self.last_side == 'd':
-                            self.expect_new_tokens(tokens_to_expect['cmd_p'])
+                            self.expect_new_tokens(tokens_to_expect['cmd_p_or_d'])
                         else:
                             raise Exception(f"invalid last side: {self.last_side} can either be d or p!")
                 elif self.in_message:
@@ -116,12 +138,22 @@ class ValidatedReplyBuffer:
                 else:
                     if token == ' ':
                         # with a space we check the character that came before
-                        character = "".join(self.tokens[self.token_last_index(">") + 1:len(self.tokens) - 1])
+                        character = ''.join(self.tokens[self.token_last_index('>') + 1:len(self.tokens) - 1])
+                        if character == self.last_character:
+                            # We don't allow the same dragon to reply twice.
+                            self.tokens = self.tokens[:self.tokens_last_index("<d>")]
+                            return 1
                         if not character in allowed_characters:
                             raise ValidationException(f"add_token: character '{character}' not in allowed_characters!")
+                        self.last_character = character
                         self.expect_new_tokens(['"'])
                     else:
                         self.expect_new_tokens([re_alphanumeric_whitespace])
+        return 0
+
+    def tokens_last_index(self, tokens: str) -> int:
+        squeezed = self.squeeze()
+        return squeezed.rfind(tokens)
 
     def token_last_index(self, token) -> int:
         return len(self.tokens) - operator.indexOf(reversed(self.tokens), token) - 1
@@ -147,3 +179,4 @@ if __name__ == '__main__':
     except ValidationException as e:
         print(e)
     test_tokens('<p><msg>c "Hey Remy!"')
+    test_tokens('<p><msg>c "Hey Remy!"<d><scn>o2<msg>Ry "Are you the Ghoster?"<d><scn>o2<msg>Sb "Yes."')

@@ -61,7 +61,6 @@ class OnnxModelManager:
         validated_reply_buffer = ValidatedReplyBuffer()
         logging.debug("prompt: " + prompt)
         for t in prompt:
-            logging.debug("begin: " + t)
             validated_reply_buffer.add_token(t)
         for step in range(self.max_length):
             inputs = {}
@@ -96,11 +95,15 @@ class OnnxModelManager:
                     for i in range(len(new_chances)):
                         new_chances[i] = new_chances[i] * chances_list[i]['c']
                 selection = random.choices(chances_list, weights=new_chances, k=1)[0]['i']
+                if selection == self.tokenizer.eos_token_id:
+                    # We end at eos_token as validated_reply_buffer doesn't track this token
+                    return validated_reply_buffer.squeeze()
                 next_tokens = np.array([selection])
                 token_str = self.tokenizer.decode(next_tokens)
                 for t in token_str:
-                    logging.debug(t)
-                    validated_reply_buffer.add_token(t)
+                    if validated_reply_buffer.add_token(t) == 1:
+                        # Early stop
+                        return validated_reply_buffer.squeeze()
             else:
                 next_tokens = np.argmax(next_token_logits, axis=-1)
             all_token_ids = np.concatenate((all_token_ids, np.expand_dims(next_tokens, -1)), axis=-1)
