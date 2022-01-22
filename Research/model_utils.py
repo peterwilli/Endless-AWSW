@@ -91,6 +91,16 @@ class ModelSeeder:
             'input_ids': input_ids
         }
         
+def content_aware_encode(tokenizer, text) -> [int]:
+    tokens = tokenizer.encode(text)
+    new_tokens = []
+    for token in tokens:
+        if token == 6927: # ><
+            new_tokens += [29, 27]
+        else:
+            new_tokens.append(token)
+    return new_tokens
+        
 def get_dataset(tokenizer, path_train, block_size = 128):
     dataset = load_dataset('text', data_files={'train': path_train, 'test': os.path.join(Config.work_dir, "data_test.txt")})
     # model_seeder = ModelSeeder(tokenizer)
@@ -100,7 +110,7 @@ def get_dataset(tokenizer, path_train, block_size = 128):
         result = []
         attention_mask = []
         for item in batch['text']:
-            tokens = tokenizer.encode(item) + [tokenizer.eos_token_id]
+            tokens = content_aware_encode(tokenizer, item) + [tokenizer.eos_token_id]
             result.append(tokens)
             attention_mask.append([1] * len(tokens))
         return {
@@ -108,7 +118,7 @@ def get_dataset(tokenizer, path_train, block_size = 128):
             'input_ids': result
         }
     
-    inject_rp_chance_pct = 0.2
+    inject_rp_chance_pct = 0.5
     rp_list = None
     with open('rp_data.txt', 'r') as f:
         rp_list = f.readlines()

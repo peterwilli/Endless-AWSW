@@ -17,6 +17,16 @@ class ModelManager:
         else:
             self.path = path
             self.load_model()
+            
+    def content_aware_encode(self, text) -> [int]:
+        tokens = self.tokenizer.encode(text)
+        new_tokens = []
+        for token in tokens:
+            if token == 6927: # ><
+                new_tokens += [29, 27]
+            else:
+                new_tokens.append(token)
+        return new_tokens
         
     def load_model(self):
         self.tokenizer = AutoTokenizer.from_pretrained('EleutherAI/gpt-neo-125M')
@@ -25,7 +35,7 @@ class ModelManager:
         self.model = model
     
     def say_raw(self, prompt, top_k=None, top_p=None) -> str:
-        generated = torch.tensor(self.tokenizer.encode(prompt)).unsqueeze(0)
+        generated = torch.tensor(self.content_aware_encode(prompt)).unsqueeze(0)
         generated = generated.to(self.device)
 
         sample_outputs = self.model.generate(
