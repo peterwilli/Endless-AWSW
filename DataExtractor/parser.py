@@ -117,16 +117,16 @@ def extract_for_training(nodes, state = None):
             for menu_item in node.items:
                 menu_str = menu_item[0].strip()
                 if menu_str in forbidden_menu_items:
-                    break
+                    continue
                 is_ok = False
                 if menu_item[2] is None:
-                    break
+                    continue
                 for node2 in menu_item[2]:
                     if isinstance(node2, renpy.ast.Say):
                         is_ok = True
                         break
                 if not is_ok:
-                    break
+                    continue
                 menu_str = re.sub(character_images_regex, r"\1", menu_str)
                 menu_str = re.sub(regular_images_regex, r"", menu_str)
                 player_prefix = "c"
@@ -137,8 +137,8 @@ def extract_for_training(nodes, state = None):
                     safe_buffer_append("{} \"{}\"".format(player_prefix, menu_str))
                 else:
                     safe_buffer_append("{}{} \"{}\"".format(pre_menu, player_prefix, menu_str))
-                nested_state = dict(state)
-                nested_state['buffer'] = []
+                nested_state = state
+                # nested_state['buffer'] = []
                 safe_buffer_append(extract_for_training(menu_item[2], nested_state))
                 safe_result_append("".join(state['buffer']))
                 state['buffer'] = []
@@ -169,8 +169,8 @@ def extract_for_training(nodes, state = None):
 
 def parse():
     script_folder = os.path.dirname(os.path.realpath(__file__))
-    awsw_path = os.path.join(script_folder, "..", "Angels with Scaly Wings", "game")
-    #awsw_path = os.path.join(script_folder, "test_rpy")
+    #awsw_path = os.path.join(script_folder, "..", "Angels with Scaly Wings", "game")
+    awsw_path = os.path.join(script_folder, "test_rpy")
     rpy_files = glob.glob(os.path.join(awsw_path, "*.rpy"))
     with open("training_data.txt", 'w') as training_data_fd:
         with open("sentiment_training_data.txt", 'w') as sentiment_data_fd:

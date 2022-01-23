@@ -85,7 +85,7 @@ class OnnxModelManager:
             inputs['attention_mask'] = attention_mask
             inputs['input_ids'] = input_ids
             outputs = self.model.run(None, inputs)
-            sample_tries_left = 15           
+            sample_tries_left = 2           
             while True:    
                 amount_word_samples = 10
                 next_token_logits = outputs[0][:, -1, :]

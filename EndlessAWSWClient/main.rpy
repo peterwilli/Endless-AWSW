@@ -182,20 +182,24 @@ label eawsw_loop:
                     selected_server = random.choice(public_servers)
                 else:
                     selected_server = persistent.eawsw_server
-                req = urllib2.Request('%s/get_command?%s' % (selected_server, query))
-                response = urllib2.urlopen(req)
-                json_str = response.read()
-                command_dict = json.loads(json_str)
-                cmds = command_dict['cmds']
-                command_executor.execute_commands(cmds)
-                if len(cmds) > 0:
-                    eawsw_state['endless_awsw_past'] += [{
-                        'cmd': 'msg',
-                        'from': 'c',
-                        'msg': prompt
-                    }]
-                eawsw_state['endless_awsw_past'] += cmds
-                strip_past()
+                try:
+                    req = urllib2.Request('%s/get_command?%s' % (selected_server, query))
+                    response = urllib2.urlopen(req)
+                    json_str = response.read()
+                    command_dict = json.loads(json_str)
+                    cmds = command_dict['cmds']
+                    command_executor.execute_commands(cmds)
+                    if len(cmds) > 0:
+                        eawsw_state['endless_awsw_past'] += [{
+                            'cmd': 'msg',
+                            'from': 'c',
+                            'msg': prompt
+                        }]
+                    eawsw_state['endless_awsw_past'] += cmds
+                    strip_past()
+                except urllib2.HTTPError as e:
+                    error_message = e.read()
+                    m("HTTP error: " + error_message)
             renpy.block_rollback()
             renpy.jump("eawsw_loop")
         if eawsw_state['did_run_start_narrative']:
