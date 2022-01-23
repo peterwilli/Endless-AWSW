@@ -110,13 +110,22 @@ def extract_for_training(nodes, state = None):
             else:
                 pre_menu = None
             state['buffer'] = []
+            forbidden_menu_items = [
+                "Yes. I want to skip ahead.",
+                "No. Don't skip ahead."
+            ]
             for menu_item in node.items:
                 menu_str = menu_item[0].strip()
-                forbidden_menu_items = [
-                    "Yes. I want to skip ahead.",
-                    "No. Don't skip ahead."
-                ]
                 if menu_str in forbidden_menu_items:
+                    break
+                is_ok = False
+                if menu_item[2] is None:
+                    break
+                for node2 in menu_item[2]:
+                    if isinstance(node2, renpy.ast.Say):
+                        is_ok = True
+                        break
+                if not is_ok:
                     break
                 menu_str = re.sub(character_images_regex, r"\1", menu_str)
                 menu_str = re.sub(regular_images_regex, r"", menu_str)
@@ -128,7 +137,9 @@ def extract_for_training(nodes, state = None):
                     safe_buffer_append("{} \"{}\"".format(player_prefix, menu_str))
                 else:
                     safe_buffer_append("{}{} \"{}\"".format(pre_menu, player_prefix, menu_str))
-                safe_buffer_append(extract_for_training(menu_item[2], state))
+                nested_state = dict(state)
+                nested_state['buffer'] = []
+                safe_buffer_append(extract_for_training(menu_item[2], nested_state))
                 safe_result_append("".join(state['buffer']))
                 state['buffer'] = []
                 # state['last_speaker'] = None

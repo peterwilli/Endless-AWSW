@@ -78,7 +78,7 @@ class ValidatedReplyBuffer:
         self.last_cmd = None
         self.last_side = None
         self.last_character = None
-        self.expect_new_tokens(tokens_to_expect['cmd_p'])
+        self.expect_new_tokens(tokens_to_expect['cmd_p_or_d'])
         self.in_message = False
         if initial_state is not None:
             for t in initial_state:
@@ -91,7 +91,7 @@ class ValidatedReplyBuffer:
     def add_token(self, token: str, is_computer_generated: bool) -> int:
         expect_tokens_len = len(self.expect_tokens)
         if self.expect_tokens_idx >= expect_tokens_len:
-            raise Exception(f"expect_tokens_idx({self.expect_tokens_idx}) > expect_tokens {self.expect_tokens} ({len(self.expect_tokens)})")
+            raise Exception(f"expect_tokens_idx({self.expect_tokens_idx}) > expect_tokens {self.expect_tokens} ({len(self.expect_tokens)}) (token: '{token}')")
         expected_token = self.expect_tokens[self.expect_tokens_idx]
         if type(expected_token) == re.Pattern:
             if expected_token.match(token) is None:
@@ -169,8 +169,9 @@ if __name__ == '__main__':
         print(f"testing: {tokens}")
         buffer = ValidatedReplyBuffer()
         for t in tokens:
-            buffer.add_token(t)
-        assert buffer.squeeze() == tokens
+            if buffer.add_token(t, is_computer_generated = False) == 1:
+                break
+        assert buffer.tokens == tokens
 
     test_tokens('<p><msg>c "Flooding?"<d><scn>o2<msg>Sb "Yes."')
     try:
@@ -183,3 +184,4 @@ if __name__ == '__main__':
         print(e)
     test_tokens('<p><msg>c "Hey Remy!"')
     test_tokens('<p><msg>c "Hey Remy!"<d><scn>o2<msg>Ry "Are you the Ghoster?"<d><scn>o2<msg>Sb "Yes."')
+    test_tokens('<d><scn>loremapt<msg>Lo "I\'m glad you came!"<d><scn>loremapt<msg>Ip "I heard all about you."')

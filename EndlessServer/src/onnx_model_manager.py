@@ -31,9 +31,26 @@ class OnnxModelManager:
         self.tokenizer.padding_side = "right"
         self.tokenizer.pad_token = self.tokenizer.eos_token
         self.model = ort.InferenceSession(self.path)
+
+    def batch_content_aware_encode(self, texts) -> dict:
+        encodings_dict = self.tokenizer.batch_encode_plus(texts, padding=True)
+        new_batch = {
+            'input_ids': [],
+            'attention_mask': []
+        }
+        for i, tokens in enumerate(encodings_dict['input_ids']):
+            new_tokens = []
+            for token in tokens:
+                if token == 6927: # ><
+                    new_tokens += [29, 27]
+                else:
+                    new_tokens.append(token)
+            new_batch['input_ids'].append(new_tokens)
+            new_batch['attention_mask'].append([1] * len(new_tokens))
+        return new_batch
         
     def get_model_input(self, prompt):
-        encodings_dict = self.tokenizer.batch_encode_plus(prompt, padding=True)
+        encodings_dict = self.batch_content_aware_encode(prompt)
         input_ids = np.array(encodings_dict['input_ids'])
         attention_mask = np.array(encodings_dict['attention_mask'], dtype=np.float32)
 
@@ -58,7 +75,6 @@ class OnnxModelManager:
         eos_token_id = self.tokenizer.eos_token_id
         batch_size = input_ids.shape[0]
         validated_reply_buffer = ValidatedReplyBuffer()
-        logging.debug("prompt: " + prompt)
         for t in prompt:
             validated_reply_buffer.add_token(t, is_computer_generated = False)
         for step in range(self.max_length):

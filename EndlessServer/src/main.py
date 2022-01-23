@@ -16,6 +16,7 @@ command_retries = 5
 def get_command():
   past = request.args.get("past")
   past = json.loads(past)
+  logging.error(past)
   past_str = reply_processor.commands_to_string(past)
   prompt = request.args.get("prompt")
   result = []
@@ -24,7 +25,10 @@ def get_command():
     if reply is not None:
       logging.debug(f"Reply before processing: {reply}")
       result = reply_processor.post_process_reply(model_manager.reply_prefix + reply)
-      break
+      if len(result) > 0 and result[-1]['cmd'] == 'scn':
+        # No trail scenes
+        result = []
+        break
   return {
     'cmds': result
   }

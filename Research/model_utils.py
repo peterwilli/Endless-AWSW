@@ -122,16 +122,16 @@ def get_dataset(tokenizer, path_train, block_size = 128):
     rp_list = None
     with open('rp_data.txt', 'r') as f:
         rp_list = f.readlines()
+        
     def inject_random_rp(batch):
-        result = []
-        for item in batch['text']:
+        for i, item in enumerate(batch['text']):
             if random.random() <= inject_rp_chance_pct:
                 rp = random.choice(rp_list)
-                item += rp.strip()
-            result.append(item)
-        return {
-            'text': result
-        }
+                injection_places = [i for i in range(len(item)) if item.startswith("<d>", i) or item.startswith("<p>", i)]
+                random_injection_place = random.choice(injection_places)
+                # We cut off the text entirely to make sure the next mapping will add the EOS token
+                batch['text'][i] = item[:random_injection_place] + rp.strip()
+        return batch
     
     def parse_variables(batch):
         last_scene = None
@@ -186,7 +186,7 @@ def get_dataset(tokenizer, path_train, block_size = 128):
         result["labels"] = result["input_ids"].copy()
         return result
 
-    dataset_map_cores = min(multiprocessing.cpu_count(), 10)
+    dataset_map_cores = min(multiprocessing.cpu_count(), 1)
     dataset_batch_size = 1000
 
     class AWSWDataset(torch.utils.data.IterableDataset):
@@ -220,12 +220,6 @@ def get_dataset(tokenizer, path_train, block_size = 128):
                 num_proc=dataset_map_cores,
                 remove_columns=["text"],
             )
-            # dataset = dataset.map(
-            #     model_seeder.seed_model,
-            #     batched=True,
-            #     batch_size=dataset_batch_size,
-            #     num_proc=1,
-            # )
             self.mapped_dataset = dataset.map(
                 group_texts,
                 batched=True,

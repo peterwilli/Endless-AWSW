@@ -33,39 +33,40 @@ label eawsw_pick_your_poison:
     python:
         eawsw_state = {
             'did_run_start_narrative': False,
-            'endless_awsw_past': []
+            'endless_awsw_past': [],
+            'start_scene': None
         }
     menu:
         "You meet Remy at the park.":
-            $ start_narrative = [
-                { 'cmd': 'scn', 'scn': 'park2' },
+            $ eawsw_state['start_scene'] = 'park2'
+            $ eawsw_state['start_narrative'] = [
                 { 'cmd': 'msg', 'from': 'c', 'msg': "Hey Remy!" },
                 { 'cmd': 'scn', 'scn': 'park2' },
                 { 'cmd': 'msg', 'from': 'Ry', 'msg': "Hey!" },
             ]
         "You're with Lorem in the forest.":
-            $ start_narrative = [
+            $ eawsw_state['start_narrative'] = [
                 { 'cmd': 'scn', 'scn': 'forest1' },
                 { 'cmd': 'msg', 'from': 'm', 'msg': "Lorem approached me in the forest." },
                 { 'cmd': 'scn', 'scn': 'forest1' },
                 { 'cmd': 'msg', 'from': 'Lo', 'msg': "Hey!" },
             ]
         "You're with Lorem and Ipsum in their apartment.":
-            $ start_narrative = [
+            $ eawsw_state['start_narrative'] = [
                 { 'cmd': 'scn', 'scn': 'loremapt' },
                 { 'cmd': 'msg', 'from': 'Lo', 'msg': "I'm glad you came!" },
                 { 'cmd': 'scn', 'scn': 'loremapt' },
                 { 'cmd': 'msg', 'from': 'Ip', 'msg': "I heard all about you." },
             ]
         "You're in a fight with Maverick.":
-            $ start_narrative = [
+            $ eawsw_state['start_narrative'] = [
                 { 'cmd': 'scn', 'scn': 'np1r' },
                 { 'cmd': 'msg', 'from': 'm', 'msg': "Maverick growled heavily at me." },
                 { 'cmd': 'scn', 'scn': 'np1r' },
                 { 'cmd': 'msg', 'from': 'Mv', 'msg': "I'll slice you open!" },
             ]
         "On a picnic with Bryce":
-            $ start_narrative = [
+            $ eawsw_state['start_narrative'] = [
                 { 'cmd': 'scn', 'scn': 'np2' },
                 { 'cmd': 'msg', 'from': 'm', 'msg': "I sat down with Bryce. During our trip to the picnic place he carried a large basket." },
                 { 'cmd': 'scn', 'scn': 'np2' },
@@ -84,10 +85,10 @@ label eawsw_loop:
     python:
         # If you maintain a public server, feel free to add it.
         public_servers = ['https://eawsw_api.emeraldodin.com']
-        save_past_amount = 6
+        save_past_amount = 12
         class CommandExecutor:
             def __init__(self):
-                self.last_scene = None
+                self.last_scene = eawsw_state['start_scene']
                 self.last_character = None
                 self.character_mapping = {
                     'Ry': 'remy',
@@ -150,6 +151,13 @@ label eawsw_loop:
                             talk_fn(msg)
                         
         command_executor = CommandExecutor()
+        def strip_past():
+            eawsw_state['endless_awsw_past'] = eawsw_state['endless_awsw_past'][save_past_amount * -1:]
+            potential_stray_dragon = eawsw_state['endless_awsw_past'][0]
+            if potential_stray_dragon['cmd'] == 'msg' and potential_stray_dragon['from'] != 'c':
+                # Dragon without a scene, forbidden so we delete it too
+                eawsw_state['endless_awsw_past'].pop(0)
+
         def await_command():
             import urllib2, urllib
             import json
@@ -180,17 +188,22 @@ label eawsw_loop:
                 command_dict = json.loads(json_str)
                 cmds = command_dict['cmds']
                 command_executor.execute_commands(cmds)
-
+                if len(cmds) > 0:
+                    eawsw_state['endless_awsw_past'] += [{
+                        'cmd': 'msg',
+                        'from': 'c',
+                        'msg': prompt
+                    }]
                 eawsw_state['endless_awsw_past'] += cmds
-                eawsw_state['endless_awsw_past'] = eawsw_state['endless_awsw_past'][save_past_amount * -1:]
+                strip_past()
             renpy.block_rollback()
             renpy.jump("eawsw_loop")
         if eawsw_state['did_run_start_narrative']:
             await_command()
         else:
-            command_executor.execute_commands(start_narrative)
-            eawsw_state['endless_awsw_past'] += start_narrative
-            eawsw_state['endless_awsw_past'] = eawsw_state['endless_awsw_past'][save_past_amount * -1:]
+            command_executor.execute_commands(eawsw_state['start_narrative'])
+            eawsw_state['endless_awsw_past'] += eawsw_state['start_narrative']
+            strip_past()
             eawsw_state['did_run_start_narrative'] = True
             renpy.block_rollback()
             renpy.jump("eawsw_loop")
