@@ -81,6 +81,13 @@ label eawsw_empty_warning:
     pause(0.5)
     jump eawsw_loop
 
+label eawsw_version:
+    show maverick nice with dissolve
+    Mv "You're using EAWSW v0.01"
+    hide maverick with dissolve
+    pause(0.5)
+    jump eawsw_loop
+
 label eawsw_loop:
     python:
         # If you maintain a public server, feel free to add it.
@@ -171,6 +178,8 @@ label eawsw_loop:
             
             if prompt == "clear":
                 renpy.jump("eawsw_pick_your_poison")
+            elif prompt == "version":
+                renpy.jump("eawsw_version")
             else:
                 query = urllib.urlencode({
                     'past': json.dumps(eawsw_state['endless_awsw_past']),
@@ -183,7 +192,12 @@ label eawsw_loop:
                 else:
                     selected_server = persistent.eawsw_server
                 try:
-                    req = urllib2.Request('%s/get_command?%s' % (selected_server, query))
+                    req = urllib2.Request(
+                        '%s/get_command?%s' % (selected_server, query),
+                        headers = {
+                            'User-Agent': 'EmeraldOdin/EAWSW'
+                        }
+                    )
                     response = urllib2.urlopen(req)
                     json_str = response.read()
                     command_dict = json.loads(json_str)
