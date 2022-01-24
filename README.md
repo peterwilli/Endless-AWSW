@@ -12,14 +12,15 @@ This tutorial will bring the EAWSW mod to Angels with Scaly Wings. The tutorial 
 
     ![Showing game properties where you can set compatibility mode (Linux only)](Images/compatibility_linux.png)
 
-1. Download the [MagmaLink mod](https://steamcommunity.com/sharedfiles/filedetails/?id=2594080243) from the Steam workshop.
-2. Find the location of your AWSW installation:
-    1. On Steam, you can right click your game and click "Browse local files"
+
+1. Download [the source from Github](https://github.com/peterwilli/Endless-AWSW/archive/refs/heads/main.zip).
+2. Extract the downloaded source.
+3. Download the [MagmaLink mod](https://steamcommunity.com/sharedfiles/filedetails/?id=2594080243) from the Steam workshop.
+4. Find the location of your AWSW installation:
+    1. On Steam, you can right-click your game and click "Browse local files"
     ![Steam showing the game library, where you right click your game and click "Browse local files"](Images/local_game_annotation.png)
-3. Once you opened the folder, browse to `game/mods`-folder.
-4. Download [the source from Github](https://github.com/peterwilli/Endless-AWSW/archive/refs/heads/main.zip).
-5. Extract the downloaded source, and drop the `EndlessAWSWClient`-folder inside the `mods`-folder.
-    1. Your final directory should look like this (depending on how much mods you installed, this may vary, as long as you got ~3 subdirectories, where one is called `EndlessAWSWClient` it should be fine):
+5. Once you opened the folder, browse to `game/mods`-folder. Inside the source you extracted in step 1, you find the `EndlessAWSWClient`-folder. Drop this folder inside the `mods`-folder.
+    1. Your final directory should look like this (depending on how many mods you installed, this may vary, as long as you got ~3 subdirectories, where one is called `EndlessAWSWClient` it should be fine):
         ```
         mods/
         |-- 2594080243
@@ -43,7 +44,7 @@ If you want to help out, please [ping me on my Discord](https://discord.gg/gKcb5
 
 ## Todo & Bugs
 
-- [ ] Prevent dragons from replying in a loop
+- [x] Prevent dragons from replying in a loop
 - [x] You can send an empty message
 - [x] Moving forward in story makes requests to the server (thanks 4onen!)
 - [x] Fix RP bug: "Meet Lorem" works but "meet Lorem" doesn't
