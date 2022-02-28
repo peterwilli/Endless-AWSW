@@ -118,7 +118,7 @@ def get_dataset(tokenizer, path_train, block_size = 128):
             'input_ids': result
         }
     
-    inject_rp_chance_pct = 0.5
+    inject_rp_chance_pct = 0.2
     rp_list = None
     with open('rp_data.txt', 'r') as f:
         rp_list = f.readlines()
@@ -168,6 +168,15 @@ def get_dataset(tokenizer, path_train, block_size = 128):
                 result.append(item)
         return { 'text': result }
 
+    def shuffle_groups(batch):
+        i = 0
+        result = []
+        while i < len(batch['text']):
+            slice_size = random.randint(2, 10)
+            result.append("".join(batch['text'][i:i + slice_size]))
+            i = i + slice_size
+        return { 'text': result }
+
     def group_texts(examples):
         # Concatenate all texts.
         concatenated_examples = {k: sum(examples[k], []) for k in examples.keys()}
@@ -197,11 +206,17 @@ def get_dataset(tokenizer, path_train, block_size = 128):
             self.shuffle()
 
         def shuffle(self):
-            self.current_dataset = self.current_dataset.shuffle()
+            dataset = self.current_dataset.map(
+                shuffle_groups,
+                batched=True,
+                batch_size=dataset_batch_size,
+                num_proc=dataset_map_cores
+            )
+            dataset = dataset.shuffle(seed=random.randint(0, 999999))
             # Hack to avoid log spam. Map() doesn't have a way to turn off the logging
             # See: https://github.com/huggingface/datasets/issues/2651
             datasets.utils.set_progress_bar_enabled(False)
-            dataset = self.current_dataset.map(
+            dataset = dataset.map(
                 inject_random_rp,
                 batched=True,
                 batch_size=dataset_batch_size,
