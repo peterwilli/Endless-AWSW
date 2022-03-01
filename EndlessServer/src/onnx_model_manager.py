@@ -117,10 +117,14 @@ class OnnxModelManager:
                 token_str = self.tokenizer.decode(next_tokens)
                 old_tokens = validated_reply_buffer.tokens
                 try:
+                    should_stop = False
                     for t in token_str:
                         if validated_reply_buffer.add_token(t, is_computer_generated = True) == 1:
-                            # Early stop
-                            return validated_reply_buffer.tokens
+                            should_stop = True
+                            if len(validated_reply_buffer.tokens) - len(prompt) > 3:
+                                return validated_reply_buffer.tokens
+                            else:
+                                break
                     break
                 except ValidationException as e:
                     logging.error(e)

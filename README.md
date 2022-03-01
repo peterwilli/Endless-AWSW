@@ -44,6 +44,7 @@ If you want to help out, please [ping me on my Discord](https://discord.gg/gKcb5
 
 ## Todo & Bugs
 
+- [ ] Token parser, don't just continue at the last valid tokens (if a bracket opens [ it's more likely it closes again and creates an invalid reply.)
 - [x] Prevent dragons from replying in a loop
 - [x] You can send an empty message
 - [x] Moving forward in story makes requests to the server (thanks 4onen!)

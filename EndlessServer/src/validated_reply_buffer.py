@@ -152,6 +152,9 @@ class ValidatedReplyBuffer:
                             self.tokens = self.tokens[:self.tokens_last_index("<d>")]
                             return 1
                         if is_computer_generated and character == 'c':
+                            if self.last_character is not None and self.last_character is not 'c':
+                                self.tokens = self.tokens[:self.tokens_last_index(f"<{self.last_side}>")]
+                                return 1
                             raise ValidationException("AI cannot respond as player!")
                         if not character in allowed_characters:
                             raise ValidationException(f"add_token: character '{character}' not in allowed_characters!")
@@ -165,14 +168,24 @@ class ValidatedReplyBuffer:
         return self.tokens.rfind(tokens)
 
 if __name__ == '__main__':
-    def test_tokens(tokens):
+    def test_tokens(tokens, is_computer_generated = False, should_equal = True):
         print(f"testing: {tokens}")
         buffer = ValidatedReplyBuffer()
         for t in tokens:
-            if buffer.add_token(t, is_computer_generated = False) == 1:
+            if buffer.add_token(t, is_computer_generated = is_computer_generated) == 1:
                 break
-        assert buffer.tokens == tokens
+        if should_equal:
+            assert buffer.tokens == tokens
+        return buffer.tokens
 
+    # AI as player test
+    parsed_tokens = test_tokens('<d><scn>o2<msg>Sb "Yes."<p><msg>c "Flooding?"', is_computer_generated = True, should_equal = False)
+    assert parsed_tokens == '<d><scn>o2<msg>Sb "Yes."'
+    try:
+        test_tokens('<p><msg>c "Flooding?', is_computer_generated = True)
+    except ValidationException as e:
+        print(e)
+    test_tokens('<p><msg>c "Flooding?', is_computer_generated = False)
     test_tokens('<p><msg>c "Flooding?"<d><scn>o2<msg>Sb "Yes."')
     try:
         test_tokens('<p><msgf>c "Flooding?"<d><scn>o2<msg>Sb "Yes."')

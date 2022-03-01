@@ -55,7 +55,6 @@ class ModelMixing:
                     cold_zone_tmp[i][:] = self.cold_zones[i]
                 restart_tries += 1
                 amplification = min(amplification + 0.01, 0.99)
-            
             if restart_tries == 25:
                 return None
             
