@@ -127,10 +127,7 @@ def get_dataset(tokenizer, path_train, block_size = 128):
         for i, item in enumerate(batch['text']):
             if random.random() <= inject_rp_chance_pct:
                 rp = random.choice(rp_list)
-                injection_places = [i for i in range(len(item)) if item.startswith("<d>", i) or item.startswith("<p>", i)]
-                random_injection_place = random.choice(injection_places)
-                # We cut off the text entirely to make sure the next mapping will add the EOS token
-                batch['text'][i] = item[:random_injection_place] + rp.strip()
+                batch['text'][i] += rp.strip()
         return batch
     
     def parse_variables(batch):
@@ -169,11 +166,30 @@ def get_dataset(tokenizer, path_train, block_size = 128):
         return { 'text': result }
 
     def shuffle_groups(batch):
-        i = 0
+        # i = 0
+        # result = []
+        # while i < len(batch['text']):
+        #     slice_size = random.randint(2, 10)
+        #     result.append("".join(batch['text'][i:i + slice_size]))
+        #     i = i + slice_size
         result = []
-        while i < len(batch['text']):
+        last_starts_with_player = None
+        tmp_list = []
+        tmp_list2 = []
+        for i in range(0, len(batch['text'])):
+            line = batch['text'][i]
+            starts_with_player = line.startswith("<p>")
+            if last_starts_with_player is not None:
+                if last_starts_with_player != starts_with_player:
+                    tmp_list2.append(random.choice(tmp_list))
+                    # We need to make a new batch
+                    tmp_list = []
+            tmp_list.append(line)                    
+            last_starts_with_player = starts_with_player
+        i = 0
+        while i < len(tmp_list2):
             slice_size = random.randint(2, 10)
-            result.append("".join(batch['text'][i:i + slice_size]))
+            result.append("".join(tmp_list2[i:i + slice_size]))
             i = i + slice_size
         return { 'text': result }
 
@@ -203,25 +219,25 @@ def get_dataset(tokenizer, path_train, block_size = 128):
             self.current_dataset = dataset
             self.dataset_type = dataset_type
             self.current_idx = 0
+            # Hack to avoid log spam. Map() doesn't have a way to turn off the logging
+            # See: https://github.com/huggingface/datasets/issues/2651
+            datasets.utils.set_progress_bar_enabled(False)
             self.shuffle()
 
         def shuffle(self):
             dataset = self.current_dataset.map(
+                inject_random_rp,
+                batched=True,
+                batch_size=dataset_batch_size,
+                num_proc=dataset_map_cores
+            )
+            dataset = dataset.map(
                 shuffle_groups,
                 batched=True,
                 batch_size=dataset_batch_size,
                 num_proc=dataset_map_cores
             )
             dataset = dataset.shuffle(seed=random.randint(0, 999999))
-            # Hack to avoid log spam. Map() doesn't have a way to turn off the logging
-            # See: https://github.com/huggingface/datasets/issues/2651
-            datasets.utils.set_progress_bar_enabled(False)
-            dataset = dataset.map(
-                inject_random_rp,
-                batched=True,
-                batch_size=dataset_batch_size,
-                num_proc=dataset_map_cores
-            )
             dataset = dataset.map(
                 parse_variables,
                 batched=True,
@@ -311,7 +327,6 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
         "scheduler": "polynomial_decay_schedule_with_warmup",
         "lr_end": 0.000002,
         "power": 0.6,
-        "freeze_layer_rate": 0.0009,
         "num_epoch": 10,
         "save_model": True,
         "batch_size": 32,
@@ -357,9 +372,11 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
         def on_step_begin(self, args, state, control, **kwargs):
             current_step = state.global_step
             # Freeze a part
+            freeze_part_layers = False
             learning_rate = self.optimizer.param_groups[0]['lr']
-            freeze_layer_rate = params['freeze_layer_rate']
-            freeze_part_layers = learning_rate > freeze_layer_rate
+            if 'freeze_layer_rate' in params:
+                freeze_layer_rate = params['freeze_layer_rate']
+                freeze_part_layers = learning_rate > freeze_layer_rate
             if 'freeze_from_steps' in params:
                 freeze_part_layers = current_step > params['freeze_from_steps']
             if self.old_freeze_part_layers is not freeze_part_layers:
