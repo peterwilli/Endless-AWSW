@@ -40,6 +40,10 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"meet with adine\"<d><scn>adineapt<msg>Ad \"Hey [player_name]!\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Meet with Sebastian\"<d><scn>office<msg>Sb \"Hey [player_name]!\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"meet with sebastian\"<d><scn>office<msg>Sb \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Meet with Naomi\"<d><scn>fac1<msg>Nm \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"meet with naomi\"<d><scn>fac1<msg>Nm \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Meet with Naomi\"<d><scn>cafe<msg>Nm \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"meet with naomi\"<d><scn>cafe<msg>Nm \"Hey [player_name]!\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Meet with Remy\"<d><scn>remyapt<msg>Ry \"Hey [player_name]! How are you?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"meet with remy\"<d><scn>remyapt<msg>Ry \"Hey [player_name]! How are you?\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Meet with Lorem\"<d><scn>loremapt<msg>Lo \"Hey [player_name]! How are you?\""}
@@ -82,6 +86,10 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"meet with adine\"<d><scn>adineapt<msg>Ad \"Hey [player_name]! How are you?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Meet with Sebastian\"<d><scn>office<msg>Sb \"Hey [player_name]! How are you?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"meet with sebastian\"<d><scn>office<msg>Sb \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Meet with Naomi\"<d><scn>fac1<msg>Nm \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"meet with naomi\"<d><scn>fac1<msg>Nm \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Meet with Naomi\"<d><scn>cafe<msg>Nm \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"meet with naomi\"<d><scn>cafe<msg>Nm \"Hey [player_name]! How are you?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Meet with Remy\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"meet with remy\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Meet with Lorem\"<d><scn>loremapt<msg>Lo \"Oh, [player_name], I didn't expect you to arrive so early.\""}
@@ -124,6 +132,10 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"meet with adine\"<d><scn>adineapt<msg>Ad \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Meet with Sebastian\"<d><scn>office<msg>Sb \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"meet with sebastian\"<d><scn>office<msg>Sb \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Meet with Naomi\"<d><scn>fac1<msg>Nm \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"meet with naomi\"<d><scn>fac1<msg>Nm \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Meet with Naomi\"<d><scn>cafe<msg>Nm \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"meet with naomi\"<d><scn>cafe<msg>Nm \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Meet with Remy\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"meet with remy\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Meet with Lorem\"<d><scn>loremapt<msg>Lo \"Oh, [player_name], I wasn't expecting visitors.\""}
@@ -166,6 +178,10 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"meet with adine\"<d><scn>adineapt<msg>Ad \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Meet with Sebastian\"<d><scn>office<msg>Sb \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"meet with sebastian\"<d><scn>office<msg>Sb \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Meet with Naomi\"<d><scn>fac1<msg>Nm \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"meet with naomi\"<d><scn>fac1<msg>Nm \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Meet with Naomi\"<d><scn>cafe<msg>Nm \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"meet with naomi\"<d><scn>cafe<msg>Nm \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Visit Remy\"<d><scn>remyapt<msg>Ry \"Hey [player_name]!\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"visit remy\"<d><scn>remyapt<msg>Ry \"Hey [player_name]!\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Visit Lorem\"<d><scn>loremapt<msg>Lo \"Hey [player_name]!\""}
@@ -208,6 +224,10 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"visit adine\"<d><scn>adineapt<msg>Ad \"Hey [player_name]!\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Visit Sebastian\"<d><scn>office<msg>Sb \"Hey [player_name]!\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"visit sebastian\"<d><scn>office<msg>Sb \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Visit Naomi\"<d><scn>fac1<msg>Nm \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"visit naomi\"<d><scn>fac1<msg>Nm \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Visit Naomi\"<d><scn>cafe<msg>Nm \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"visit naomi\"<d><scn>cafe<msg>Nm \"Hey [player_name]!\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Visit Remy\"<d><scn>remyapt<msg>Ry \"Hey [player_name]! How are you?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"visit remy\"<d><scn>remyapt<msg>Ry \"Hey [player_name]! How are you?\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Visit Lorem\"<d><scn>loremapt<msg>Lo \"Hey [player_name]! How are you?\""}
@@ -250,6 +270,10 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"visit adine\"<d><scn>adineapt<msg>Ad \"Hey [player_name]! How are you?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Visit Sebastian\"<d><scn>office<msg>Sb \"Hey [player_name]! How are you?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"visit sebastian\"<d><scn>office<msg>Sb \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Visit Naomi\"<d><scn>fac1<msg>Nm \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"visit naomi\"<d><scn>fac1<msg>Nm \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Visit Naomi\"<d><scn>cafe<msg>Nm \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"visit naomi\"<d><scn>cafe<msg>Nm \"Hey [player_name]! How are you?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Visit Remy\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"visit remy\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Visit Lorem\"<d><scn>loremapt<msg>Lo \"Oh, [player_name], I didn't expect you to arrive so early.\""}
@@ -292,6 +316,10 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"visit adine\"<d><scn>adineapt<msg>Ad \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Visit Sebastian\"<d><scn>office<msg>Sb \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"visit sebastian\"<d><scn>office<msg>Sb \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Visit Naomi\"<d><scn>fac1<msg>Nm \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"visit naomi\"<d><scn>fac1<msg>Nm \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Visit Naomi\"<d><scn>cafe<msg>Nm \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"visit naomi\"<d><scn>cafe<msg>Nm \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Visit Remy\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"visit remy\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Visit Lorem\"<d><scn>loremapt<msg>Lo \"Oh, [player_name], I wasn't expecting visitors.\""}
@@ -334,6 +362,10 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"visit adine\"<d><scn>adineapt<msg>Ad \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Visit Sebastian\"<d><scn>office<msg>Sb \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"visit sebastian\"<d><scn>office<msg>Sb \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Visit Naomi\"<d><scn>fac1<msg>Nm \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"visit naomi\"<d><scn>fac1<msg>Nm \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Visit Naomi\"<d><scn>cafe<msg>Nm \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"visit naomi\"<d><scn>cafe<msg>Nm \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Go to Remy\"<d><scn>remyapt<msg>Ry \"Hey [player_name]!\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"go to remy\"<d><scn>remyapt<msg>Ry \"Hey [player_name]!\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Go to Lorem\"<d><scn>loremapt<msg>Lo \"Hey [player_name]!\""}
@@ -376,6 +408,10 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"go to adine\"<d><scn>adineapt<msg>Ad \"Hey [player_name]!\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Go to Sebastian\"<d><scn>office<msg>Sb \"Hey [player_name]!\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"go to sebastian\"<d><scn>office<msg>Sb \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Go to Naomi\"<d><scn>fac1<msg>Nm \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"go to naomi\"<d><scn>fac1<msg>Nm \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Go to Naomi\"<d><scn>cafe<msg>Nm \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"go to naomi\"<d><scn>cafe<msg>Nm \"Hey [player_name]!\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Go to Remy\"<d><scn>remyapt<msg>Ry \"Hey [player_name]! How are you?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"go to remy\"<d><scn>remyapt<msg>Ry \"Hey [player_name]! How are you?\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Go to Lorem\"<d><scn>loremapt<msg>Lo \"Hey [player_name]! How are you?\""}
@@ -418,6 +454,10 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"go to adine\"<d><scn>adineapt<msg>Ad \"Hey [player_name]! How are you?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Go to Sebastian\"<d><scn>office<msg>Sb \"Hey [player_name]! How are you?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"go to sebastian\"<d><scn>office<msg>Sb \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Go to Naomi\"<d><scn>fac1<msg>Nm \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"go to naomi\"<d><scn>fac1<msg>Nm \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Go to Naomi\"<d><scn>cafe<msg>Nm \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"go to naomi\"<d><scn>cafe<msg>Nm \"Hey [player_name]! How are you?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Go to Remy\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"go to remy\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Go to Lorem\"<d><scn>loremapt<msg>Lo \"Oh, [player_name], I didn't expect you to arrive so early.\""}
@@ -460,6 +500,10 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"go to adine\"<d><scn>adineapt<msg>Ad \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Go to Sebastian\"<d><scn>office<msg>Sb \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"go to sebastian\"<d><scn>office<msg>Sb \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Go to Naomi\"<d><scn>fac1<msg>Nm \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"go to naomi\"<d><scn>fac1<msg>Nm \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Go to Naomi\"<d><scn>cafe<msg>Nm \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"go to naomi\"<d><scn>cafe<msg>Nm \"Oh, [player_name], I didn't expect you to arrive so early.\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Go to Remy\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"go to remy\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Go to Lorem\"<d><scn>loremapt<msg>Lo \"Oh, [player_name], I wasn't expecting visitors.\""}
@@ -502,342 +546,26 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"go to adine\"<d><scn>adineapt<msg>Ad \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Go to Sebastian\"<d><scn>office<msg>Sb \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"go to sebastian\"<d><scn>office<msg>Sb \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>remyapt<msg>Ry \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>remyapt<msg>Ry \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>loremapt<msg>Lo \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>loremapt<msg>Lo \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>loremapt<msg>Ip \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>loremapt<msg>Ip \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>bare<msg>Br \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>bare<msg>Br \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>emeraroom<msg>Em \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>emeraroom<msg>Em \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Ka \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Ka \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Ka \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Ka \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Ka \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Ka \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Rz \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Rz \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Rz \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Rz \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Rz \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Rz \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Kv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Kv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Kv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Kv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Kv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Kv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>bare<msg>Zh \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>bare<msg>Zh \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Mv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Mv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Mv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Mv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Mv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Mv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>corridor<msg>An \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>corridor<msg>An \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>adineapt<msg>Ad \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>adineapt<msg>Ad \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>office<msg>Sb \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>office<msg>Sb \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>remyapt<msg>Ry \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>remyapt<msg>Ry \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>loremapt<msg>Lo \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>loremapt<msg>Lo \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>loremapt<msg>Ip \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>loremapt<msg>Ip \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>bare<msg>Br \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>bare<msg>Br \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>emeraroom<msg>Em \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>emeraroom<msg>Em \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Ka \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Ka \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Ka \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Ka \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Ka \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Ka \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Rz \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Rz \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Rz \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Rz \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Rz \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Rz \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Kv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Kv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Kv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Kv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Kv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Kv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>bare<msg>Zh \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>bare<msg>Zh \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Mv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Mv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Mv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Mv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Mv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Mv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>corridor<msg>An \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>corridor<msg>An \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>adineapt<msg>Ad \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>adineapt<msg>Ad \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>office<msg>Sb \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>office<msg>Sb \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>loremapt<msg>Lo \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>loremapt<msg>Lo \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>loremapt<msg>Ip \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>loremapt<msg>Ip \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>bare<msg>Br \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>bare<msg>Br \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>emeraroom<msg>Em \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>emeraroom<msg>Em \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Ka \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Ka \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Ka \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Ka \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Ka \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Ka \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Rz \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Rz \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Rz \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Rz \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Rz \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Rz \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Kv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Kv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Kv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Kv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Kv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Kv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>bare<msg>Zh \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>bare<msg>Zh \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Mv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Mv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Mv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Mv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Mv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Mv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>corridor<msg>An \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>corridor<msg>An \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>adineapt<msg>Ad \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>adineapt<msg>Ad \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>office<msg>Sb \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>office<msg>Sb \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>loremapt<msg>Lo \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>loremapt<msg>Lo \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>loremapt<msg>Ip \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>loremapt<msg>Ip \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>bare<msg>Br \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>bare<msg>Br \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>emeraroom<msg>Em \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>emeraroom<msg>Em \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Ka \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Ka \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Ka \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Ka \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Ka \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Ka \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Rz \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Rz \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Rz \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Rz \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Rz \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Rz \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Kv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Kv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Kv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Kv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Kv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Kv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>bare<msg>Zh \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>bare<msg>Zh \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park3<msg>Mv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park3<msg>Mv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park2<msg>Mv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park2<msg>Mv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>Mv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>Mv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>corridor<msg>An \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>corridor<msg>An \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>adineapt<msg>Ad \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>adineapt<msg>Ad \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Leave\"<d><scn>office<msg>Sb \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"leave\"<d><scn>office<msg>Sb \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>remyapt<msg>Ry \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>remyapt<msg>Ry \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>loremapt<msg>Lo \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>loremapt<msg>Lo \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>loremapt<msg>Ip \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>loremapt<msg>Ip \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>bare<msg>Br \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>bare<msg>Br \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>emeraroom<msg>Em \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>emeraroom<msg>Em \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Ka \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Ka \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Ka \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Ka \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Ka \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Ka \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Rz \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Rz \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Rz \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Rz \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Rz \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Rz \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Kv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Kv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Kv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Kv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Kv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Kv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>bare<msg>Zh \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>bare<msg>Zh \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Mv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Mv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Mv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Mv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Mv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Mv \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>corridor<msg>An \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>corridor<msg>An \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>adineapt<msg>Ad \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>adineapt<msg>Ad \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>office<msg>Sb \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>office<msg>Sb \"Hey [player_name]!\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>remyapt<msg>Ry \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>remyapt<msg>Ry \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>loremapt<msg>Lo \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>loremapt<msg>Lo \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>loremapt<msg>Ip \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>loremapt<msg>Ip \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>bare<msg>Br \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>bare<msg>Br \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>emeraroom<msg>Em \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>emeraroom<msg>Em \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Ka \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Ka \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Ka \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Ka \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Ka \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Ka \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Rz \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Rz \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Rz \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Rz \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Rz \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Rz \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Kv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Kv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Kv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Kv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Kv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Kv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>bare<msg>Zh \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>bare<msg>Zh \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Mv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Mv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Mv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Mv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Mv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Mv \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>corridor<msg>An \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>corridor<msg>An \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>adineapt<msg>Ad \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>adineapt<msg>Ad \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>office<msg>Sb \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>office<msg>Sb \"Hey [player_name]! How are you?\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>loremapt<msg>Lo \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>loremapt<msg>Lo \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>loremapt<msg>Ip \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>loremapt<msg>Ip \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>bare<msg>Br \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>bare<msg>Br \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>emeraroom<msg>Em \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>emeraroom<msg>Em \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Ka \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Ka \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Ka \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Ka \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Ka \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Ka \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Rz \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Rz \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Rz \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Rz \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Rz \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Rz \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Kv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Kv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Kv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Kv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Kv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Kv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>bare<msg>Zh \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>bare<msg>Zh \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Mv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Mv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Mv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Mv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Mv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Mv \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>corridor<msg>An \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>corridor<msg>An \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>adineapt<msg>Ad \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>adineapt<msg>Ad \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>office<msg>Sb \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>office<msg>Sb \"Oh, [player_name], I didn't expect you to arrive so early.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>remyapt<msg>Ry \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>loremapt<msg>Lo \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>loremapt<msg>Lo \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>loremapt<msg>Ip \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>loremapt<msg>Ip \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>bare<msg>Br \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>bare<msg>Br \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>emeraroom<msg>Em \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>emeraroom<msg>Em \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Ka \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Ka \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Ka \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Ka \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Ka \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Ka \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Rz \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Rz \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Rz \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Rz \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Rz \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Rz \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Kv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Kv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Kv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Kv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Kv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Kv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>bare<msg>Zh \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>bare<msg>Zh \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park3<msg>Mv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park3<msg>Mv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park2<msg>Mv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park2<msg>Mv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>Mv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>Mv \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>corridor<msg>An \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>corridor<msg>An \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>adineapt<msg>Ad \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>adineapt<msg>Ad \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"Go to park\"<d><scn>office<msg>Sb \"Oh, [player_name], I wasn't expecting visitors.\""}
-{"cmd": "<p><msg>c \"go to park\"<d><scn>office<msg>Sb \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Go to Naomi\"<d><scn>fac1<msg>Nm \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"go to naomi\"<d><scn>fac1<msg>Nm \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Go to Naomi\"<d><scn>cafe<msg>Nm \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"go to naomi\"<d><scn>cafe<msg>Nm \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>m \"I walked back to the park\""}
+{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>m \"I walked back to the park\""}
+{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>m \"After a long stroll, I managed to end up at he park\""}
+{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>m \"After a long stroll, I managed to end up at he park\""}
+{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>m \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>m \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"cmd": "<p><msg>c \"Leave\"<d><scn>park1<msg>m \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"cmd": "<p><msg>c \"leave\"<d><scn>park1<msg>m \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>m \"I walked back to the park\""}
+{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>m \"I walked back to the park\""}
+{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>m \"After a long stroll, I managed to end up at he park\""}
+{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>m \"After a long stroll, I managed to end up at he park\""}
+{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>m \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>m \"Oh, [player_name], I didn't expect you to arrive so early.\""}
+{"cmd": "<p><msg>c \"Go to park\"<d><scn>park1<msg>m \"Oh, [player_name], I wasn't expecting visitors.\""}
+{"cmd": "<p><msg>c \"go to park\"<d><scn>park1<msg>m \"Oh, [player_name], I wasn't expecting visitors.\""}
 {"cmd": "<p><msg>c \"Fight\"<d><scn>%lastscene<msg>m \"%lastcharacter barely avoids my attack and fell, but managed to get up and quickly punch me in the face, a soaring pain quickly came over my face\""}
 {"cmd": "<p><msg>c \"fight\"<d><scn>%lastscene<msg>m \"%lastcharacter barely avoids my attack and fell, but managed to get up and quickly punch me in the face, a soaring pain quickly came over my face\""}
 {"cmd": "<p><msg>c \"Fight\"<d><scn>%lastscene<msg>m \"%lastcharacter dodges my attack and comes rushing towards me\""}
@@ -900,6 +628,8 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"hey adine! over here!\"<d><scn>%lastscene<msg>Ad \"Hey [player_name]!\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Hey Sebastian! Over here!\"<d><scn>%lastscene<msg>Sb \"Hey [player_name]!\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"hey sebastian! over here!\"<d><scn>%lastscene<msg>Sb \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Hey Naomi! Over here!\"<d><scn>%lastscene<msg>Nm \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"hey naomi! over here!\"<d><scn>%lastscene<msg>Nm \"Hey [player_name]!\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Hey Remy! Over here!\"<d><scn>%lastscene<msg>Ry \"Hey [player_name]! How are you?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"hey remy! over here!\"<d><scn>%lastscene<msg>Ry \"Hey [player_name]! How are you?\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Hey Lorem! Over here!\"<d><scn>%lastscene<msg>Lo \"Hey [player_name]! How are you?\""}
@@ -926,6 +656,8 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"hey adine! over here!\"<d><scn>%lastscene<msg>Ad \"Hey [player_name]! How are you?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Hey Sebastian! Over here!\"<d><scn>%lastscene<msg>Sb \"Hey [player_name]! How are you?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"hey sebastian! over here!\"<d><scn>%lastscene<msg>Sb \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Hey Naomi! Over here!\"<d><scn>%lastscene<msg>Nm \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"hey naomi! over here!\"<d><scn>%lastscene<msg>Nm \"Hey [player_name]! How are you?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Hey Remy! Over here!\"<d><scn>%lastscene<msg>Ry \"[player_name]? What are you doing here?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"hey remy! over here!\"<d><scn>%lastscene<msg>Ry \"[player_name]? What are you doing here?\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Hey Lorem! Over here!\"<d><scn>%lastscene<msg>Lo \"[player_name]? What are you doing here?\""}
@@ -952,6 +684,8 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"hey adine! over here!\"<d><scn>%lastscene<msg>Ad \"[player_name]? What are you doing here?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Hey Sebastian! Over here!\"<d><scn>%lastscene<msg>Sb \"[player_name]? What are you doing here?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"hey sebastian! over here!\"<d><scn>%lastscene<msg>Sb \"[player_name]? What are you doing here?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Hey Naomi! Over here!\"<d><scn>%lastscene<msg>Nm \"[player_name]? What are you doing here?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"hey naomi! over here!\"<d><scn>%lastscene<msg>Nm \"[player_name]? What are you doing here?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Hello Remy\"<d><scn>%lastscene<msg>Ry \"Hey [player_name]!\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"hello remy\"<d><scn>%lastscene<msg>Ry \"Hey [player_name]!\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Hello Lorem\"<d><scn>%lastscene<msg>Lo \"Hey [player_name]!\""}
@@ -978,6 +712,8 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"hello adine\"<d><scn>%lastscene<msg>Ad \"Hey [player_name]!\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Hello Sebastian\"<d><scn>%lastscene<msg>Sb \"Hey [player_name]!\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"hello sebastian\"<d><scn>%lastscene<msg>Sb \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Hello Naomi\"<d><scn>%lastscene<msg>Nm \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"hello naomi\"<d><scn>%lastscene<msg>Nm \"Hey [player_name]!\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Hello Remy\"<d><scn>%lastscene<msg>Ry \"Hey [player_name]! How are you?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"hello remy\"<d><scn>%lastscene<msg>Ry \"Hey [player_name]! How are you?\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Hello Lorem\"<d><scn>%lastscene<msg>Lo \"Hey [player_name]! How are you?\""}
@@ -1004,6 +740,8 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"hello adine\"<d><scn>%lastscene<msg>Ad \"Hey [player_name]! How are you?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Hello Sebastian\"<d><scn>%lastscene<msg>Sb \"Hey [player_name]! How are you?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"hello sebastian\"<d><scn>%lastscene<msg>Sb \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Hello Naomi\"<d><scn>%lastscene<msg>Nm \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"hello naomi\"<d><scn>%lastscene<msg>Nm \"Hey [player_name]! How are you?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Hello Remy\"<d><scn>%lastscene<msg>Ry \"[player_name]? What are you doing here?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"hello remy\"<d><scn>%lastscene<msg>Ry \"[player_name]? What are you doing here?\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Hello Lorem\"<d><scn>%lastscene<msg>Lo \"[player_name]? What are you doing here?\""}
@@ -1030,6 +768,8 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"hello adine\"<d><scn>%lastscene<msg>Ad \"[player_name]? What are you doing here?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Hello Sebastian\"<d><scn>%lastscene<msg>Sb \"[player_name]? What are you doing here?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"hello sebastian\"<d><scn>%lastscene<msg>Sb \"[player_name]? What are you doing here?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Hello Naomi\"<d><scn>%lastscene<msg>Nm \"[player_name]? What are you doing here?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"hello naomi\"<d><scn>%lastscene<msg>Nm \"[player_name]? What are you doing here?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Remy? Is that you?\"<d><scn>%lastscene<msg>Ry \"Hey [player_name]!\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"remy? is that you?\"<d><scn>%lastscene<msg>Ry \"Hey [player_name]!\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Lorem? Is that you?\"<d><scn>%lastscene<msg>Lo \"Hey [player_name]!\""}
@@ -1056,6 +796,8 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"adine? is that you?\"<d><scn>%lastscene<msg>Ad \"Hey [player_name]!\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Sebastian? Is that you?\"<d><scn>%lastscene<msg>Sb \"Hey [player_name]!\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"sebastian? is that you?\"<d><scn>%lastscene<msg>Sb \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Naomi? Is that you?\"<d><scn>%lastscene<msg>Nm \"Hey [player_name]!\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"naomi? is that you?\"<d><scn>%lastscene<msg>Nm \"Hey [player_name]!\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Remy? Is that you?\"<d><scn>%lastscene<msg>Ry \"Hey [player_name]! How are you?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"remy? is that you?\"<d><scn>%lastscene<msg>Ry \"Hey [player_name]! How are you?\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Lorem? Is that you?\"<d><scn>%lastscene<msg>Lo \"Hey [player_name]! How are you?\""}
@@ -1082,6 +824,8 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"adine? is that you?\"<d><scn>%lastscene<msg>Ad \"Hey [player_name]! How are you?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Sebastian? Is that you?\"<d><scn>%lastscene<msg>Sb \"Hey [player_name]! How are you?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"sebastian? is that you?\"<d><scn>%lastscene<msg>Sb \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Naomi? Is that you?\"<d><scn>%lastscene<msg>Nm \"Hey [player_name]! How are you?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"naomi? is that you?\"<d><scn>%lastscene<msg>Nm \"Hey [player_name]! How are you?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"Remy? Is that you?\"<d><scn>%lastscene<msg>Ry \"[player_name]? What are you doing here?\""}
 {"about_character": "Ry", "cmd": "<p><msg>c \"remy? is that you?\"<d><scn>%lastscene<msg>Ry \"[player_name]? What are you doing here?\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"Lorem? Is that you?\"<d><scn>%lastscene<msg>Lo \"[player_name]? What are you doing here?\""}
@@ -1108,6 +852,8 @@
 {"about_character": "Ad", "cmd": "<p><msg>c \"adine? is that you?\"<d><scn>%lastscene<msg>Ad \"[player_name]? What are you doing here?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"Sebastian? Is that you?\"<d><scn>%lastscene<msg>Sb \"[player_name]? What are you doing here?\""}
 {"about_character": "Sb", "cmd": "<p><msg>c \"sebastian? is that you?\"<d><scn>%lastscene<msg>Sb \"[player_name]? What are you doing here?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"Naomi? Is that you?\"<d><scn>%lastscene<msg>Nm \"[player_name]? What are you doing here?\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"naomi? is that you?\"<d><scn>%lastscene<msg>Nm \"[player_name]? What are you doing here?\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"What do you think of Lorem?\"<d><scn>%lastscene<msg>%lastcharactercode \"I think he's cute.\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"What do you think of Lorem?\"<d><scn>%lastscene<msg>%lastcharactercode \"I dont like him as well as before.\""}
 {"about_character": "Lo", "cmd": "<p><msg>c \"What do you think of Lorem?\"<d><scn>%lastscene<msg>%lastcharactercode \"I like him.\""}
@@ -1240,3 +986,15 @@
 {"about_character": "Zh", "cmd": "<p><msg>c \"What do you think of Zhong?\"<d><scn>%lastscene<msg>%lastcharactercode \"I think he is ugly.\""}
 {"about_character": "Zh", "cmd": "<p><msg>c \"What do you think of Zhong?\"<d><scn>%lastscene<msg>%lastcharactercode \"I think he is good looking.\""}
 {"about_character": "Zh", "cmd": "<p><msg>c \"I was with Zhong today\"<d><scn>%lastscene<msg>%lastcharactercode \"Very nice\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode \"I think she's cute.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode \"I dont like her as well as before.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode \"I like her.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode \"She is a bit odd.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode \"She is a bit interesting.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode \"I think she's funny.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode \"I think she's ugly.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode \"I think she's good looking.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode \"I think she is funny.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode \"I think she is ugly.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode \"I think she is good looking.\""}
+{"about_character": "Nm", "cmd": "<p><msg>c \"I was with Naomi today\"<d><scn>%lastscene<msg>%lastcharactercode \"Very nice\""}
