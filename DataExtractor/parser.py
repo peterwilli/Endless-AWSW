@@ -40,7 +40,7 @@ def parse():
                         lines = f.readlines()
                         for line in lines:
                             line = line.strip()
-                            scene_command_match = re_scene_command.search(line)
+                            scene_command_match = re_scene_command.match(line)
                             if scene_command_match is not None:
                                 last_scene = scene_command_match.group(1)
                                 continue
@@ -56,7 +56,7 @@ def parse():
                                     training_data_fd.write(msg_output + "\n")
                                 continue
                             if last_scene is not None:
-                                say_command_match = re_say_command.search(line)
+                                say_command_match = re_say_command.match(line)
                                 if say_command_match is not None:
                                     msg_from = say_command_match.group(1)
                                     if msg_from in allowed_characters:

@@ -34,9 +34,10 @@ allowed_characters = {
     'Mv': 'Maverick',
     'An': 'Anna',
     'Ad': 'Adine',
-    'Sb': 'Sebastian'
+    'Sb': 'Sebastian',
+    'Nm': 'Naomi'
 }
-allowed_scenes = ['park2', 'black', 'loremapt', 'office', 'bare', 'bareblur', 'bareblur2', 'pad', 'facin2', 'facinx', 'facin3', 'alley', 'farm', 'town4', 'beach', 'adineapt', 'corridor', 'emeraroom', 'o4', 'park3', 'np3x', 'np2x', 'np1x', 'buildingoutside', 'o2', 'np3', 'np2', 'store2', 'town1x', 'forestx', 'cave', 'o', 'remyapt', 'cafe', 'viewingspot', 'np1r', 'hallway', 'np2y', 'np1n', 'town2', 'stairs', 'darker', 'town1', 'store', 'library', 'school', 'forest1', 'forest2', 'storex', 'np5e', 'port1', 'beachx', 'padx', 'intro1', 'intro2', 'np4', 'np5', 'fac1', 'facin', 'town3', 'kitchen', 'np1', 'stars', 'o3', 'town7', 'town6', 'deadbody', 'whiteroom', 'office2', 'cave2', 'table', 'starsrx', 'hatchery', 'farm2', 'gate', 'testingroom', 'np6', 'fac12', 'adineapt2']        
+allowed_scenes = ['park2', 'loremapt', 'office', 'black', 'bare', 'pad', 'bareblur', 'bareblur2', 'facin3', 'alley', 'fb', 'farm', 'town4', 'adineapt', 'corridor', 'emeraroom', 'o4', 'facin2', 'o2', 'park3', 'np2x', 'np1x', 'buildingoutside', 'np3', 'cave', 'o', 'remyapt', 'cafe', 'viewingspot', 'np1r', 'hallway', 'np2y', 'np1n', 'town2', 'stairs', 'darker', 'library', 'forest2', 'school', 'forest1', 'storex', 'np3x', 'beachx', 'padx', 'np4', 'fac1', 'facin', 'town3', 'np1', 'stars', 'town6', 'deadbody', 'office2', 'cave2', 'table', 'farm2', 'hatchery', 'testingroom', 'gate', 'town7', 'fac12', 'adineapt2', 'ecknaomiapt01', 'eckswimmingpool', 'ecknewtownout2', 'eckswimmingpool2', 'eckoldbiolab', 'beach', 'eckwatersky01', 'eckunderwatertunnel', 'eckbeachb', 'ecknaomiapt03', 'ecknaomiaptbalcony', 'eckpolicedeptstairs1', 'eckplayeraptextra1', 'town1', 'eckkitchenx']
 
 re_token = re.compile(r'(<.*?>|[^<]*)')
 re_command = re.compile(r'^<(.*?)>$')
