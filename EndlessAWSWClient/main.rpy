@@ -80,6 +80,16 @@ label eawsw_pick_your_poison:
                 { 'cmd': 'scn', 'scn': 'np2' },
                 { 'cmd': 'msg', 'from': 'Br', 'msg': "If you're hungry, you can grab something from the fun basket." },
             ]
+        "In a shipwreck with Naomi":
+            if eawsw_naomi_installed:   
+                $ eawsw_state['start_narrative'] = [
+                    { 'cmd': 'scn', 'scn': 'eckoldbiolab' },
+                    { 'cmd': 'msg', 'from': 'm', 'msg': "After days locked up in here, we still haven't found a way out." },
+                    { 'cmd': 'scn', 'scn': 'eckoldbiolab' },
+                    { 'cmd': 'msg', 'from': 'Nm', 'msg': "Are they looking for us you think?" },
+                ]
+            else:    
+                jump need_naomi_error
     jump eawsw_loop
 
 label eawsw_empty_warning:
@@ -88,6 +98,13 @@ label eawsw_empty_warning:
     hide maverick with dissolve
     pause(0.5)
     jump eawsw_loop
+
+label need_naomi_error:
+    show maverick nice with dissolve
+    Mv "You need the mod 'A Solitary Mind' to play with Naomi! Go get it from the workshop and restart the game, otherwise select another narrative!"
+    hide maverick with dissolve
+    pause(0.5)
+    jump eawsw_pick_your_poison
 
 label eawsw_no_reply_error:
     show maverick nice with dissolve
@@ -127,7 +144,8 @@ label eawsw_loop:
                     'An': 'anna',
                     'Ad': 'adine',
                     'Sb': 'sebastian',
-                    'Ip': 'ipsum'
+                    'Ip': 'ipsum',
+                    'Nm': 'naomi'
                 }
 
                 self.talk_functions = {
@@ -142,6 +160,7 @@ label eawsw_loop:
                     'Zh': Zh,
                     'Mv': Mv,
                     'Em': Em,
+                    'Nm': Nm,
                     'm': m,
                     'c': c,
                     'An': An,

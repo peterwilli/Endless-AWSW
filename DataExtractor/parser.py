@@ -14,7 +14,7 @@ def extract_sentiment(nodes, state = None):
         }
 
     def process_say(node):
-        allowed_lines = ["n", "m", "Rz", "Lo", "Ad", "c", "Ry", "Mv", "Br", "An", "Ip", "Sb", "Wr", "Zh", "Kv", "Ka", "Em"]
+        allowed_lines = ["n", "m", "Rz", "Nm", "Lo", "Ad", "c", "Ry", "Mv", "Br", "An", "Ip", "Sb", "Wr", "Zh", "Kv", "Ka", "Em"]
         info = node.diff_info()
         if info[1] in allowed_lines:
             sentiment = None
@@ -71,7 +71,8 @@ def extract_for_training(nodes, state = None):
         state['last_speaker'] = None
 
     def process_say(character, msg):
-        allowed_lines = ["n", "m", "Rz", "Lo", "Ad", "c", "Ry", "Mv", "Br", "An", "Ip", "Sb", "Wr", "Zh", "Kv", "Ka", "Em"]
+        print('process_say', character, msg)
+        allowed_lines = ["n", "m", "Rz", "Lo", "Nm", "Ad", "c", "Ry", "Mv", "Br", "An", "Ip", "Sb", "Wr", "Zh", "Kv", "Ka", "Em"]
         if character in allowed_lines:
             commands = []
             if character == "c":
@@ -103,8 +104,10 @@ def extract_for_training(nodes, state = None):
     def copy_state_without_messages(state):
         obj = json.loads(json.dumps(state))
         obj['lines'] = []
+        return obj
 
     for node_idx, node in enumerate(nodes): 
+        print(node, node_idx)
         if isinstance(node, renpy.ast.Menu):
             forbidden_menu_items = [
                 "Yes. I want to skip ahead.",
@@ -163,7 +166,7 @@ def extract_for_training(nodes, state = None):
 def parse():
     script_folder = os.path.dirname(os.path.realpath(__file__))
     awsw_path = os.path.join(script_folder, "..", "Angels with Scaly Wings", "game")
-    # awsw_path = os.path.join(script_folder, "test_rpy")
+    awsw_path = os.path.join(script_folder, "test_rpy")
     rpy_files = glob.glob(os.path.join(awsw_path, "*.rpy"))
     with open("training_data.txt", 'w') as training_data_fd:
         with open("sentiment_training_data.txt", 'w') as sentiment_data_fd:
