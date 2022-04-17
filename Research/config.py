@@ -15,5 +15,6 @@ class Config:
         'Mv': 'Maverick',
         'An': 'Anna',
         'Ad': 'Adine',
-        'Sb': 'Sebastian'
+        'Sb': 'Sebastian',
+        'Nm': 'Naomi'
     }
