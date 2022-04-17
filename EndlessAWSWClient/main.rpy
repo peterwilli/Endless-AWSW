@@ -45,6 +45,13 @@ label eawsw_pick_your_poison:
                 { 'cmd': 'scn', 'scn': 'park2' },
                 { 'cmd': 'msg', 'from': 'Ry', 'msg': "Hey!" },
             ]
+        "You're watching Adine training stunt flights at the beach":
+            $ eawsw_state['start_scene'] = 'beach'
+            $ eawsw_state['start_narrative'] = [
+                { 'cmd': 'msg', 'from': 'c', 'msg': "Wow nice looping!" },
+                { 'cmd': 'scn', 'scn': 'beach' },
+                { 'cmd': 'msg', 'from': 'Ad', 'msg': "Thanks! But I have to do much better than this!" },
+            ]
         "You're with Lorem in the forest.":
             $ eawsw_state['start_narrative'] = [
                 { 'cmd': 'scn', 'scn': 'forest1' },
@@ -78,6 +85,13 @@ label eawsw_pick_your_poison:
 label eawsw_empty_warning:
     show maverick angry with dissolve
     Mv "How are dragons supposed to reply to an empty message?!"
+    hide maverick with dissolve
+    pause(0.5)
+    jump eawsw_loop
+
+label eawsw_no_reply_error:
+    show maverick nice with dissolve
+    Mv "Sorry, the AI couldn't form a reply after multiple tries, please try another prompt!"
     hide maverick with dissolve
     pause(0.5)
     jump eawsw_loop
@@ -204,12 +218,16 @@ label eawsw_loop:
                     command_dict = json.loads(json_str)
                     cmds = command_dict['cmds']
                     command_executor.execute_commands(cmds)
-                    if len(cmds) > 0:
-                        eawsw_state['endless_awsw_past'] += [{
-                            'cmd': 'msg',
-                            'from': 'c',
-                            'msg': prompt
-                        }]
+                    
+                    if len(cmds) == 0:
+                        renpy.jump('eawsw_no_reply_error')
+                        return
+
+                    eawsw_state['endless_awsw_past'] += [{
+                        'cmd': 'msg',
+                        'from': 'c',
+                        'msg': prompt
+                    }]
                     eawsw_state['endless_awsw_past'] += cmds
                     strip_past()
                 except urllib2.HTTPError as e:

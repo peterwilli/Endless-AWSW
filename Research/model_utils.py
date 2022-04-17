@@ -121,13 +121,30 @@ def get_dataset(tokenizer, path_train, block_size = 128):
     inject_rp_chance_pct = 0.5
     rp_list = None
     with open('rp_data.txt', 'r') as f:
-        rp_list = f.readlines()
+        rp_list = [json.loads(line) for line in f.readlines()]
         
     def inject_random_rp(batch):
+        last_scene = None
+        last_character = None
+        result = []
+        
+        re_msg = re.compile(r'([a-zA-Z]{1,2})\s"(.*?)"')
         for i, item in enumerate(batch['text']):
             if random.random() <= inject_rp_chance_pct:
-                rp = random.choice(rp_list)
-                batch['text'][i] += rp.strip()
+                if item.startswith("<d>"):
+                    msg_match = re_msg.search(item)
+                    if msg_match is not None:
+                        filtered_rp_list = []
+                        msg_from = msg_match.group(1)
+                        for rp_json in rp_list:
+                            if 'about_character' in rp_json:
+                                if msg_from != rp_json['about_character']:
+                                    filtered_rp_list.append(rp_json)
+                            else:
+                                filtered_rp_list.append(rp_json)
+                        if len(filtered_rp_list) > 0:
+                            rp = random.choice(filtered_rp_list)
+                            batch['text'][i] += rp['cmd'].strip()
         return batch
     
     def parse_variables(batch):
@@ -212,6 +229,7 @@ def get_dataset(tokenizer, path_train, block_size = 128):
         return result
 
     dataset_map_cores = min(multiprocessing.cpu_count(), 1)
+    #dataset_map_cores = 1
     dataset_batch_size = 1000
 
     class AWSWDataset(torch.utils.data.IterableDataset):
