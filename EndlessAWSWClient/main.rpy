@@ -5,6 +5,7 @@ label eawsw_intro:
         "I wish to play endless":
             jump eawsw_server_selection
         "I wish to play normally":
+            hide zhong with dissolve
             jump eawsw_intro_return
 
 label eawsw_server_selection:
@@ -92,7 +93,7 @@ label eawsw_loop:
     python:
         # If you maintain a public server, feel free to add it.
         public_servers = ['https://eawsw_api.emeraldodin.com']
-        save_past_amount = 12
+        save_past_amount = 6
         class CommandExecutor:
             def __init__(self):
                 self.last_scene = eawsw_state['start_scene']
