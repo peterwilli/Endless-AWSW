@@ -16,7 +16,8 @@ interactable_characters = {
     'An': 'Anna',
     'Ad': 'Adine',
     'Sb': 'Sebastian',
-    'Nm': 'Naomi'
+    'Nm': 'Naomi',
+    'Iz': 'Izumi'
 }
 allowed_characters = list(interactable_characters.keys()) + ['c']
 
@@ -30,7 +31,7 @@ def parse():
     re_menu_option = re.compile(r'"(.*?)":')
     with open("training_data.txt", 'w') as training_data_fd:
         with open("sentiment_training_data.txt", 'w') as sentiment_data_fd:
-            blacklist = ["screens.rpy", "status.rpy", "help.rpy", "achievements.rpy", "gallery.rpy"]
+            blacklist = ["screens.rpy", "status.rpy", "help.rpy", "achievements.rpy", "gallery.rpy", "sec.rpy"]
             for rpy_file in rpy_files:
                 file_name = os.path.basename(rpy_file)
                 if not file_name in blacklist:
