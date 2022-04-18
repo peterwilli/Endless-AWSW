@@ -380,6 +380,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             self.results = results
             self.no_grad_masks = self.make_no_grad_masks(0.01)
             self.named_parameters = list(model.named_parameters())
+            random.Random(4).shuffle(self.named_parameters)
             self.did_freeze = False
             
         def on_train_end(self, args, state, control, **kwargs):
