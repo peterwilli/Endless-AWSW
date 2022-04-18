@@ -380,6 +380,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             self.results = results
             self.no_grad_masks = self.make_no_grad_masks(0.01)
             self.named_parameters = list(model.named_parameters())
+            self.did_freeze = False
             
         def on_train_end(self, args, state, control, **kwargs):
             learning_rate_history = [h['learning_rate'] for h in state.log_history if 'learning_rate' in h]
@@ -391,13 +392,18 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             current_step = state.global_step
             # Freeze a part
             freeze_part_layers = False
+            freeze_once = False
             learning_rate = self.optimizer.param_groups[0]['lr']
             if 'freeze_layer_rate' in params:
                 freeze_layer_rate = params['freeze_layer_rate']
                 freeze_part_layers = learning_rate > freeze_layer_rate
             if 'freeze_from_steps' in params:
                 freeze_part_layers = current_step > params['freeze_from_steps']
+            if 'freeze_once' in params:
+                freeze_once = params['freeze_once']
             if self.old_freeze_part_layers is not freeze_part_layers:
+                if freeze_once and self.did_freeze:
+                    return
                 if 'to_freeze_gpt_blocks' in params:
                     param_slice = self.named_parameters
                     for name, param in param_slice:
@@ -415,7 +421,9 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
                     print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (freezing {len(param_slice)} out of {len(self.named_parameters)} layers.)")
                     for name, param in param_slice:
                         param.requires_grad = not freeze_part_layers
-                self.old_freeze_part_layers = freeze_part_layers        
+                self.old_freeze_part_layers = freeze_part_layers   
+                if freeze_part_layers:
+                    self.did_freeze = True     
 
         def make_no_grad_masks(self, model_train_pct):
             masks = []
