@@ -22,7 +22,7 @@ import datasets
 from datasets import load_dataset
 from torch.utils.data import Dataset, DataLoader
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from transformers import AdamW, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup, get_polynomial_decay_schedule_with_warmup
+from transformers import get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup, get_polynomial_decay_schedule_with_warmup
 from transformers import Trainer, TrainingArguments, TrainerCallback
 from config import Config
 import onnx
@@ -317,7 +317,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
     num_epoch = params['num_epoch']
     num_total_steps = num_steps_per_epoch * num_epoch
     num_warmup_steps = num_steps_per_epoch * params['warmup_factor']
-    optimizer = AdamW(model.parameters(), lr=lr)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
     scheduler_str = params['scheduler']
     scheduler = None
     if scheduler_str == "cosine_schedule_with_warmup":
