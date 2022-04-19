@@ -40,56 +40,6 @@ def random_model_folder():
     if not os.path.isdir(models_dir):
         pathlib.Path(models_dir).mkdir(parents=True, exist_ok=True)
     return models_dir
-
-class ModelSeeder:
-    def __init__(self, tokenizer):
-        self.main_model_path = os.path.join("models", "main_gptneo_onnx")
-        if not os.path.exists(os.path.join(self.main_model_path, "model_quant.onnx")):
-            os.system(f"python3 -m transformers.onnx --model='EleutherAI/gpt-neo-125M' --feature=causal-lm-with-past {self.main_model_path} --atol=0.0002")
-            self.optimize_onnx()
-        self.onnx_model_manager = OnnxModelManager(os.path.join(self.main_model_path, "model_quant.onnx"))
-        self.tokenizer = tokenizer
-        self.buffer = []
-        self.done_queue = queue.Queue(maxsize = 10000)
-        self.running = False
-        self.buffer_thread = threading.Thread(target=self.buffer_worker)
-        
-    def start_worker(self):
-        self.running = True
-        self.buffer_thread.start()
-        
-    def stop_worker(self):
-        self.running = False
-        
-    def buffer_worker(self):
-        num_tokens = len(self.tokenizer)
-        while self.running:
-            random_input_id = random.randint(0, num_tokens)
-            output = self.onnx_model_manager.say_raw(self.tokenizer.decode([random_input_id])[0], do_sample=True)
-            self.done_queue.put(output)
-
-    def optimize_onnx(self):
-        model_fp32 = os.path.join(self.main_model_path, "model.onnx")
-        model_quant = os.path.join(self.main_model_path, "model_quant.onnx")
-        model_opt = os.path.join(self.main_model_path, "model-opt.onnx")
-        quantized_model = quantize_dynamic(model_fp32, model_quant, weight_type=QuantType.QUInt8)
-        os.system(f"rm {model_opt}")
-        
-    def seed_model(self, batch):
-        input_ids = []
-        attention_mask = []
-        for i in range(len(batch['input_ids'])):
-            input_ids.append(batch['input_ids'][i])
-            attention_mask.append(batch['attention_mask'][i])
-            # Add a text from the main model
-            output = self.done_queue.get()
-            output = self.tokenizer.encode(output)
-            input_ids.append(output)
-            attention_mask.append([1] * len(output))
-        return {
-            'attention_mask': attention_mask,
-            'input_ids': input_ids
-        }
         
 def content_aware_encode(tokenizer, text) -> [int]:
     tokens = tokenizer.encode(text)
@@ -101,11 +51,9 @@ def content_aware_encode(tokenizer, text) -> [int]:
             new_tokens.append(token)
     return new_tokens
         
-def get_dataset(tokenizer, path_train, block_size = 128):
+def get_dataset(seed, tokenizer, path_train, block_size = 128):
     dataset = load_dataset('text', data_files={'train': path_train, 'test': os.path.join(Config.work_dir, "data_test.txt")})
-    # model_seeder = ModelSeeder(tokenizer)
-    # model_seeder.start_worker()
-        
+    
     def encode(batch):
         result = []
         attention_mask = []
@@ -118,11 +66,12 @@ def get_dataset(tokenizer, path_train, block_size = 128):
             'input_ids': result
         }
     
-    inject_rp_chance_pct = 0.5
+    inject_rp_chance_pct = 1
     rp_list = None
     with open('rp_data.txt', 'r') as f:
         rp_list = [json.loads(line) for line in f.readlines()]
         
+    inject_random_rp_random = random.Random(seed)
     def inject_random_rp(batch):
         last_scene = None
         last_character = None
@@ -130,65 +79,67 @@ def get_dataset(tokenizer, path_train, block_size = 128):
         
         re_msg = re.compile(r'([a-zA-Z]{1,2})\s"(.*?)"')
         for i, item in enumerate(batch['text']):
-            if random.random() <= inject_rp_chance_pct:
+            if inject_random_rp_random.random() <= inject_rp_chance_pct:
                 if item.startswith("<d>"):
                     msg_match = re_msg.search(item)
                     if msg_match is not None:
                         filtered_rp_list = []
                         msg_from = msg_match.group(1)
-                        for rp_json in rp_list:
-                            if 'about_character' in rp_json:
-                                if msg_from != rp_json['about_character']:
-                                    filtered_rp_list.append(rp_json)
-                            else:
-                                filtered_rp_list.append(rp_json)
+                        # for rp_json in rp_list:
+                        #     if 'about_character' in rp_json:
+                        #         if msg_from != rp_json['about_character']:
+                        #             filtered_rp_list.append(rp_json)
+                        #     else:
+                        #         filtered_rp_list.append(rp_json)
+                        filtered_rp_list.append(rp_list[1014])
                         if len(filtered_rp_list) > 0:
-                            rp = random.choice(filtered_rp_list)
+                            rp = inject_random_rp_random.choice(filtered_rp_list)
                             batch['text'][i] += rp['cmd'].strip()
         return batch
     
-    def parse_variables(batch):
+    def gen_parse_variables():
         last_scene = None
         last_character = None
-        result = []
         
-        re_token = re.compile(r'(<.*?>|[^<]*)')
-        re_command = re.compile(r'^<(.*?)>$')
-        re_msg = re.compile(r'([a-zA-Z]{1,2})\s"(.*?)"')
-        
-        for item in batch['text']:
-            current_cmd = None
-            for token in re_token.findall(item):
-                cmd_match = re_command.match(token)
-                if cmd_match is None:
-                    if current_cmd == 'scn':
-                        if not token.startswith("%"):
-                            last_scene = token
-                    elif current_cmd == 'msg':
-                        msg_match = re_msg.match(token)
-                        if msg_match is not None:
-                            msg_from = msg_match.group(1)
-                            if msg_from in Config.interactable_characters:
-                                last_character = msg_from
-                else:
-                    current_cmd = cmd_match.group(1)
-                        
-            if last_scene is not None:
-                item = item.replace("%lastscene", last_scene)
-            if last_character is not None:
-                item = item.replace("%lastcharactercode", last_character)
-                item = item.replace("%lastcharacter", Config.interactable_characters[last_character])
-            if not '%lastcharacter' in item and not '%lastscene' in item:
-                result.append(item)
-        return { 'text': result }
+        def parse_variables(batch):
+            nonlocal last_character, last_scene
+            result = []
+
+            re_token = re.compile(r'(<.*?>|[^<]*)')
+            re_command = re.compile(r'^<(.*?)>$')
+            re_msg = re.compile(r'([a-zA-Z]{1,2})\s"(.*?)"')
+
+            for item in batch['text']:
+                current_cmd = None
+                for token in re_token.findall(item):
+                    cmd_match = re_command.match(token)
+                    if cmd_match is None:
+                        if current_cmd == 'scn':
+                            if not token.startswith("%"):
+                                last_scene = token
+                        elif current_cmd == 'msg':
+                            msg_match = re_msg.match(token)
+                            if msg_match is not None:
+                                msg_from = msg_match.group(1)
+                                if msg_from in Config.interactable_characters:
+                                    last_character = msg_from
+                                else:
+                                    if msg_from != 'c':
+                                        last_character = None
+                    else:
+                        current_cmd = cmd_match.group(1)
+
+                if last_scene is not None:
+                    item = item.replace("%lastscene", last_scene)
+                if last_character is not None:
+                    item = item.replace("%lastcharactercode", last_character)
+                    item = item.replace("%lastcharacter", Config.interactable_characters[last_character])
+                if not '%lastcharacter' in item and not '%lastscene' in item:
+                    result.append(item)
+            return { 'text': result }
+        return parse_variables
 
     def shuffle_groups(batch):
-        # i = 0
-        # result = []
-        # while i < len(batch['text']):
-        #     slice_size = random.randint(2, 10)
-        #     result.append("".join(batch['text'][i:i + slice_size]))
-        #     i = i + slice_size
         result = []
         last_starts_with_player = None
         tmp_list = []
@@ -201,7 +152,8 @@ def get_dataset(tokenizer, path_train, block_size = 128):
                     tmp_list2.append(random.choice(tmp_list))
                     # We need to make a new batch
                     tmp_list = []
-            tmp_list.append(line)                    
+                    
+            tmp_list.append(line)        
             last_starts_with_player = starts_with_player
         i = 0
         while i < len(tmp_list2):
@@ -229,17 +181,16 @@ def get_dataset(tokenizer, path_train, block_size = 128):
         return result
 
     dataset_map_cores = min(multiprocessing.cpu_count(), 1)
-    #dataset_map_cores = 1
+    dataset_map_cores = 1
     dataset_batch_size = 1000
 
     class AWSWDataset(torch.utils.data.IterableDataset):
         def __init__(self, dataset, dataset_type):
             self.current_dataset = dataset
             self.dataset_type = dataset_type
+            self.random = np.random.RandomState(seed)
             self.current_idx = 0
-            # Hack to avoid log spam. Map() doesn't have a way to turn off the logging
-            # See: https://github.com/huggingface/datasets/issues/2651
-            datasets.utils.set_progress_bar_enabled(False)
+            datasets.logging.disable_progress_bar()
             self.shuffle()
 
         def shuffle(self):
@@ -255,13 +206,13 @@ def get_dataset(tokenizer, path_train, block_size = 128):
                 batch_size=dataset_batch_size,
                 num_proc=dataset_map_cores
             )
-            dataset = dataset.shuffle(seed=random.randint(0, 999999))
-            dataset = dataset.map(
-                parse_variables,
-                batched=True,
-                batch_size=dataset_batch_size,
-                num_proc=dataset_map_cores
-            )
+            dataset = dataset.shuffle(seed=self.random.randint(0, 2**32-1))
+            # dataset = dataset.map(
+            #     gen_parse_variables(),
+            #     batched=True,
+            #     batch_size=dataset_batch_size,
+            #     num_proc=1
+            # )
             dataset = dataset.map(
                 encode,
                 batched=True,
@@ -284,7 +235,6 @@ def get_dataset(tokenizer, path_train, block_size = 128):
             return iter(self.mapped_dataset[self.dataset_type])
     
     return {
-        # 'model_seeder': model_seeder,
         'train': AWSWDataset(dataset, 'train')
     }
 
@@ -380,7 +330,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             self.results = results
             self.no_grad_masks = self.make_no_grad_masks(0.01)
             self.named_parameters = list(model.named_parameters())
-            random.Random(4).shuffle(self.named_parameters)
+            self.random.shuffle(self.named_parameters)
             self.did_freeze = False
             
         def on_train_end(self, args, state, control, **kwargs):

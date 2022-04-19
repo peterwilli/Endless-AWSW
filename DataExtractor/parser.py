@@ -26,7 +26,7 @@ def parse():
     awsw_path = os.path.join(script_folder, "..", "Angels with Scaly Wings", "game")
     # awsw_path = os.path.join(script_folder, "test_rpy")
     rpy_files = glob.glob(os.path.join(awsw_path, "*.rpy"))
-    re_say_command = re.compile(r'([A-Za-z]{1,2})\s(.*?)"(.*?)"')
+    re_say_command = re.compile(r'([A-Za-z]{1,2})\s(.*?)"(.*)"')
     re_scene_command = re.compile(r'scene\s([^ ]*)')
     re_menu_option = re.compile(r'"(.*?)":')
     with open("training_data.txt", 'w') as training_data_fd:
