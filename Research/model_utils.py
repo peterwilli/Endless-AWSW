@@ -66,7 +66,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             'input_ids': result
         }
     
-    inject_rp_chance_pct = 1
+    inject_rp_chance_pct = 0.5
     rp_list = None
     with open('rp_data.txt', 'r') as f:
         rp_list = [json.loads(line) for line in f.readlines()]
@@ -76,8 +76,8 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         last_scene = None
         last_character = None
         result = []
+        re_msg = re.compile(r'([A-Za-z]{1,2})\s(.*?)"(.*)"')
         
-        re_msg = re.compile(r'([a-zA-Z]{1,2})\s"(.*?)"')
         for i, item in enumerate(batch['text']):
             if inject_random_rp_random.random() <= inject_rp_chance_pct:
                 if item.startswith("<d>"):
@@ -85,13 +85,12 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                     if msg_match is not None:
                         filtered_rp_list = []
                         msg_from = msg_match.group(1)
-                        # for rp_json in rp_list:
-                        #     if 'about_character' in rp_json:
-                        #         if msg_from != rp_json['about_character']:
-                        #             filtered_rp_list.append(rp_json)
-                        #     else:
-                        #         filtered_rp_list.append(rp_json)
-                        filtered_rp_list.append(rp_list[1014])
+                        for rp_json in rp_list:
+                            if 'about_character' in rp_json:
+                                if msg_from != rp_json['about_character']:
+                                    filtered_rp_list.append(rp_json)
+                            else:
+                                filtered_rp_list.append(rp_json)
                         if len(filtered_rp_list) > 0:
                             rp = inject_random_rp_random.choice(filtered_rp_list)
                             batch['text'][i] += rp['cmd'].strip()
@@ -107,27 +106,31 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
 
             re_token = re.compile(r'(<.*?>|[^<]*)')
             re_command = re.compile(r'^<(.*?)>$')
-            re_msg = re.compile(r'([a-zA-Z]{1,2})\s"(.*?)"')
+            re_msg = re.compile(r'([A-Za-z]{1,2})\s(.*?)"(.*)"')
 
             for item in batch['text']:
                 current_cmd = None
                 for token in re_token.findall(item):
-                    cmd_match = re_command.match(token)
-                    if cmd_match is None:
-                        if current_cmd == 'scn':
-                            if not token.startswith("%"):
-                                last_scene = token
-                        elif current_cmd == 'msg':
-                            msg_match = re_msg.match(token)
-                            if msg_match is not None:
-                                msg_from = msg_match.group(1)
-                                if msg_from in Config.interactable_characters:
-                                    last_character = msg_from
+                    if len(token) > 0:
+                        cmd_match = re_command.match(token)
+                        if cmd_match is None:
+                            if current_cmd == 'scn':
+                                if not token.startswith("%"):
+                                    last_scene = token
+                            elif current_cmd == 'msg':
+                                msg_match = re_msg.match(token)
+                                if msg_match is None: 
+                                    if not '%' in token:
+                                        raise Exception(f"[parse_variables] Message not matched and doesn't contain variables! Item: {item} token: {token}")
                                 else:
-                                    if msg_from != 'c':
-                                        last_character = None
-                    else:
-                        current_cmd = cmd_match.group(1)
+                                    msg_from = msg_match.group(1)
+                                    if msg_from in Config.interactable_characters:
+                                        last_character = msg_from
+                                    else:
+                                        if msg_from != 'c':
+                                            last_character = None
+                        else:
+                            current_cmd = cmd_match.group(1)
 
                 if last_scene is not None:
                     item = item.replace("%lastscene", last_scene)
@@ -141,20 +144,25 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
 
     def shuffle_groups(batch):
         result = []
-        last_starts_with_player = None
+        last_character = None
         tmp_list = []
         tmp_list2 = []
+        re_msg = re.compile(r'([A-Za-z]{1,2})\s(.*?)"(.*)"')
         for i in range(0, len(batch['text'])):
-            line = batch['text'][i]
-            starts_with_player = line.startswith("<p>")
-            if last_starts_with_player is not None:
-                if last_starts_with_player != starts_with_player:
-                    tmp_list2.append(random.choice(tmp_list))
-                    # We need to make a new batch
-                    tmp_list = []
-                    
-            tmp_list.append(line)        
-            last_starts_with_player = starts_with_player
+            line = batch['text'][i].strip()
+            if len(line) > 0:
+                msg_match = re_msg.search(line)
+                if msg_match is None:
+                    raise Exception(f"msg_match None! Line: '{line}'")
+                msg_from = msg_match.group(1)
+                if last_character is not None:
+                    if last_character != msg_from:
+                        tmp_list2.append(random.choice(tmp_list))
+                        # We need to make a new batch
+                        tmp_list = []
+
+                tmp_list.append(line)        
+                last_character = msg_from
         i = 0
         while i < len(tmp_list2):
             slice_size = random.randint(2, 10)
@@ -181,7 +189,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         return result
 
     dataset_map_cores = min(multiprocessing.cpu_count(), 1)
-    dataset_map_cores = 1
+    # dataset_map_cores = 1
     dataset_batch_size = 1000
 
     class AWSWDataset(torch.utils.data.IterableDataset):
@@ -201,18 +209,18 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 num_proc=dataset_map_cores
             )
             dataset = dataset.map(
+                gen_parse_variables(),
+                batched=True,
+                batch_size=dataset_batch_size,
+                num_proc=dataset_map_cores
+            )
+            dataset = dataset.map(
                 shuffle_groups,
                 batched=True,
                 batch_size=dataset_batch_size,
                 num_proc=dataset_map_cores
             )
             dataset = dataset.shuffle(seed=self.random.randint(0, 2**32-1))
-            # dataset = dataset.map(
-            #     gen_parse_variables(),
-            #     batched=True,
-            #     batch_size=dataset_batch_size,
-            #     num_proc=1
-            # )
             dataset = dataset.map(
                 encode,
                 batched=True,
