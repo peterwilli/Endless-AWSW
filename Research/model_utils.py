@@ -67,7 +67,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             'input_ids': result
         }
     
-    inject_rp_chance_pct = 0.25
+    inject_rp_chance_pct = 0.5
     rp_list = None
     with open('rp_data.txt', 'r') as f:
         rp_list = [json.loads(line) for line in f.readlines()]
@@ -158,7 +158,11 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 msg_from = msg_match.group(1)
                 if last_character is not None:
                     if last_character != msg_from:
-                        tmp_list2.append(random.choice(tmp_list))
+                        tmp_list_idxs = list(range(len(tmp_list)))
+                        random.shuffle(tmp_list_idxs)
+                        random_group_count = random.randint(1, len(tmp_list))
+                        tmp_list_idxs = sorted(tmp_list_idxs[:random_group_count])
+                        tmp_list2 += [tmp_list[idx] for idx in tmp_list_idxs]
                         # We need to make a new batch
                         tmp_list = []
 
@@ -198,12 +202,17 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             self.current_dataset = dataset
             self.dataset_type = dataset_type
             self.random = np.random.RandomState(seed)
-            self.current_idx = 0
             datasets.logging.disable_progress_bar()
             self.shuffle()
 
         def shuffle(self):
             dataset = self.current_dataset.map(
+                shuffle_groups,
+                batched=True,
+                batch_size=dataset_batch_size,
+                num_proc=dataset_map_cores
+            )
+            dataset = dataset.map(
                 inject_random_rp,
                 batched=True,
                 batch_size=dataset_batch_size,
@@ -211,12 +220,6 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             )
             dataset = dataset.map(
                 gen_parse_variables(),
-                batched=True,
-                batch_size=dataset_batch_size,
-                num_proc=dataset_map_cores
-            )
-            dataset = dataset.map(
-                shuffle_groups,
                 batched=True,
                 batch_size=dataset_batch_size,
                 num_proc=dataset_map_cores
@@ -229,6 +232,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 num_proc=dataset_map_cores,
                 remove_columns=["text"],
             )
+            self.pre_grouped_dataset = dataset
             self.mapped_dataset = dataset.map(
                 group_texts,
                 batched=True,
