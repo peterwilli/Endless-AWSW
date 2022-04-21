@@ -200,7 +200,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         return result
 
     dataset_map_cores = min(multiprocessing.cpu_count(), 1)
-    dataset_map_cores = 1
+    # dataset_map_cores = 1
     dataset_batch_size = 1000
 
     class AWSWDataset(torch.utils.data.IterableDataset):
