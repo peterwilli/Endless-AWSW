@@ -29,7 +29,13 @@ from config import Config
 import onnx
 from onnx_model_manager import OnnxModelManager
 from onnxruntime.quantization import quantize_dynamic, QuantType
-    
+from reply_processor import ReplyProcessor
+
+re_token = re.compile(r'(<.*?>|[^<]*)')
+re_command = re.compile(r'^<(.*?)>$')
+re_msg = re.compile(r'([A-Za-z]{1,2})\s(.*?)"(.*)"')
+reply_processor = ReplyProcessor()
+
 def get_model(name):
     tokenizer = AutoTokenizer.from_pretrained(name)
     model = AutoModelForCausalLM.from_pretrained(name)
@@ -51,7 +57,7 @@ def content_aware_encode(tokenizer, text) -> [int]:
         else:
             new_tokens.append(token)
     return new_tokens
-        
+    
 def get_dataset(seed, tokenizer, path_train, block_size = 128):
     dataset = load_dataset('text', data_files={'train': path_train, 'test': os.path.join(Config.work_dir, "data_test.txt")})
     
@@ -74,27 +80,33 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         
     inject_random_rp_random = random.Random(seed)
     def inject_random_rp(batch):
-        last_scene = None
-        last_character = None
         result = []
-        re_msg = re.compile(r'([A-Za-z]{1,2})\s(.*?)"(.*)"')
         
         for i, item in enumerate(batch['text']):
             if inject_random_rp_random.random() <= inject_rp_chance_pct:
-                if item.startswith("<d>"):
-                    msg_match = re_msg.search(item)
-                    if msg_match is not None:
-                        filtered_rp_list = []
-                        msg_from = msg_match.group(1)
-                        for rp_json in rp_list:
-                            if 'about_character' in rp_json:
-                                if msg_from != rp_json['about_character']:
-                                    filtered_rp_list.append(rp_json)
-                            else:
+                cmds = reply_processor.string_to_commands(item)
+                msg_from = None
+                for cmd in cmds:
+                    if cmd['cmd'] == 'msg':
+                        if cmd['from'] in Config.interactable_characters:
+                            msg_from = cmd['from']
+                if msg_from is not None:
+                    filtered_rp_list = []
+                    for rp_json in rp_list:
+                        if 'about_character' in rp_json:
+                            if msg_from != rp_json['about_character']:
                                 filtered_rp_list.append(rp_json)
-                        if len(filtered_rp_list) > 0:
-                            rp = inject_random_rp_random.choice(filtered_rp_list)
-                            batch['text'][i] += rp['cmd'].strip()
+                        else:
+                            filtered_rp_list.append(rp_json)
+                    if len(filtered_rp_list) > 0:
+                        rps_categorized = {}
+                        for rp in filtered_rp_list:
+                            if not rp['category'] in rps_categorized:
+                                rps_categorized[rp['category']] = []
+                            rps_categorized[rp['category']].append(rp)
+                        category = inject_random_rp_random.choice(list(rps_categorized.keys()))
+                        rp = inject_random_rp_random.choice(rps_categorized[category])
+                        batch['text'][i] += rp['cmd'].strip()
         return batch
     
     def gen_parse_variables():
@@ -104,10 +116,6 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         def parse_variables(batch):
             nonlocal last_character, last_scene
             result = []
-
-            re_token = re.compile(r'(<.*?>|[^<]*)')
-            re_command = re.compile(r'^<(.*?)>$')
-            re_msg = re.compile(r'([A-Za-z]{1,2})\s(.*?)"(.*)"')
 
             for item in batch['text']:
                 current_cmd = None
@@ -127,9 +135,6 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                                     msg_from = msg_match.group(1)
                                     if msg_from in Config.interactable_characters:
                                         last_character = msg_from
-                                    else:
-                                        if msg_from != 'c':
-                                            last_character = None
                         else:
                             current_cmd = cmd_match.group(1)
 
@@ -140,6 +145,8 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                     item = item.replace("%lastcharacter", Config.interactable_characters[last_character])
                 if not '%lastcharacter' in item and not '%lastscene' in item:
                     result.append(item)
+                else:
+                    raise Exception(f"Stray item: {item}")
             return { 'text': result }
         return parse_variables
 
@@ -148,7 +155,6 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         last_character = None
         tmp_list = []
         tmp_list2 = []
-        re_msg = re.compile(r'([A-Za-z]{1,2})\s(.*?)"(.*)"')
         for i in range(0, len(batch['text'])):
             line = batch['text'][i].strip()
             if len(line) > 0:
@@ -194,7 +200,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         return result
 
     dataset_map_cores = min(multiprocessing.cpu_count(), 1)
-    # dataset_map_cores = 1
+    dataset_map_cores = 1
     dataset_batch_size = 1000
 
     class AWSWDataset(torch.utils.data.IterableDataset):
