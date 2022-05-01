@@ -50,17 +50,9 @@ class OnnxModelManager:
         
     def get_model_input(self, prompt):
         encodings_dict = self.batch_content_aware_encode(prompt)
-        input_ids = np.array(encodings_dict['input_ids'])
-        attention_mask = np.array(encodings_dict['attention_mask'], dtype=np.float32)
-
-        #Empty Past State for generating first word
-        empty_past = []
-        batch_size = input_ids.shape[0]
-        past_shape = [batch_size, 12, 0, 64]
-        for i in range(self.num_layer * 2):
-            empty_past.append(np.zeros(past_shape, dtype=np.float32))
-
-        return input_ids, attention_mask, empty_past
+        input_ids = np.array(encodings_dict['input_ids'], dtype=np.int64)
+        attention_mask = np.array(encodings_dict['attention_mask'], dtype=np.int64)
+        return input_ids, attention_mask
     
     def word_chance(self, x, scale):
         c = 1.0 - (scale * 0.5)
@@ -70,16 +62,13 @@ class OnnxModelManager:
         return x
     
     def say_raw(self, prompt, do_sample = False, reply_as = None) -> str:
-        input_ids, attention_mask, past = self.get_model_input([prompt])
+        input_ids, attention_mask = self.get_model_input([prompt])
         eos_token_id = self.tokenizer.eos_token_id
         batch_size = input_ids.shape[0]
         all_token_ids = input_ids
         is_in_message = False
         for step in range(self.max_length):
             inputs = {}
-            for i in range(0, self.num_layer):
-                inputs[f'past_key_values.{i}.key'] = np.ascontiguousarray(past[i * 2])
-                inputs[f'past_key_values.{i}.value'] = np.ascontiguousarray(past[(i * 2) + 1])
             inputs['attention_mask'] = attention_mask
             inputs['input_ids'] = input_ids
             outputs = self.model.run(None, inputs)                
@@ -114,13 +103,8 @@ class OnnxModelManager:
                 next_tokens = np.argmax(next_token_logits, axis=-1)
             all_token_ids = np.concatenate((all_token_ids, np.expand_dims(next_tokens, -1)), axis=-1)
             # Update input_ids, attention_mask and past
-            input_ids = next_tokens.reshape((batch_size, 1))   
-            attention_mask = np.ones((batch_size, 1), dtype=np.float32)
-
-            past = []
-            for i in range(self.num_layer * 2):
-                past_i = outputs[i + 1]
-                past.append(past_i)
+            input_ids = all_token_ids
+            attention_mask = np.ones((batch_size, 1), dtype=np.int64)
                 
             if eos_token_id in next_tokens:
                 break
