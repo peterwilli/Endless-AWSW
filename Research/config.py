@@ -1,7 +1,8 @@
 import os
 
 class Config:
-    base_model_name = "distilgpt2"
+    base_model_name = "EleutherAI/gpt-neo-125M"
+    base_model_basename = base_model_name.split("/")[1]
     work_dir = os.path.join("/opt", "awsw")
     interactable_characters = {
         'Ry': 'Remy',
@@ -19,3 +20,4 @@ class Config:
         'Sb': 'Sebastian',
         'Nm': 'Naomi'
     }
+    
