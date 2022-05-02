@@ -411,7 +411,6 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             self.old_freeze_part_layers = None
             self.optimizer = optimizer
             self.results = results
-            self.no_grad_masks = self.make_no_grad_masks(0.01)
             self.named_parameters = list(model.named_parameters())
             self.random.shuffle(self.named_parameters)
             self.did_freeze = False
@@ -458,73 +457,6 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
                 self.old_freeze_part_layers = freeze_part_layers   
                 if freeze_part_layers:
                     self.did_freeze = True     
-
-        def make_no_grad_masks(self, model_train_pct):
-            masks = []
-            for p in model.parameters():
-                mask = torch.zeros(*p.shape)
-                flattened_view = torch.flatten(mask)
-                to_pick_len = math.floor(len(flattened_view) * model_train_pct)
-                flattened_view[0:to_pick_len] = 1
-                mask = mask.int().to(model.device)
-                masks.append(mask)
-            return masks
-        
-        # def on_before_optimizer_step(self, args, state, control, **kwargs):
-        #     for i, w in enumerate(model.parameters()):    
-        #         if w.grad is not None:
-        #             w.grad *= self.no_grad_masks[i]
-                    
-    class AWSWTrainer(Trainer):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            main_model, _ = get_model("EleutherAI/gpt-neo-125M")
-            main_model.to(model.device)
-            self.main_model = main_model
-            self.params_len = len(list(model.parameters()))
-            self.avg_loss_tries = 50
-            self.last_avg_loss = None
-            self.tick = 0
-            self.mix_rate = 0.1
-            self.loss_log = []
-                
-        def compute_loss(self, model, inputs, return_outputs=False):
-            with torch.no_grad():
-                for p1, p2 in zip(model.parameters(), self.main_model.parameters()):
-                    diff = abs(p1.data - p2.data)
-                    diff_mean = diff.mean()
-                    learning_rate = optimizer.param_groups[0]['lr']
-                    p1.data = torch.lerp(p1.data, p2.data, self.mix_rate)
-                    
-            outputs = model(**inputs)
-            loss = outputs.get("loss")
-            self.loss_log.append(loss.detach().cpu().numpy())
-            avg_loss = 0
-            if len(self.loss_log) == self.avg_loss_tries:
-                avg_loss = sum(self.loss_log) / len(self.loss_log)
-                if self.last_avg_loss is None:
-                    self.last_avg_loss = avg_loss
-                else:
-                    #avg_loss_diff = abs(avg_loss - self.last_avg_loss)
-                    #if avg_loss_diff > 0.0001:
-                    if self.last_avg_loss < avg_loss:
-                        # Loss gone up, time to stop mixing so much
-                        self.mix_rate = max(0.0001, self.mix_rate * 0.5)
-                    else:
-                        # Loss gone down, we can keep mixing
-                        self.mix_rate = min(0.5, self.mix_rate * 1.5)
-                    self.last_avg_loss = avg_loss
-                self.loss_log.pop(0)
-            if not 'model_closeness_loss' in results:
-                results['model_closeness_loss'] = []
-            if not 'mix_rate' in results:
-                results['mix_rate'] = []
-            if not 'avg_loss' in results:
-                results['avg_loss'] = []
-            results['avg_loss'].append(avg_loss)
-            results['mix_rate'].append(self.mix_rate)
-            results['model_closeness_loss'].append(diff_mean.cpu().numpy())
-            return (loss, outputs) if return_outputs else loss
                 
     def train(model, dataset, trainer_callback):
         training_args = TrainingArguments(
@@ -533,7 +465,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             per_device_train_batch_size=batch_size,
             per_device_eval_batch_size=batch_size,
             num_train_epochs=num_epoch,
-            logging_steps=math.floor(max(num_total_steps, 100) / min(num_total_steps, 100)),
+            logging_steps=math.floor(max(num_total_steps, 100) / 100),
             save_total_limit=2,
             log_level="error",
             save_strategy = "steps" if params['save_model'] else "no"
