@@ -3,9 +3,11 @@ import re
 import logging
 import numpy as np
 import onnxruntime as ort
-import torch
 import random
+import os
 import math
+import sys
+from validated_reply_buffer import ValidatedReplyBuffer, ValidationException
 
 class OnnxModelManager:
     def __init__(self, path = None, model = None, tokenizer = None, device = None):
@@ -23,14 +25,14 @@ class OnnxModelManager:
             
     def normalize(self, x):
         x = abs(np.min(x)) + x
-        return x / x.sum(axis=0,keepdims=1)
+        return x / x.sum(axis=0, keepdims=1)
         
     def load_model(self):
-        self.tokenizer = AutoTokenizer.from_pretrained('EleutherAI/gpt-neo-125M')
+        self.tokenizer = AutoTokenizer.from_pretrained(os.path.dirname(self.path))
         self.tokenizer.padding_side = "right"
         self.tokenizer.pad_token = self.tokenizer.eos_token
         self.model = ort.InferenceSession(self.path)
-        
+
     def batch_content_aware_encode(self, texts) -> dict:
         encodings_dict = self.tokenizer.batch_encode_plus(texts, padding=True)
         new_batch = {
@@ -61,23 +63,26 @@ class OnnxModelManager:
             c *= scale
         return x
     
-    def say_raw(self, prompt, do_sample = False, reply_as = None) -> str:
+    def say_raw(self, prompt, do_sample = False) -> str:
         input_ids, attention_mask = self.get_model_input([prompt])
         eos_token_id = self.tokenizer.eos_token_id
         batch_size = input_ids.shape[0]
-        all_token_ids = input_ids
-        is_in_message = False
+        validated_reply_buffer = ValidatedReplyBuffer()
+        for t in prompt:
+            validated_reply_buffer.add_token(t, is_computer_generated = False)
         for step in range(self.max_length):
             inputs = {}
             inputs['attention_mask'] = attention_mask
             inputs['input_ids'] = input_ids
-            outputs = self.model.run(None, inputs)                
-            next_token_logits = outputs[0][:, -1, :]
-            
-            if do_sample:
+            print("sex", inputs['input_ids'].shape, file=sys.stderr)
+            outputs = self.model.run(None, inputs)
+            sample_tries_left = 2
+            while True:    
+                amount_word_samples = 10
+                next_token_logits = outputs[0][:, -1, :]
                 noise = np.random.uniform(low = 0.9, high = 1, size = next_token_logits.shape)
                 next_token_logits = next_token_logits * noise
-                next_tokens = np.argpartition(-next_token_logits, 10).flatten()[:10]
+                next_tokens = np.argpartition(-next_token_logits, amount_word_samples).flatten()[:amount_word_samples]
                 chances = next_token_logits.flatten()[next_tokens]
                 chances = self.normalize(chances)
                 chances_list = []
@@ -88,31 +93,55 @@ class OnnxModelManager:
                     })
                 chances_list.sort(key=lambda x: x['c'], reverse=True)
                 dyn_chance = 0.0
-                if is_in_message:
+                if validated_reply_buffer.in_message:
                     dyn_chance = 0.5
-                new_chances = np.linspace(0, 1, 10)
+                new_chances = np.linspace(0, 1, amount_word_samples)
                 self.word_chance(new_chances, dyn_chance)
-                if is_in_message:
+                if validated_reply_buffer.in_message:
                     for i in range(len(new_chances)):
                         new_chances[i] = new_chances[i] * chances_list[i]['c']
                 selection = random.choices(chances_list, weights=new_chances, k=1)[0]['i']
+                if selection == self.tokenizer.eos_token_id:
+                    # We end at eos_token as validated_reply_buffer doesn't track this token
+                    return validated_reply_buffer.tokens
                 next_tokens = np.array([selection])
-                if '"' in self.tokenizer.decode(next_tokens):
-                    is_in_message = not is_in_message
-            else:
-                next_tokens = np.argmax(next_token_logits, axis=-1)
-            all_token_ids = np.concatenate((all_token_ids, np.expand_dims(next_tokens, -1)), axis=-1)
+                token_str = self.tokenizer.decode(next_tokens)
+                old_tokens = validated_reply_buffer.tokens
+                try:
+                    should_stop = False
+                    for t in token_str:
+                        if validated_reply_buffer.add_token(t, is_computer_generated = True) == 1:
+                            should_stop = True
+                            if len(validated_reply_buffer.tokens) - len(prompt) > 3:
+                                return validated_reply_buffer.tokens
+                            else:
+                                break
+                    break
+                except ValidationException as e:
+                    logging.error(e)
+                    logging.warn(f"Validation exception with last tokens {validated_reply_buffer.tokens} (retrying generate with last known working tokens {old_tokens})...")
+                    validated_reply_buffer = ValidatedReplyBuffer(old_tokens)
+                sample_tries_left -= 1
+                if sample_tries_left == 0:
+                    logging.warning("Can't find valid samples for message!")
+                    return None
+            # else:
+            #     next_tokens = np.argmax(next_token_logits, axis=-1)
             # Update input_ids, attention_mask and past
-            input_ids = all_token_ids
-            attention_mask = np.ones((batch_size, 1), dtype=np.int64)
-                
+            input_ids = np.array(self.tokenizer.encode(validated_reply_buffer.tokens), dtype=np.int64)
+            input_ids = input_ids[np.newaxis, ...]
+            print(input_ids, file=sys.stderr)
+            attention_mask = np.ones((batch_size, input_ids.shape[1]), dtype=np.int64)
             if eos_token_id in next_tokens:
                 break
-        return self.tokenizer.decode(all_token_ids[0], skip_special_tokens=False)
+        return validated_reply_buffer.tokens
     
     def say(self, past, prompt, do_sample=False) -> str:
         prompt = f'{past}<p><msg>c "{prompt}"{self.reply_prefix}'
-        return self.say_raw(prompt, do_sample = do_sample)[len(prompt):].strip()
+        raw_reply = self.say_raw(prompt, do_sample = do_sample)
+        if raw_reply is None:
+            return None
+        return raw_reply[len(prompt):].strip()
     
 if __name__ == "__main__":
     manager = OnnxModelManager("models/awsw_onnx/model_quant.onnx")

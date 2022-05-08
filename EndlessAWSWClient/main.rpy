@@ -125,6 +125,13 @@ label eawsw_loop:
         # If you maintain a public server, feel free to add it.
         public_servers = ['https://eawsw_api.emeraldodin.com']
         save_past_amount = 6
+
+        def set_bit(value, bit):
+            return value | (1 << bit)
+
+        def clear_bit(value, bit):
+            return value & ~(1 << bit)
+
         class CommandExecutor:
             def __init__(self):
                 self.last_scene = eawsw_state['start_scene']
@@ -220,9 +227,13 @@ label eawsw_loop:
             elif prompt == "version":
                 renpy.jump("eawsw_version")
             else:
+                mods = 0
+                if eawsw_naomi_installed:
+                    mods = set_bit(mods, 0)
                 query = urllib.urlencode({
                     'past': json.dumps(eawsw_state['endless_awsw_past']),
-                    'prompt': prompt
+                    'prompt': prompt,
+                    'mods': mods
                 })
                 selected_server = None
                 if persistent.eawsw_server is None:

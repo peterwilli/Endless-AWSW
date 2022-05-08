@@ -459,13 +459,17 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
                     self.did_freeze = True     
                 
     def train(model, dataset, trainer_callback):
+        num_log_steps = 100
+        logging_steps = math.floor(max(num_total_steps, num_log_steps) / num_log_steps)
+        print(f"train -> logging_steps: {logging_steps}")
+        
         training_args = TrainingArguments(
             params['model_folder'],
             seed=params['seed'],
             per_device_train_batch_size=batch_size,
             per_device_eval_batch_size=batch_size,
             num_train_epochs=num_epoch,
-            logging_steps=math.floor(max(num_total_steps, 100) / 100),
+            logging_steps=1,
             save_total_limit=2,
             log_level="error",
             save_strategy = "steps" if params['save_model'] else "no"

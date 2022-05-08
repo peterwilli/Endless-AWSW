@@ -35,6 +35,9 @@ allowed_characters = {
     "Sb": "Sebastian",
     "Zh": "Zhong",
 }
+blocked_characters_solitary_mind = {
+    "Nm": "Naomi"
+}
 # Add self
 allowed_characters.update({
     "n": "Backstory",
@@ -78,13 +81,14 @@ def has_valid_bracket_vars(text) -> bool:
     return True
 
 class ValidatedReplyBuffer:
-    def __init__(self, initial_state: str = None):
+    def __init__(self, initial_state: str = None, mods = 0):
         self.tokens = ""
         self.last_cmd = None
         self.last_side = None
         self.last_character = None
         self.expect_new_tokens(tokens_to_expect['cmd_p_or_d'])
         self.in_message = False
+        self.mods = mods
         if initial_state is not None:
             for t in initial_state:
                 self.add_token(t, False)
@@ -163,11 +167,17 @@ class ValidatedReplyBuffer:
                             raise ValidationException("AI cannot respond as player!")
                         if not character in allowed_characters:
                             raise ValidationException(f"add_token: character '{character}' not in allowed_characters!")
+                        if not self.installed_mod(0):
+                            if character in blocked_characters_solitary_mind:
+                                raise ValidationException(f"add_token: character '{character}' is only available in 'A Solitary Mind'!")
                         self.last_character = character
                         self.expect_new_tokens(['"'])
                     else:
                         self.expect_new_tokens([re_alphanumeric_whitespace])
         return 0
+
+    def installed_mod(self, index: int) -> bool:
+        return self.mods & (1 << 0)
 
     def tokens_last_index(self, tokens: str) -> int:
         return self.tokens.rfind(tokens)
