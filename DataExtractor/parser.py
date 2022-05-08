@@ -3,22 +3,32 @@ import re
 import glob
 
 interactable_characters = {
-    'Ry': 'Remy',
-    'Lo': 'Lorem',
-    'Ip': 'Ipsum',
-    'Br': 'Bryce',
-    'Em': 'Emera',
-    'Ka': 'Katsuharu',
-    'Rz': 'Reza',
-    'Kv': 'Kevin',
-    'Zh': 'Zhong',
-    'Mv': 'Maverick',
-    'An': 'Anna',
-    'Ad': 'Adine',
-    'Sb': 'Sebastian',
-    'Nm': 'Naomi',
-    'Iz': 'Izumi'
+    "Ad": "Adine",
+    "An": "Anna",
+    "Br": "Bryce",
+    "Dm": "Damion",
+    "Em": "Emera",
+    "Ip": "Ipsum",
+    "Iz": "Izumi",
+    "Ka": "Katsuharu",
+    "Kv": "Kevin",
+    "Lo": "Lorem",
+    "Mv": "Maverick",
+    "Nm": "Naomi",
+    "Ry": "Remy",
+    "Rz": "Reza",
+    "Sb": "Sebastian",
+    "Zh": "Zhong",
 }
+
+# def sort_dict(dict):
+#     sorted_dict = {}
+#     for key in sorted(list(dict)):
+#         sorted_dict[key] = dict[key]
+#     return sorted_dict
+
+# print(sort_dict(interactable_characters))
+
 allowed_characters = list(interactable_characters.keys()) + ['c']
 
 def parse():
@@ -60,6 +70,9 @@ def parse():
                                 say_command_match = re_say_command.match(line)
                                 if say_command_match is not None:
                                     msg_from = say_command_match.group(1)
+                                    # This is actually Zhong
+                                    if msg_from == "St":
+                                        msg_from = "Zh"
                                     if msg_from in allowed_characters:
                                         msg_emote = say_command_match.group(2)
                                         msg_content = say_command_match.group(3)

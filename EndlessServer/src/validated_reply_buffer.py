@@ -18,26 +18,30 @@ allowed_commands = [
     "d"
 ]
 allowed_characters = {
-    'c': 'Player',
-    'Ry': 'Remy',
-    'Lo': 'Lorem',
-    'Ip': 'Ipsum',
-    'Br': 'Bryce',
-    'Wr': 'Unknown name',
-    'Em': 'Emera',
-    'Ka': 'Katsuharu',
-    'Rz': 'Reza',
-    'Kv': 'Kevin',
-    'Zh': 'Zhong',
-    'm': 'Narrator',
-    'n': 'Back Story',
-    'Mv': 'Maverick',
-    'An': 'Anna',
-    'Ad': 'Adine',
-    'Sb': 'Sebastian',
-    'Nm': 'Naomi'
+    "Ad": "Adine",
+    "An": "Anna",
+    "Br": "Bryce",
+    "Dm": "Damion",
+    "Em": "Emera",
+    "Ip": "Ipsum",
+    "Iz": "Izumi",
+    "Ka": "Katsuharu",
+    "Kv": "Kevin",
+    "Lo": "Lorem",
+    "Mv": "Maverick",
+    "Nm": "Naomi",
+    "Ry": "Remy",
+    "Rz": "Reza",
+    "Sb": "Sebastian",
+    "Zh": "Zhong",
 }
-allowed_scenes = ['park2', 'loremapt', 'office', 'black', 'bare', 'pad', 'bareblur', 'bareblur2', 'facin3', 'alley', 'fb', 'farm', 'town4', 'adineapt', 'corridor', 'emeraroom', 'o4', 'facin2', 'o2', 'park3', 'np2x', 'np1x', 'buildingoutside', 'np3', 'cave', 'o', 'remyapt', 'cafe', 'viewingspot', 'np1r', 'hallway', 'np2y', 'np1n', 'town2', 'stairs', 'darker', 'library', 'forest2', 'school', 'forest1', 'storex', 'np3x', 'beachx', 'padx', 'np4', 'fac1', 'facin', 'town3', 'np1', 'stars', 'town6', 'deadbody', 'office2', 'cave2', 'table', 'farm2', 'hatchery', 'testingroom', 'gate', 'town7', 'fac12', 'adineapt2', 'ecknaomiapt01', 'eckswimmingpool', 'ecknewtownout2', 'eckswimmingpool2', 'eckoldbiolab', 'beach', 'eckwatersky01', 'eckunderwatertunnel', 'eckbeachb', 'ecknaomiapt03', 'ecknaomiaptbalcony', 'eckpolicedeptstairs1', 'eckplayeraptextra1', 'town1', 'eckkitchenx']
+# Add self
+allowed_characters.update({
+    "n": "Backstory",
+    "m": "Narrator",
+    "c": "Player"
+})
+allowed_scenes = ['park2', 'loremapt', 'office', 'black', 'bare', 'pad', 'bareblur', 'bareblur2', 'facin3', 'alley', 'fb', 'farm', 'town4', 'adineapt', 'corridor', 'emeraroom', 'o4', 'facin2', 'o2', 'park3', 'np2x', 'np1x', 'buildingoutside', 'np3', 'store2', 'cave', 'o', 'remyapt', 'cafe', 'viewingspot', 'np1r', 'hallway', 'np2y', 'np1n', 'town2', 'stairs', 'darker', 'store', 'library', 'forest2', 'school', 'forest1', 'storex', 'np3x', 'beachx', 'padx', 'np4', 'fac1', 'facin', 'town3', 'np1', 'stars', 'town6', 'deadbody', 'forestx', 'office2', 'cave2', 'table', 'farm2', 'hatchery', 'testingroom', 'gate', 'town7', 'fac12', 'adineapt2', 'ecknaomiapt01', 'eckswimmingpool', 'ecknewtownout2', 'eckswimmingpool2', 'eckoldbiolab', 'beach', 'eckwatersky01', 'eckunderwatertunnel', 'eckbeachb', 'ecknaomiapt03', 'ecknaomiaptbalcony', 'eckpolicedeptstairs1', 'eckplayeraptextra1', 'town1', 'eckkitchenx']
 
 re_token = re.compile(r'(<.*?>|[^<]*)')
 re_command = re.compile(r'^<(.*?)>$')

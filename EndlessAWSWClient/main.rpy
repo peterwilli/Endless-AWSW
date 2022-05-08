@@ -130,43 +130,46 @@ label eawsw_loop:
                 self.last_scene = eawsw_state['start_scene']
                 self.last_character = None
                 self.character_mapping = {
-                    'Ry': 'remy',
-                    'Lo': 'lorem',
-                    'Br': 'bryce',
-                    'Wr': None,
-                    'Ka': 'katsu',
-                    'Rz': 'reza',
-                    'Kv': 'kevin',
-                    'Mv': 'maverick',
-                    'Zh': 'zhong',
-                    'Em': 'emera',
-                    'm': None,
-                    'An': 'anna',
-                    'Ad': 'adine',
-                    'Sb': 'sebastian',
-                    'Ip': 'ipsum',
-                    'Nm': 'naomi'
+                    "Ad": "adine",
+                    "An": "anna",
+                    "Br": "bryce",
+                    "Dm": "damion",
+                    "Em": "emera",
+                    "Ip": "ipsum",
+                    "Iz": "izumi",
+                    "Ka": "katsu",
+                    "Kv": "kevin",
+                    "Lo": "lorem",
+                    "Mv": "maverick",
+                    "Nm": "naomi",
+                    "Ry": "remy",
+                    "Rz": "reza",
+                    "Sb": "sebastian",
+                    "Zh": "zhong"
                 }
-
                 self.talk_functions = {
-                    'Ry': Ry,
-                    'Lo': Lo,
-                    'Ip': Ip,
-                    'Br': Br,
-                    'Wr': Wr,
-                    'Ka': Ka,
-                    'Rz': Rz,
-                    'Kv': Kv,
-                    'Zh': Zh,
-                    'Mv': Mv,
-                    'Em': Em,
-                    'Nm': Nm,
-                    'm': m,
-                    'c': c,
-                    'An': An,
-                    'Ad': Ad,
-                    'Sb': Sb
+                    "Ad": Ad,
+                    "An": An,
+                    "Br": Br,
+                    "Dm": Dm,
+                    "Em": Em,
+                    "Ip": Ip,
+                    "Iz": Iz,
+                    "Ka": Ka,
+                    "Kv": Kv,
+                    "Lo": Lo,
+                    "Mv": Mv,
+                    "Nm": Nm,
+                    "Ry": Ry,
+                    "Rz": Rz,
+                    "Sb": Sb,
+                    "Zh": Zh
                 }
+                # Add self
+                self.talk_functions.update({
+                    'm': m,
+                    'c': c
+                })
 
             def execute_commands(self, cmds):
                 for item in cmds:
@@ -176,12 +179,14 @@ label eawsw_loop:
                     elif cmd == "msg":
                         msg_from = item['from']
                         msg = item['msg']
-                        # Todo custom expressions
+                        # TODO: custom expressions
                         if msg_from in self.character_mapping:
                             if self.character_mapping[msg_from] is None:
                                 self.last_character = None
                             else:
                                 self.last_character = '%s normal b' % (self.character_mapping[msg_from])
+                        else:
+                            self.last_character = None
                         renpy.scene()
                         if self.last_scene is not None:
                             renpy.show(self.last_scene)

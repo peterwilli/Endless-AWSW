@@ -5,19 +5,20 @@ class Config:
     base_model_basename = base_model_name.split("/")[1]
     work_dir = os.path.join("/opt", "awsw")
     interactable_characters = {
-        'Ry': 'Remy',
-        'Lo': 'Lorem',
-        'Ip': 'Ipsum',
-        'Br': 'Bryce',
-        'Em': 'Emera',
-        'Ka': 'Katsuharu',
-        'Rz': 'Reza',
-        'Kv': 'Kevin',
-        'Zh': 'Zhong',
-        'Mv': 'Maverick',
-        'An': 'Anna',
-        'Ad': 'Adine',
-        'Sb': 'Sebastian',
-        'Nm': 'Naomi'
+        "Ad": "Adine",
+        "An": "Anna",
+        "Br": "Bryce",
+        "Dm": "Damion",
+        "Em": "Emera",
+        "Ip": "Ipsum",
+        "Iz": "Izumi",
+        "Ka": "Katsuharu",
+        "Kv": "Kevin",
+        "Lo": "Lorem",
+        "Mv": "Maverick",
+        "Nm": "Naomi",
+        "Ry": "Remy",
+        "Rz": "Reza",
+        "Sb": "Sebastian",
+        "Zh": "Zhong",
     }
-    
