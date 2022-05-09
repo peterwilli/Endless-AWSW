@@ -74,7 +74,6 @@ class OnnxModelManager:
             inputs = {}
             inputs['attention_mask'] = attention_mask
             inputs['input_ids'] = input_ids
-            print("sex", inputs['input_ids'].shape, file=sys.stderr)
             outputs = self.model.run(None, inputs)
             sample_tries_left = 2
             while True:    
@@ -101,39 +100,31 @@ class OnnxModelManager:
                     for i in range(len(new_chances)):
                         new_chances[i] = new_chances[i] * chances_list[i]['c']
                 selection = random.choices(chances_list, weights=new_chances, k=1)[0]['i']
-                if selection == self.tokenizer.eos_token_id:
+                if selection == eos_token_id:
                     # We end at eos_token as validated_reply_buffer doesn't track this token
                     return validated_reply_buffer.tokens
                 next_tokens = np.array([selection])
                 token_str = self.tokenizer.decode(next_tokens)
                 old_tokens = validated_reply_buffer.tokens
                 try:
-                    should_stop = False
                     for t in token_str:
                         if validated_reply_buffer.add_token(t, is_computer_generated = True) == 1:
-                            should_stop = True
-                            if len(validated_reply_buffer.tokens) - len(prompt) > 3:
-                                return validated_reply_buffer.tokens
-                            else:
-                                break
+                            return validated_reply_buffer.tokens
                     break
                 except ValidationException as e:
                     logging.error(e)
                     logging.warn(f"Validation exception with last tokens {validated_reply_buffer.tokens} (retrying generate with last known working tokens {old_tokens})...")
                     validated_reply_buffer = ValidatedReplyBuffer(old_tokens)
-                sample_tries_left -= 1
-                if sample_tries_left == 0:
-                    logging.warning("Can't find valid samples for message!")
-                    return None
+                    sample_tries_left -= 1
+                    if sample_tries_left == 0:
+                        logging.warning("Can't find valid samples for message!")
+                        return None
             # else:
             #     next_tokens = np.argmax(next_token_logits, axis=-1)
             # Update input_ids, attention_mask and past
             input_ids = np.array(self.tokenizer.encode(validated_reply_buffer.tokens), dtype=np.int64)
             input_ids = input_ids[np.newaxis, ...]
-            print(input_ids, file=sys.stderr)
             attention_mask = np.ones((batch_size, input_ids.shape[1]), dtype=np.int64)
-            if eos_token_id in next_tokens:
-                break
         return validated_reply_buffer.tokens
     
     def say(self, past, prompt, do_sample=False) -> str:

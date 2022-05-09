@@ -24,13 +24,14 @@ def get_command():
     reply = model_manager.say(past_str, prompt, do_sample=True)
     if reply is not None:
       logging.debug(f"Reply before processing: {reply}")
-      result = reply_processor.post_process_reply(model_manager.reply_prefix + reply)
-      if len(result) > 0 and result[-1]['cmd'] == 'scn':
-        # No trail scenes
-        result = []
-        break
+      result = reply_processor.string_to_commands(model_manager.reply_prefix + reply)
+      logging.debug(f"Reply after processing: {result}")
+      if len(result) > 0 and result[-1]['cmd'] != 'scn':
+        return {
+          'cmds': result
+        }
   return {
-    'cmds': result
+    'cmds': []
   }
 
 if __name__ == '__main__':

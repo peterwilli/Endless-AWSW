@@ -1,14 +1,13 @@
 from transformers import Trainer, TrainingArguments
 import re
 import sys
-import Levenshtein
 import logging
 
 class ReplyProcessor:
     def __init__(self):
         self.re_token = re.compile(r'(<.*?>|[^<]*)')
         self.re_command = re.compile(r'^<(.*?)>$')
-        self.re_msg = re.compile(r'([a-zA-Z]{1,2})\s"(.*?)"')
+        self.re_msg = re.compile(r'([A-Za-z]{1,2})\s(.*?)"(.*)"')
 
     def commands_to_string(self, commands) -> str:
         result = []
@@ -27,7 +26,7 @@ class ReplyProcessor:
             result.append(result_item)
         return "".join(result)
 
-    def post_process_reply(self, reply):
+    def string_to_commands(self, reply):
         result = []
         current_cmd = None
         for token in self.re_token.findall(reply):
@@ -41,7 +40,7 @@ class ReplyProcessor:
                     if msg_match is not None:
                         msg_from = msg_match.group(1)
                         current_cmd['from'] = msg_from
-                        current_cmd['msg'] = msg_match.group(2)
+                        current_cmd['msg'] = msg_match.group(3)
                         result.append(current_cmd)
             else:
                 current_cmd = {

@@ -40,7 +40,7 @@ class ReplyProcessor:
                     if msg_match is not None:
                         msg_from = msg_match.group(1)
                         current_cmd['from'] = msg_from
-                        current_cmd['msg'] = msg_match.group(2)
+                        current_cmd['msg'] = msg_match.group(3)
                         result.append(current_cmd)
             else:
                 current_cmd = {
