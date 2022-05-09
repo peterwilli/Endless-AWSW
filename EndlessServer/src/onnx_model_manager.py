@@ -63,11 +63,13 @@ class OnnxModelManager:
             c *= scale
         return x
     
-    def say_raw(self, prompt, do_sample = False) -> str:
+    def say_raw(self, prompt, do_sample = False, mods = 0) -> str:
         input_ids, attention_mask = self.get_model_input([prompt])
         eos_token_id = self.tokenizer.eos_token_id
         batch_size = input_ids.shape[0]
-        validated_reply_buffer = ValidatedReplyBuffer()
+        validated_reply_buffer = ValidatedReplyBuffer(
+            mods = mods
+        )
         for t in prompt:
             validated_reply_buffer.add_token(t, is_computer_generated = False)
         for step in range(self.max_length):
@@ -127,9 +129,9 @@ class OnnxModelManager:
             attention_mask = np.ones((batch_size, input_ids.shape[1]), dtype=np.int64)
         return validated_reply_buffer.tokens
     
-    def say(self, past, prompt, do_sample=False) -> str:
+    def say(self, past, prompt, do_sample = False, mods = 0) -> str:
         prompt = f'{past}<p><msg>c "{prompt}"{self.reply_prefix}'
-        raw_reply = self.say_raw(prompt, do_sample = do_sample)
+        raw_reply = self.say_raw(prompt, do_sample = do_sample, mods = mods)
         if raw_reply is None:
             return None
         return raw_reply[len(prompt):].strip()

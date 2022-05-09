@@ -7,6 +7,7 @@ class AWSWMod(Mod):
         return ("EndlessAWSW", "1.0", "EmeraldOdin")
 
     def mod_load(self):
+        modast.set_renpy_global("eawsw_naomi_installed", modinfo.has_mod("A Solitary Mind"))
         ml = modinfo.get_mods()["MagmaLink"].import_ml()
         ml.find_label("seccont") \
             .search_say("He seemed a lot smaller than Remy, and when he somewhat") \

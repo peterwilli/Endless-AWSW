@@ -19,9 +19,10 @@ def get_command():
   logging.error(past)
   past_str = reply_processor.commands_to_string(past)
   prompt = request.args.get("prompt")
+  mods = int(request.args.get("mods")) or 0
   result = []
   for i in range(command_retries):
-    reply = model_manager.say(past_str, prompt, do_sample=True)
+    reply = model_manager.say(past_str, prompt, do_sample = True, mods = mods)
     if reply is not None:
       logging.debug(f"Reply before processing: {reply}")
       result = reply_processor.string_to_commands(model_manager.reply_prefix + reply)

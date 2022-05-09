@@ -89,6 +89,7 @@ class ValidatedReplyBuffer:
         self.expect_new_tokens(tokens_to_expect['cmd_p_or_d'])
         self.in_message = False
         self.mods = mods
+        logging.debug(f"Has Naomi mod: {self.installed_mod(0)}")
         if initial_state is not None:
             for t in initial_state:
                 self.add_token(t, False)
@@ -177,7 +178,7 @@ class ValidatedReplyBuffer:
         return 0
 
     def installed_mod(self, index: int) -> bool:
-        return self.mods & (1 << 0)
+        return (self.mods & (1 << 0)) == 1
 
     def tokens_last_index(self, tokens: str) -> int:
         return self.tokens.rfind(tokens)
