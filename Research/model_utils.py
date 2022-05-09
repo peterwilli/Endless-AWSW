@@ -469,7 +469,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             per_device_train_batch_size=batch_size,
             per_device_eval_batch_size=batch_size,
             num_train_epochs=num_epoch,
-            logging_steps=1,
+            logging_steps=num_log_steps,
             save_total_limit=2,
             log_level="error",
             save_strategy = "steps" if params['save_model'] else "no"
