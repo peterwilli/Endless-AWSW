@@ -122,6 +122,11 @@ label eawsw_version:
 
 label eawsw_loop:
     python:
+        import re
+        import urllib2, urllib
+        import json
+        import random
+
         # If you maintain a public server, feel free to add it.
         public_servers = ['https://eawsw_api.emeraldodin.com']
         save_past_amount = 6
@@ -210,12 +215,11 @@ label eawsw_loop:
             if potential_stray_dragon['cmd'] == 'msg' and potential_stray_dragon['from'] != 'c':
                 # Dragon without a scene, forbidden so we delete it too
                 eawsw_state['endless_awsw_past'].pop(0)
+            
+        def sanitize(msg):
+            return re.sub(r'[^a-zA-Z0-9_\s]', '', msg)
 
         def await_command():
-            import urllib2, urllib
-            import json
-            import random
-
             prompt = renpy.input(_("Enter your reply"), default="", exclude='{%[]}', length=512)
             prompt = prompt.strip()
             if len(prompt) == 0:
@@ -267,7 +271,7 @@ label eawsw_loop:
                     strip_past()
                 except urllib2.HTTPError as e:
                     error_message = e.read()
-                    m("HTTP error: " + error_message)
+                    m("HTTP error: " + sanitize(error_message))
             renpy.block_rollback()
             renpy.jump("eawsw_loop")
         if eawsw_state['did_run_start_narrative']:
