@@ -17,7 +17,6 @@ def get_command():
   try:
     past = request.args.get("past")
     past = json.loads(past)
-    logging.error(past)
     past_str = reply_processor.commands_to_string(past)
     prompt = request.args.get("prompt")
     mods = int(request.args.get("mods")) or 0
@@ -25,9 +24,7 @@ def get_command():
     for i in range(command_retries):
       reply = model_manager.say(past_str, prompt, do_sample = True, mods = mods)
       if reply is not None:
-        logging.debug(f"Reply before processing: {reply}")
         result = reply_processor.string_to_commands(model_manager.reply_prefix + reply)
-        logging.debug(f"Reply after processing: {result}")
         if len(result) > 0 and result[-1]['cmd'] != 'scn':
           return {
             'cmds': result

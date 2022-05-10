@@ -246,6 +246,7 @@ label eawsw_loop:
                 else:
                     selected_server = persistent.eawsw_server
                 try:
+                    m("Waiting for reply...{nw}")
                     req = urllib2.Request(
                         '%s/get_command?%s' % (selected_server, query),
                         headers = {
