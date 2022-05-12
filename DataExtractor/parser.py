@@ -21,6 +21,25 @@ interactable_characters = {
     "Zh": "Zhong",
 }
 
+long_short_character_mapping = {
+    'adine': 'Ad', 
+    'anna': 'An', 
+    'bryce': 'Br', 
+    'damion': 'Dm', 
+    'emera': 'Em', 
+    'ipsum': 'Ip', 
+    'izumi': 'Iz', 
+    'katsu': 'Ka', 
+    'kevin': 'Kv', 
+    'lorem': 'Lo', 
+    'maverick': 'Mv', 
+    'naomi': 'Nm', 
+    'remy': 'Ry', 
+    'reza': 'Rz', 
+    'sebastian': 'Sb', 
+    'zhong': 'Zh'
+}
+
 # def sort_dict(dict):
 #     sorted_dict = {}
 #     for key in sorted(list(dict)):
@@ -29,7 +48,7 @@ interactable_characters = {
 
 # print(sort_dict(interactable_characters))
 
-allowed_characters = list(interactable_characters.keys()) + ['c']
+allowed_characters = list(interactable_characters.keys()) + ['c', 'm']
 
 def post_process_msg_content(content):
     return content.replace('\\"', "'")
@@ -37,7 +56,7 @@ def post_process_msg_content(content):
 def parse():
     script_folder = os.path.dirname(os.path.realpath(__file__))
     awsw_path = os.path.join(script_folder, "..", "Angels with Scaly Wings", "game")
-    # awsw_path = os.path.join(script_folder, "test_rpy")
+    #awsw_path = os.path.join(script_folder, "test_rpy")
     rpy_files = glob.glob(os.path.join(awsw_path, "*.rpy"))
     re_say_command = re.compile(r'([A-Za-z]{1,2})\s([a-z]*).*?"(.*)"')
     re_scene_command = re.compile(r'scene\s([^ ]*)')
@@ -59,8 +78,13 @@ def parse():
                             line = line.strip()
                             show_command_match = re_show_command.match(line)
                             if show_command_match is not None:
-                                last_from = show_command_match.group(1)
-                                last_emote = show_command_match.group(2)
+                                if show_command_match.group(2) != "at":
+                                    if show_command_match.group(1) in long_short_character_mapping:
+                                        last_from = long_short_character_mapping[show_command_match.group(1)]
+                                        last_emote = show_command_match.group(2)
+                                    else:
+                                        # print(f"Key not found in long_short_character_mapping! Line: {line}")
+                                        pass
                                 continue
                             scene_command_match = re_scene_command.match(line)
                             if scene_command_match is not None:
@@ -83,22 +107,29 @@ def parse():
                                     msg_from = say_command_match.group(1)
                                     msg_emote = say_command_match.group(2)
                                     if msg_from != last_from:
-                                        # We reset the emote if we have a new character
-                                        last_emote = None
+                                        # We reset the emote if we have a new character (that isn't ourselves)
+                                        allow_skip_emote_reset = ['m', 'c']
+                                        if not msg_from in allow_skip_emote_reset and not last_from in allow_skip_emote_reset:
+                                            last_emote = None
                                     if len(msg_emote) > 0:
                                         last_emote = msg_emote
-
                                     # This is actually Zhong
                                     if msg_from == "St":
                                         msg_from = "Zh"
 
-                                    if msg_from in allowed_characters and last_emote is not None:
+                                    if msg_from in allowed_characters:
                                         msg_content = say_command_match.group(3)
                                         p_or_d = 'p' if msg_from == 'c' else 'd'
                                         scn_part = ''
+                                        emote_part = ''
                                         if msg_from != 'c':
                                             scn_part = f'<scn>{last_scene}'
-                                        msg_output = f'<{p_or_d}>{scn_part}<msg>{msg_from} {last_emote} "{post_process_msg_content(msg_content)}"'
+                                            if msg_from != 'm' and last_emote is not None:
+                                                emote_part = f' {last_emote}'
+                                        if msg_from != 'c' and msg_from != 'm' and len(emote_part) == 0:
+                                            # We don't do dragon replies (except for m) without emotions
+                                            continue
+                                        msg_output = f'<{p_or_d}>{scn_part}<msg>{msg_from}{emote_part} "{post_process_msg_content(msg_content)}"'
                                         training_data_fd.write(msg_output + "\n")
                                     last_from = msg_from
 if __name__ == "__main__":

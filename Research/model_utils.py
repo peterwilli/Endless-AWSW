@@ -282,11 +282,6 @@ def split_data(txt_file: str, shuffle_output = False):
     
     if shuffle_output:
         random.shuffle(train_lines)
-
-    if not os.path.isfile(os.path.join(Config.work_dir, "data_train_sample.txt")):
-        with open(os.path.join(Config.work_dir, "data_train_sample.txt"), "w") as f:
-            for l in train_lines[:10]:
-                f.write(l + "\n")
                 
     if not os.path.isfile(os.path.join(Config.work_dir, "data_train.txt")):
         with open(os.path.join(Config.work_dir, "data_train.txt"), "w") as f:
