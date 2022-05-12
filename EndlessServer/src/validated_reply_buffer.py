@@ -162,7 +162,7 @@ class ValidatedReplyBuffer:
                             self.tokens = self.tokens[:self.tokens_last_index("<d>")]
                             return 1
                         if is_computer_generated and character == 'c':
-                            if self.last_character is not None and self.last_character is not 'c':
+                            if self.last_character is not None and self.last_character != 'c':
                                 self.tokens = self.tokens[:self.tokens_last_index(f"<{self.last_side}>")]
                                 return 1
                             raise ValidationException("AI cannot respond as player!")
@@ -214,3 +214,5 @@ if __name__ == '__main__':
     test_tokens('<p><msg>c "Hey Remy!"')
     test_tokens('<p><msg>c "Hey Remy!"<d><scn>o2<msg>Ry "Are you the Ghoster?"<d><scn>o2<msg>Sb "Yes."')
     test_tokens('<d><scn>loremapt<msg>Lo "I\'m glad you came!"<d><scn>loremapt<msg>Ip "I heard all about you."')
+    # TODO: Enforce emotions for dragon replies
+    # test_tokens('<d><scn>loremapt<msg>Lo happy "I\'m glad you came!"<d><scn>loremapt<msg>Ip "I heard all about you."')
