@@ -51,14 +51,17 @@ long_short_character_mapping = {
 allowed_characters = list(interactable_characters.keys()) + ['c', 'm']
 
 def post_process_msg_content(content):
-    return content.replace('\\"', "'")
+    content = content.replace('\\"', "'")
+    content = content.replace("[adinestagename!t]", "Kite")
+    content = content.replace("[[Custom name]", "Kite")
+    return content
 
 def parse():
     script_folder = os.path.dirname(os.path.realpath(__file__))
     awsw_path = os.path.join(script_folder, "..", "Angels with Scaly Wings", "game")
     #awsw_path = os.path.join(script_folder, "test_rpy")
     rpy_files = glob.glob(os.path.join(awsw_path, "*.rpy"))
-    re_say_command = re.compile(r'([A-Za-z]{1,2})\s([a-z]*).*?"(.*)"')
+    re_say_command = re.compile(r'^([A-Za-z]{1,2})\s([a-z]*).*?"(.*)"$')
     re_scene_command = re.compile(r'scene\s([^ ]*)')
     re_show_command = re.compile(r"show\s([a-z]+)\s([a-z]+)")
     re_menu_option = re.compile(r'"(.*?)":')
@@ -98,14 +101,17 @@ def parse():
                                 ]
                                 menu_content = menu_option_match.group(1)
                                 if not menu_content in forbidden_menu_items:
-                                    msg_output = f'<p><msg>c "{post_process_msg_content(menu_content)}"'
-                                    training_data_fd.write(msg_output + "\n")
+                                    if not ('[' in menu_content or ']' in menu_content):
+                                        msg_output = f'<p><msg>c "{post_process_msg_content(menu_content)}"'
+                                        training_data_fd.write(msg_output + "\n")
                                 continue
                             if last_scene is not None:
                                 say_command_match = re_say_command.match(line)
                                 if say_command_match is not None:
                                     msg_from = say_command_match.group(1)
                                     msg_emote = say_command_match.group(2)
+                                    if msg_emote == "adinestatus":
+                                        print("last_emote", msg_emote, line)
                                     if msg_from != last_from:
                                         # We reset the emote if we have a new character (that isn't ourselves)
                                         allow_skip_emote_reset = ['m', 'c']
