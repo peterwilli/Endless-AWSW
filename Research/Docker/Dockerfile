@@ -1,13 +1,10 @@
-FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04
+FROM nvcr.io/nvidia/pytorch:22.04-py3
 MAINTAINER Peter Willemsen <peter@codebuffet.co>
 RUN echo "Installing dependencies..." && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y curl sudo git build-essential nano cmake python3-pip python3 pkg-config libssl-dev zsh clang && \
     apt-get dist-upgrade -y && \
 	rm -rf /var/lib/apt/lists/*
-
-# RTX 3080 support
-RUN pip3 install torch==1.10.1+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
 
 ADD requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt && rm /requirements.txt
