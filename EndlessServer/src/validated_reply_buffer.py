@@ -87,6 +87,7 @@ class ValidatedReplyBuffer:
         self.last_side = None
         self.last_character = None
         self.expect_new_tokens(tokens_to_expect['cmd_p_or_d'])
+        self.in_emotion = False
         self.in_message = False
         self.mods = mods
         logging.debug(f"Has Naomi mod: {self.installed_mod(0)}")
@@ -101,7 +102,7 @@ class ValidatedReplyBuffer:
     def add_token(self, token: str, is_computer_generated: bool) -> int:
         expect_tokens_len = len(self.expect_tokens)
         if self.expect_tokens_idx >= expect_tokens_len:
-            raise Exception(f"expect_tokens_idx({self.expect_tokens_idx}) > expect_tokens {self.expect_tokens} ({len(self.expect_tokens)}) (token: '{token}')")
+            raise Exception(f"expect_tokens_idx({self.expect_tokens_idx}) > expect_tokens {self.expect_tokens} ({len(self.expect_tokens)}) (token: '{token}') (full text so far: {self.tokens})")
         expected_token = self.expect_tokens[self.expect_tokens_idx]
         if type(expected_token) == re.Pattern:
             if expected_token.match(token) is None:
@@ -153,6 +154,13 @@ class ValidatedReplyBuffer:
                             raise Exception(f"invalid last side: {self.last_side} can either be d or p!")
                 elif self.in_message:
                     self.expect_new_tokens([re_within_message])
+                elif self.in_emotion:
+                    if token == ' ':
+                        # TODO: Validate emotion
+                        self.in_emotion = False
+                        self.expect_new_tokens(['"'])
+                    else:
+                        self.expect_new_tokens([re_alphanumeric_whitespace])
                 else:
                     if token == ' ':
                         # with a space we check the character that came before
@@ -172,7 +180,11 @@ class ValidatedReplyBuffer:
                             if character in blocked_characters_solitary_mind:
                                 raise ValidationException(f"add_token: character '{character}' is only available in 'A Solitary Mind'!")
                         self.last_character = character
-                        self.expect_new_tokens(['"'])
+                        if character in ['c', 'm']:
+                            self.expect_new_tokens(['"'])
+                        else:
+                            self.in_emotion = True
+                            self.expect_new_tokens([re_alphanumeric_whitespace])
                     else:
                         self.expect_new_tokens([re_alphanumeric_whitespace])
         return 0
@@ -195,24 +207,25 @@ if __name__ == '__main__':
         return buffer.tokens
 
     # AI as player test
-    parsed_tokens = test_tokens('<d><scn>o2<msg>Sb "Yes."<p><msg>c "Flooding?"', is_computer_generated = True, should_equal = False)
-    assert parsed_tokens == '<d><scn>o2<msg>Sb "Yes."'
+    parsed_tokens = test_tokens('<d><scn>o2<msg>Sb normal "Yes."<p><msg>c "Flooding?"', is_computer_generated = True, should_equal = False)
+    assert parsed_tokens == '<d><scn>o2<msg>Sb normal "Yes."'
     try:
         test_tokens('<p><msg>c "Flooding?', is_computer_generated = True)
     except ValidationException as e:
         print(e)
     test_tokens('<p><msg>c "Flooding?', is_computer_generated = False)
-    test_tokens('<p><msg>c "Flooding?"<d><scn>o2<msg>Sb "Yes."')
+    test_tokens('<p><msg>c "Flooding?"<d><scn>o2<msg>Sb happy "Yes."')
+    # Test some faulty ones
     try:
-        test_tokens('<p><msgf>c "Flooding?"<d><scn>o2<msg>Sb "Yes."')
+        test_tokens('<p><msgf>c "Flooding?"<d><scn>o2<msg>Sb normal "Yes."')
     except ValidationException as e:
         print(e)
     try:
-        test_tokens('<p><msg>c "Floodi"ng?"<d><scn>o2<msg>Sb "Yes."')
+        test_tokens('<p><msg>c "Floodi"ng?"<d><scn>o2<msg>Sb normal "Yes."')
     except ValidationException as e:
         print(e)
     test_tokens('<p><msg>c "Hey Remy!"')
-    test_tokens('<p><msg>c "Hey Remy!"<d><scn>o2<msg>Ry "Are you the Ghoster?"<d><scn>o2<msg>Sb "Yes."')
-    test_tokens('<d><scn>loremapt<msg>Lo "I\'m glad you came!"<d><scn>loremapt<msg>Ip "I heard all about you."')
+    test_tokens('<p><msg>c "Hey Remy!"<d><scn>o2<msg>Ry normal "Are you the Ghoster?"<d><scn>o2<msg>Sb normal "Yes."')
+    test_tokens('<d><scn>loremapt<msg>Lo normal "I\'m glad you came!"<d><scn>loremapt<msg>Ip normal "I heard all about you."')
     # TODO: Enforce emotions for dragon replies
     # test_tokens('<d><scn>loremapt<msg>Lo happy "I\'m glad you came!"<d><scn>loremapt<msg>Ip "I heard all about you."')

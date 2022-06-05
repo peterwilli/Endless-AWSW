@@ -57,7 +57,7 @@ label eawsw_pick_your_poison:
                 { 'cmd': 'scn', 'scn': 'forest1' },
                 { 'cmd': 'msg', 'from': 'm', 'msg': "Lorem approached me in the forest." },
                 { 'cmd': 'scn', 'scn': 'forest1' },
-                { 'cmd': 'msg', 'from': 'Lo', 'msg': "Hey!" },
+                { 'cmd': 'msg', 'from': 'Lo', 'emotion': 'happy', 'msg': "Hey!" },
             ]
         "You're with Lorem and Ipsum in their apartment.":
             $ eawsw_state['start_narrative'] = [
@@ -191,12 +191,17 @@ label eawsw_loop:
                     elif cmd == "msg":
                         msg_from = item['from']
                         msg = item['msg']
-                        # TODO: custom expressions
+                        emotion = None
+                        if 'emotion' in item:
+                            emotion = item['emotion']
                         if msg_from in self.character_mapping:
                             if self.character_mapping[msg_from] is None:
                                 self.last_character = None
                             else:
-                                self.last_character = '%s normal b' % (self.character_mapping[msg_from])
+                                if emotion is None:
+                                    self.last_character = '%s b' % (self.character_mapping[msg_from])
+                                else:
+                                    self.last_character = '%s %s b' % (self.character_mapping[msg_from], emotion)
                         else:
                             self.last_character = None
                         renpy.scene()

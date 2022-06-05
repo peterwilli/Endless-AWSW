@@ -7,7 +7,7 @@ class ReplyProcessor:
     def __init__(self):
         self.re_token = re.compile(r'(<.*?>|[^<]*)')
         self.re_command = re.compile(r'^<(.*?)>$')
-        self.re_msg = re.compile(r'([A-Za-z]{1,2})\s(.*?)"(.*)"')
+        self.re_msg = re.compile(r'([A-Za-z]{1,2})\s(.*?)\s{0,1}"(.*)"')
 
     def commands_to_string(self, commands) -> str:
         result = []
@@ -17,7 +17,10 @@ class ReplyProcessor:
                 if cmd['from'] == "c":
                     result_item += "<p>"
                 result_item += f"<{cmd['cmd']}>"
-                result_item += f"{cmd['from']} \"{cmd['msg']}\""
+                result_item += f"{cmd['from']}"
+                if 'emotion' in cmd:
+                    result_item += f" {cmd['emotion']}"
+                result_item += f" \"{cmd['msg']}\""
             if cmd['cmd'] == "scn":
                 # only dragons have scn so we can safely prefix a dragon reply token here
                 result_item += "<d>"
@@ -40,6 +43,9 @@ class ReplyProcessor:
                     if msg_match is not None:
                         msg_from = msg_match.group(1)
                         current_cmd['from'] = msg_from
+                        emotion = msg_match.group(2)
+                        if emotion is not None:
+                            current_cmd['emotion'] = emotion
                         current_cmd['msg'] = msg_match.group(3)
                         result.append(current_cmd)
             else:
