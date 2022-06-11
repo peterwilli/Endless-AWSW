@@ -29,10 +29,8 @@ import onnx
 from onnx_model_manager import OnnxModelManager
 from onnxruntime.quantization import quantize_dynamic, QuantType
 from reply_processor import ReplyProcessor
+from regexes import *
 
-re_token = re.compile(r'(<.*?>|[^<]*)')
-re_command = re.compile(r'^<(.*?)>$')
-re_msg = re.compile(r'([A-Za-z]{1,2})\s(.*?)"(.*)"')
 reply_processor = ReplyProcessor()
 
 def get_model(name):
@@ -97,6 +95,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                                 filtered_rp_list.append(rp_json)
                         else:
                             filtered_rp_list.append(rp_json)
+                    
                     if len(filtered_rp_list) > 0:
                         rps_categorized = {}
                         for rp in filtered_rp_list:
@@ -105,7 +104,13 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                             rps_categorized[rp['category']].append(rp)
                         category = inject_random_rp_random.choice(list(rps_categorized.keys()))
                         rp = inject_random_rp_random.choice(rps_categorized[category])
-                        batch['text'][i] += rp['cmd'].strip()
+                        rp_cmd = rp['cmd'].strip()
+                        if 'compatible_emotions' in rp:
+                            for emotion in rp['compatible_emotions']:
+                                if emotion in Config.valid_emotions_for_dragon[msg_from]:
+                                    rp_cmd = rp_cmd.replace('normal "', f'{emotion} "')
+                                    break
+                        batch['text'][i] += rp_cmd
         return batch
     
     def gen_parse_variables():
