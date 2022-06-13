@@ -70,7 +70,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             'input_ids': result
         }
     
-    inject_rp_chance_pct = 0.75
+    inject_rp_chance_pct = 0.3
     rp_list = None
     with open('rp_data.txt', 'r') as f:
         rp_list = [json.loads(line) for line in f.readlines()]
