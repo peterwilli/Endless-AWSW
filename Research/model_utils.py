@@ -261,22 +261,6 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         'train': AWSWDataset(dataset, 'train')
     }
 
-def split_branches(data):
-    result = []
-    quote_counter = 0
-    line = ""
-    for i in range(len(data)):
-        if data[i] == "\n":
-            continue
-        line += data[i]
-        if data[i] == '"':
-            quote_counter += 1
-        if quote_counter == 2:
-            quote_counter = 0
-            result.append(line.strip())
-            line = ""
-    return "\n".join(result)
-
 def split_data(txt_file: str, shuffle_output = False):
     with open(txt_file) as f:
         data = f.read()
@@ -291,10 +275,6 @@ def split_data(txt_file: str, shuffle_output = False):
         with open(os.path.join(Config.work_dir, "data_train.txt"), "w") as f:
             for l in train_lines:
                 f.write(l + "\n")
-                
-            # flat_lines = split_branches(data).split("\n")
-            # for l in flat_lines:
-            #     f.write(l + "\n")
 
     if not os.path.isfile(os.path.join(Config.work_dir, "data_test.txt")):
         with open(os.path.join(Config.work_dir, "data_test.txt"), "w") as f:
@@ -389,7 +369,7 @@ def get_scheduler(optimizer, num_warmup_steps: int, num_total_steps: int, params
         scheduler = get_polynomial_decay_schedule_with_warmup(optimizer, num_warmup_steps, num_total_steps, power=power, lr_end=lr_end)
     elif scheduler_str == "cycles_buildoff":
         cycles = params['cycles']
-        scheduler = get_cycles_buildoff(optimizer, num_warmup_steps, num_total_steps, num_cycles = cycles, merge_cycles = math.ceil(cycles * 0.25), noise_amount = 0.01)
+        scheduler = get_cycles_buildoff(optimizer, num_warmup_steps, num_total_steps, num_cycles = cycles, merge_cycles = math.ceil(cycles * 0.05), noise_amount = 0.01)
     return scheduler
         
 def train_model(model, tokenizer, dataset, params: dict, results: dict):
