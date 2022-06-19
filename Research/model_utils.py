@@ -369,7 +369,7 @@ def get_scheduler(optimizer, num_warmup_steps: int, num_total_steps: int, params
         scheduler = get_polynomial_decay_schedule_with_warmup(optimizer, num_warmup_steps, num_total_steps, power=power, lr_end=lr_end)
     elif scheduler_str == "cycles_buildoff":
         cycles = params['cycles']
-        scheduler = get_cycles_buildoff(optimizer, num_warmup_steps, num_total_steps, num_cycles = cycles, merge_cycles = math.ceil(cycles * 0.05), noise_amount = 0.01)
+        scheduler = get_cycles_buildoff(optimizer, num_warmup_steps, num_total_steps, num_cycles = cycles, merge_cycles = 0, noise_amount = 0.01)
     return scheduler
         
 def train_model(model, tokenizer, dataset, params: dict, results: dict):
