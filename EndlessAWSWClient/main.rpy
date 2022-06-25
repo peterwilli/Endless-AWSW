@@ -43,14 +43,14 @@ label eawsw_pick_your_poison:
             $ eawsw_state['start_narrative'] = [
                 { 'cmd': 'msg', 'from': 'c', 'msg': "Hey Remy!" },
                 { 'cmd': 'scn', 'scn': 'park2' },
-                { 'cmd': 'msg', 'from': 'Ry', 'msg': "Hey!" },
+                { 'cmd': 'msg', 'emotion': 'smile', 'from': 'Ry', 'msg': "Hey!" },
             ]
         "You're watching Adine training stunt flights at the beach":
             $ eawsw_state['start_scene'] = 'beach'
             $ eawsw_state['start_narrative'] = [
                 { 'cmd': 'msg', 'from': 'c', 'msg': "Wow nice looping!" },
                 { 'cmd': 'scn', 'scn': 'beach' },
-                { 'cmd': 'msg', 'from': 'Ad', 'msg': "Thanks! But I have to do much better than this!" },
+                { 'cmd': 'msg', 'emotion': 'giggle', 'from': 'Ad', 'msg': "Thanks! But I have to do much better than this!" },
             ]
         "You're with Lorem in the forest.":
             $ eawsw_state['start_narrative'] = [
@@ -62,23 +62,23 @@ label eawsw_pick_your_poison:
         "You're with Lorem and Ipsum in their apartment.":
             $ eawsw_state['start_narrative'] = [
                 { 'cmd': 'scn', 'scn': 'loremapt' },
-                { 'cmd': 'msg', 'from': 'Lo', 'msg': "I'm glad you came!" },
+                { 'cmd': 'msg', 'from': 'Lo', 'emotion': 'happy', 'msg': "I'm glad you came!" },
                 { 'cmd': 'scn', 'scn': 'loremapt' },
-                { 'cmd': 'msg', 'from': 'Ip', 'msg': "I heard all about you." },
+                { 'cmd': 'msg', 'from': 'Ip', 'emotion': 'happy', 'msg': "I heard all about you." },
             ]
         "You're in a fight with Maverick.":
             $ eawsw_state['start_narrative'] = [
                 { 'cmd': 'scn', 'scn': 'np1r' },
                 { 'cmd': 'msg', 'from': 'm', 'msg': "Maverick growled heavily at me." },
                 { 'cmd': 'scn', 'scn': 'np1r' },
-                { 'cmd': 'msg', 'from': 'Mv', 'msg': "I'll slice you open!" },
+                { 'cmd': 'msg', 'from': 'Mv', 'emotion': 'angry', 'msg': "I'll slice you open!" },
             ]
         "On a picnic with Bryce":
             $ eawsw_state['start_narrative'] = [
                 { 'cmd': 'scn', 'scn': 'np2' },
                 { 'cmd': 'msg', 'from': 'm', 'msg': "I sat down with Bryce. During our trip to the picnic place he carried a large basket." },
                 { 'cmd': 'scn', 'scn': 'np2' },
-                { 'cmd': 'msg', 'from': 'Br', 'msg': "If you're hungry, you can grab something from the fun basket." },
+                { 'cmd': 'msg', 'from': 'Br', 'emotion': 'laugh', 'msg': "If you're hungry, you can grab something from the fun basket." },
             ]
         "In a shipwreck with Naomi":
             if eawsw_naomi_installed:   
@@ -86,7 +86,7 @@ label eawsw_pick_your_poison:
                     { 'cmd': 'scn', 'scn': 'eckoldbiolab' },
                     { 'cmd': 'msg', 'from': 'm', 'msg': "After days locked up in here, we still haven't found a way out." },
                     { 'cmd': 'scn', 'scn': 'eckoldbiolab' },
-                    { 'cmd': 'msg', 'from': 'Nm', 'msg': "Are they looking for us you think?" },
+                    { 'cmd': 'msg', 'from': 'Nm', 'emotion': 'blank', 'msg': "Are they looking for us you think?" },
                 ]
             else:    
                 jump need_naomi_error
@@ -171,12 +171,13 @@ label eawsw_loop:
                     "Kv": Kv,
                     "Lo": Lo,
                     "Mv": Mv,
-                    "Nm": Nm,
                     "Ry": Ry,
                     "Rz": Rz,
                     "Sb": Sb,
                     "Zh": Zh
                 }
+                if eawsw_naomi_installed:
+                    self.talk_functions['Nm'] = Nm
                 # Add self
                 self.talk_functions.update({
                     'm': m,
@@ -199,7 +200,7 @@ label eawsw_loop:
                                 self.last_character = None
                             else:
                                 if emotion is None:
-                                    self.last_character = '%s b' % (self.character_mapping[msg_from])
+                                    self.last_character = '%s normal b' % (self.character_mapping[msg_from])
                                 else:
                                     self.last_character = '%s %s b' % (self.character_mapping[msg_from], emotion)
                         else:
