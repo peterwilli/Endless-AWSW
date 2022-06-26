@@ -18,7 +18,7 @@ class ReplyProcessor:
                     result_item += "<p>"
                 result_item += f"<{cmd['cmd']}>"
                 result_item += f"{cmd['from']}"
-                if 'emotion' in cmd:
+                if 'emotion' in cmd and len(cmd['emotion']) > 0:
                     result_item += f" {cmd['emotion']}"
                 result_item += f" \"{cmd['msg']}\""
             if cmd['cmd'] == "scn":
