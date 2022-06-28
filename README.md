@@ -2,6 +2,8 @@
 
 I'm working on a mod called Endless AWSW that will mix the normal AWSW game with AI-generated prompts and stories. It's likely going to be not as good as the "real story" but if you're like me (can't get enough of the game) then you will get more of your dragon friends in their dragon world.
 
+[Demo video on YouTube!](https://www.youtube.com/watch?v=6tA9d3wCrbc)
+
 ## Installation
 
 ### From source
