@@ -1,0 +1,7 @@
+jtype: Flow
+with:
+  protocol: 'http'
+monitoring: true
+executors:
+  - name: EndlessAWSW
+    uses: jinahub+docker://EndlessAWSW/v0.3

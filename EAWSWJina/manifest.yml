@@ -1,0 +1,5 @@
+manifest_version: 1
+name: EndlessAWSW
+description: Replies as characters of the game Angels with Scaly Wings, a dragon-themed visual novel. Uses a carefully finetuned GPT-Neo-125M ported to ONNX
+url: https://github.com/peterwilli/Endless-AWSW
+keywords: ['eawsw', 'awsw', 'dragons', 'game', 'mod']
