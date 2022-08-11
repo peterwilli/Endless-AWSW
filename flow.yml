@@ -4,4 +4,4 @@ with:
 monitoring: true
 executors:
   - name: EndlessAWSW
-    uses: jinahub+docker://2ic5tbg6/latest
+    uses: jinahub+docker://2ic5tbg6/0.3.6

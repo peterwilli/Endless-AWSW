@@ -7,7 +7,7 @@ import random
 import os
 import math
 import sys
-from validated_reply_buffer import ValidatedReplyBuffer, ValidationException
+from .validated_reply_buffer import ValidatedReplyBuffer, ValidationException
 
 class OnnxModelManager:
     def __init__(self, path = None, model = None, tokenizer = None, device = None):

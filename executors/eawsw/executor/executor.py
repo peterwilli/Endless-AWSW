@@ -1,16 +1,17 @@
 from jina import Executor, requests
 from docarray import DocumentArray, Document
-from onnx_model_manager import OnnxModelManager
-from reply_processor import ReplyProcessor
+from .onnx_model_manager import OnnxModelManager
+from .reply_processor import ReplyProcessor
 import os
 import json
 import urllib.request
 
-model_path = os.path.join("model", "model.onnx")
+script_path = os.path.dirname(os.path.realpath(__file__))
+model_path = os.path.join(script_path, "model", "model.onnx")
 if not os.path.exists(model_path):
+    print("Downloading model...")
     urllib.request.urlretrieve("https://github.com/peterwilli/Endless-AWSW/releases/download/v0.3/model.onnx", model_path)
-
-model_manager = OnnxModelManager()
+model_manager = OnnxModelManager(model_path)
 reply_processor = ReplyProcessor()
 command_retries = 5
 

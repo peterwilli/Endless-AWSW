@@ -1,0 +1,2 @@
+curl --request POST 'https://804c68e852.wolf.jina.ai' --header 'Content-Type: application/json' -d '{"data": [{"text": "[{\\"cmd\\": \\"msg\\", \\"from\\": \\"c\\", \\"msg\\": \\"Hey Remy!\\"}, {\\"cmd\\": \\"scn\\", \\"scn\\": \\"park2\\"}, {\\"cmd\\": \\"msg\\", \\"emotion\\": \\"smile\\", \\"from\\": \\"Ry\\", \\"msg\\": \\"Hey!\\"}]", "tags": {"prompt": "test"}}]}'
+curl --request POST 'https://804c68e852.wolf.jina.ai' --header 'Content-Type: application/json' -d '{"data": [{"text": "hello world"}],"execEndpoint": "/"}'
