@@ -44,9 +44,19 @@ This tutorial will bring the EAWSW mod to Angels with Scaly Wings. The tutorial 
 
 If you want to help out, please [ping me on my Discord](https://discord.gg/gKcb5U3) (You can also DM me at EmeraldOdin#1991 but sometimes change the name, so it's a gamble hehe)
 
+## AI Safety
+
+In the public servers, hate-speech, lewd language and general profanity are being censored. Since our model is pretrained on various parts of the web (dataset is The Pile), it could be that it replies in hate-speech or lewd language when given profane input or slurs.
+
+Filtering data on in and output fixes this problem. Both the players prompts and the replies the model makes are being checked and filtered for profanity, hate-speech and sexual content, enabling a safe environment first and foremost.
+
+If people want to use NSFW conversations with this mod, they still can, provided that they run the server themselves on their own, local computer and disable the filter on their own responsibility.
+
+For obvious reasons, we won't post our test results here, but if you're interested or have any concerns about the AI safety measures we've taken, feel free to DM me.
+
 ## Todo & Bugs
 
-- [ ] Token parser, don't just continue at the last valid tokens (if a bracket opens [ it's more likely it closes again and creates an invalid reply.)
+- [x] Token parser, don't just continue at the last valid tokens (if a bracket opens [ it's more likely it closes again and creates an invalid reply.)
 - [x] Prevent dragons from replying in a loop
 - [x] You can send an empty message
 - [x] Moving forward in story makes requests to the server (thanks 4onen!)

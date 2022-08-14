@@ -1,1 +1,0 @@
-curl --request POST 'https://804c68e852.wolf.jina.ai/post' --header 'Content-Type: application/json' -d '{"data": [{"text": "hello world"}],"execEndpoint": "/"}'
