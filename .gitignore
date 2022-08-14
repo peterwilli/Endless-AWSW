@@ -3,3 +3,5 @@ Angels with Scaly Wings/
 __pycache__/
 .vscode/
 .jina
+*.pyo
+*.rpyc

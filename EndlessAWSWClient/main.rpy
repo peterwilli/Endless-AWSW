@@ -1,5 +1,7 @@
 init python:
-    from eawsw import EAWSWClient
+    from eawsw import EAWSWClient, Config
+    import json
+
 label eawsw_intro:
     show zhong normal with dissolve
     Zh "Hello [player_name]! I'm your Endless Angels with Scaly Wings host for today. Do you wish to proceed?"
@@ -30,6 +32,34 @@ label eawsw_server_selection:
                 persistent.eawsw_server = server_input
     jump eawsw_pick_your_poison
 
+label eawsw_m_menu:
+    show zhong normal with dissolve
+    $ Zh("Here's the EAWSW v%s menu!" % Config.version)
+    menu:
+        "New session":
+            hide zhong with dissolve
+            jump eawsw_pick_your_poison
+        "Debug menu":
+            jump eawsw_debug_menu
+        "Continue":
+            hide zhong with dissolve
+            jump eawsw_loop
+
+label eawsw_show_past:
+    nvl clear
+    python:
+        result = ""
+        for item in eawsw_client.state['endless_awsw_past']:
+            result += "%s: %s\n" % (eawsw_client.sanitize(json.dumps(item['tags'])), item['text'])
+        n(result)
+
+label eawsw_debug_menu:
+    menu:
+        "Show past":
+            jump eawsw_show_past
+        "Back":
+            jump eawsw_m_menu
+
 label eawsw_pick_your_poison:
     show zhong normal with dissolve
     Zh "Pick your poison!"
@@ -38,10 +68,9 @@ label eawsw_pick_your_poison:
             mods = []
             if eawsw_naomi_installed:
                 mods.append('naomi')
-            public_servers = ['https://bbc893b770.wolf.jina.ai']
             hosts = None
             if persistent.eawsw_server is None:
-                hosts = public_servers
+                hosts = Config.public_servers
             else:
                 hosts = [persistent.eawsw_server]
             return EAWSWClient(hosts = hosts, mods = mods)
@@ -122,13 +151,6 @@ label need_naomi_error:
 label eawsw_no_reply_error:
     show maverick nice with dissolve
     Mv "Sorry, the AI couldn't form a reply after multiple tries, please try another prompt!"
-    hide maverick with dissolve
-    pause(0.5)
-    jump eawsw_loop
-
-label eawsw_version:
-    show maverick nice with dissolve
-    Mv "You're using EAWSW v0.3.0"
     hide maverick with dissolve
     pause(0.5)
     jump eawsw_loop

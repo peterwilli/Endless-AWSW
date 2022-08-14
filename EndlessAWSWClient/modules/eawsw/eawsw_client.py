@@ -140,15 +140,13 @@ class EAWSWClient:
         return result
 
     def await_prompt(self):
-        prompt = renpy.exports.input("Enter your reply", default="", exclude='{%[]}', length=512)
+        prompt = renpy.exports.input("Enter your reply ('m' for menu)", default="", exclude='{%[]}', length=512)
         prompt = prompt.strip()
         if len(prompt) == 0:
             renpy.exports.jump("eawsw_empty_warning")
             return
-        if prompt == "clear":
-            renpy.exports.jump("eawsw_pick_your_poison")
-        elif prompt == "version":
-            renpy.exports.jump("eawsw_version")
+        if prompt == "m":
+            renpy.exports.jump("eawsw_m_menu")
         else:
             mods = 0
             if 'naomi' in self.mods:
@@ -206,7 +204,7 @@ class EAWSWClient:
         renpy.exports.jump("eawsw_loop")
     
     def sanitize(self, msg):
-        return re.sub(r'[^a-zA-Z0-9_\s]', '', msg)
+        return re.sub(r'[^a-zA-Z0-9_\s"\']', '', msg)
 
     def tick(self):
         if self.state['did_run_start_narrative']:
