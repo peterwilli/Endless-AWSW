@@ -129,6 +129,13 @@ label eawsw_empty_warning:
     pause(0.5)
     jump eawsw_loop
 
+label eawsw_profanity_detected:
+    show maverick angry with dissolve
+    Mv "I detected profanity or NFSW langague in your prompt. This is not allowed on the public server! You can run your own from source if you wish to do this, or change your prompt!"
+    hide maverick with dissolve
+    pause(0.5)
+    jump eawsw_loop
+
 label need_naomi_error:
     show maverick nice with dissolve
     Mv "You need the mod 'A Solitary Mind' to play with Naomi! Go get it from the workshop and restart the game, otherwise select another narrative!"
@@ -160,7 +167,7 @@ label eawsw_loop:
 
         # Jina is currently providing EAWSW hosting for free on their JCloud service.
         # At the moment, there's no need for community services.
-        public_servers = ['https://b8ec14c5b3.wolf.jina.ai']
+        public_servers = ['https://e8495ef0a2.wolf.jina.ai']
         save_past_amount = 6
 
         def set_bit(value, bit):
@@ -168,6 +175,15 @@ label eawsw_loop:
 
         def clear_bit(value, bit):
             return value & ~(1 << bit)
+
+        class DebugLogger:
+            def __init__(self):
+                self.debug_mode = True
+            
+            def log(self, msg):
+                if self.debug_mode:
+                    with open("eawsw_logs.log", "a") as f:
+                        f.write(msg + "\n")
 
         class CommandExecutor:
             def __init__(self):
@@ -247,6 +263,8 @@ label eawsw_loop:
                             talk_fn(msg)
                         
         command_executor = CommandExecutor()
+        debug_logger = DebugLogger()
+
         def strip_past():
             eawsw_state['endless_awsw_past'] = eawsw_state['endless_awsw_past'][save_past_amount * -1:]
             potential_stray_dragon = eawsw_state['endless_awsw_past'][0]
@@ -279,30 +297,36 @@ label eawsw_loop:
                 else:
                     selected_server = persistent.eawsw_server
                 try:
-                    m("Waiting for reply...")
-                    request_body = {
+                    m("Waiting for reply...{nw}")
+                    request_body = json.dumps({
                         'data': eawsw_state['endless_awsw_past'],
                         'execEndpoint': '/',
                         'parameters': {
                             'prompt': prompt
                         }
-                    }
+                    })
+                    debug_logger.log("Request: %s" % request_body)
                     req = urllib2.Request(
                         '%s/post' % selected_server,
                         headers = {
                             'User-Agent': 'EmeraldOdin/EAWSW',
                             'Content-Type': 'application/json'
                         },
-                        data = json.dumps(request_body)
+                        data = request_body
                     )
                     ssl_ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
                     response = urllib2.urlopen(req, context = ssl_ctx)
                     json_str = response.read()
+                    debug_logger.log("Response: %s" % json_str)
                     docs = json.loads(json_str)['data']
                     command_executor.execute_commands(docs)
                     
                     if len(docs) == 0:
                         renpy.jump('eawsw_no_reply_error')
+                        return
+
+                    if docs[0]['tags']['cmd'] == 'error' and docs[0]['text'] == 'profanity_detected': 
+                        renpy.jump('eawsw_profanity_detected')
                         return
 
                     eawsw_state['endless_awsw_past'] += eawsw_json_to_doc_array([{
@@ -315,8 +339,8 @@ label eawsw_loop:
                 except urllib2.HTTPError as e:
                     error_message = e.read()
                     with open("eawsw_http_error.log", "w") as f:
-                        f.write('Request: curl -d "%s" %s/post' % (request_body, selected_server))
-                        f.write("\nData: %s" % json.dumps(request_body))
+                        f.write('Request: %s/post' % selected_server)
+                        f.write("\nData: %s" % request_body)
                         f.write("\nError:")
                         f.write(error_message)
                     m("HTTP error (stored in eawsw_http_error.log): " + sanitize(error_message))

@@ -33,27 +33,25 @@ class EndlessAWSWExec(Executor):
         result = []
         for i in range(command_retries):
             reply = model_manager.say(past_str, prompt, do_sample = True, mods = mods)
-            if filter_profanity and predict_profanity([reply])[0] == 1:
-                continue
-
             if reply is not None:
+                if filter_profanity and predict_profanity([reply])[0] == 1:
+                    continue
                 result = reply_processor.string_to_docs(model_manager.reply_prefix + reply)
                 if len(result) > 0 and result[-1].tags['cmd'] != 'scn':
                     return DocumentArray(result)
-                    
             return DocumentArray()
 
-def test():
-    m = EndlessAWSWExec()
-    test_past = DocumentArray([
-        Document(text = "Hey Remy!", tags = { 'cmd': 'msg', 'from': 'c' }),
-        Document(text = "park2", tags = { 'cmd': 'scn' }),
-        Document(text = "Hey!", tags = { 'cmd': 'msg', 'emotion': 'smile', 'from': 'Ry' }),
-    ])
-    print(f"json: {test_past.to_json()}")
-    replies = m.send_message(test_past, {
-        'prompt': 'Test' 
-    })
-    for reply in replies:
-        print(f"Tags: {reply.tags} Reply: {reply.text}")
-test()
+# def test():
+#     m = EndlessAWSWExec()
+#     test_past = DocumentArray([
+#         Document(text = "Hey Remy!", tags = { 'cmd': 'msg', 'from': 'c' }),
+#         Document(text = "park2", tags = { 'cmd': 'scn' }),
+#         Document(text = "Hey!", tags = { 'cmd': 'msg', 'emotion': 'smile', 'from': 'Ry' }),
+#     ])
+#     print(f"json: {test_past.to_json()}")
+#     replies = m.send_message(test_past, {
+#         'prompt': 'Test' 
+#     })
+#     for reply in replies:
+#         print(f"Tags: {reply.tags} Reply: {reply.text}")
+# test()
