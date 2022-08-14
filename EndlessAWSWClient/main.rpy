@@ -1,3 +1,32 @@
+init python:
+    import random
+    import string
+    def eawsw_get_random_string(length):
+        charpool = string.ascii_letters + string.digits
+        result = ''.join(random.choice(charpool) for i in range(length))
+        return result
+
+    # Since we can't use Jina's DocumentArray directly in this mod
+    # We use a sexy json and convert it to DocumentArray's json format
+    def eawsw_json_to_doc_array(arr):
+        result = []
+        for cmd in arr:
+            obj = {
+                'tags': {
+                    'cmd': cmd['cmd']
+                }
+            }
+            if cmd['cmd'] == 'msg':
+                obj['text'] = cmd['msg']
+                obj['tags']['from'] = cmd['from']
+                if 'emotion' in cmd:
+                    obj['tags']['emotion'] = cmd['emotion']
+            elif cmd['cmd'] == 'scn':
+                obj['text'] = cmd['scn']
+            obj['id'] = eawsw_get_random_string(32)
+            result.append(obj)
+        return result
+
 label eawsw_intro:
     show zhong normal with dissolve
     Zh "Hello [player_name]! I'm your Endless Angels with Scaly Wings host for today. Do you wish to proceed?"
@@ -36,7 +65,7 @@ label eawsw_pick_your_poison:
             'did_run_start_narrative': False,
             'endless_awsw_past': [],
             'start_scene': None
-        }
+        }      
     menu:
         "You meet Remy at the park.":
             $ eawsw_state['start_scene'] = 'park2'
@@ -90,6 +119,7 @@ label eawsw_pick_your_poison:
                 ]
             else:    
                 jump need_naomi_error
+    $ eawsw_state['start_narrative'] = eawsw_json_to_doc_array(eawsw_state['start_narrative'])
     jump eawsw_loop
 
 label eawsw_empty_warning:
@@ -125,10 +155,12 @@ label eawsw_loop:
         import re
         import urllib2, urllib
         import json
+        import ssl
         import random
 
-        # If you maintain a public server, feel free to add it.
-        public_servers = ['https://eawsw_api.emeraldodin.com']
+        # Jina is currently providing EAWSW hosting for free on their JCloud service.
+        # At the moment, there's no need for community services.
+        public_servers = ['https://b8ec14c5b3.wolf.jina.ai']
         save_past_amount = 6
 
         def set_bit(value, bit):
@@ -184,17 +216,17 @@ label eawsw_loop:
                     'c': c
                 })
 
-            def execute_commands(self, cmds):
-                for item in cmds:
-                    cmd = item['cmd']
+            def execute_commands(self, docs):
+                for item in docs:
+                    cmd = item['tags']['cmd']
                     if cmd == "scn":
-                        self.last_scene = item['scn']
+                        self.last_scene = item['text']
                     elif cmd == "msg":
-                        msg_from = item['from']
-                        msg = item['msg']
+                        msg_from = item['tags']['from']
+                        msg = item['text']
                         emotion = None
-                        if 'emotion' in item:
-                            emotion = item['emotion']
+                        if 'emotion' in item['tags']:
+                            emotion = item['tags']['emotion']
                         if msg_from in self.character_mapping:
                             if self.character_mapping[msg_from] is None:
                                 self.last_character = None
@@ -218,7 +250,7 @@ label eawsw_loop:
         def strip_past():
             eawsw_state['endless_awsw_past'] = eawsw_state['endless_awsw_past'][save_past_amount * -1:]
             potential_stray_dragon = eawsw_state['endless_awsw_past'][0]
-            if potential_stray_dragon['cmd'] == 'msg' and potential_stray_dragon['from'] != 'c':
+            if potential_stray_dragon['tags']['cmd'] == 'msg' and potential_stray_dragon['tags']['from'] != 'c':
                 # Dragon without a scene, forbidden so we delete it too
                 eawsw_state['endless_awsw_past'].pop(0)
             
@@ -240,11 +272,6 @@ label eawsw_loop:
                 mods = 0
                 if eawsw_naomi_installed:
                     mods = set_bit(mods, 0)
-                query = urllib.urlencode({
-                    'past': json.dumps(eawsw_state['endless_awsw_past']),
-                    'prompt': prompt,
-                    'mods': mods
-                })
                 selected_server = None
                 if persistent.eawsw_server is None:
                     # Use a public server from a list
@@ -252,33 +279,47 @@ label eawsw_loop:
                 else:
                     selected_server = persistent.eawsw_server
                 try:
-                    m("Waiting for reply...{nw}")
-                    req = urllib2.Request(
-                        '%s/get_command?%s' % (selected_server, query),
-                        headers = {
-                            'User-Agent': 'EmeraldOdin/EAWSW'
+                    m("Waiting for reply...")
+                    request_body = {
+                        'data': eawsw_state['endless_awsw_past'],
+                        'execEndpoint': '/',
+                        'parameters': {
+                            'prompt': prompt
                         }
+                    }
+                    req = urllib2.Request(
+                        '%s/post' % selected_server,
+                        headers = {
+                            'User-Agent': 'EmeraldOdin/EAWSW',
+                            'Content-Type': 'application/json'
+                        },
+                        data = json.dumps(request_body)
                     )
-                    response = urllib2.urlopen(req)
+                    ssl_ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+                    response = urllib2.urlopen(req, context = ssl_ctx)
                     json_str = response.read()
-                    command_dict = json.loads(json_str)
-                    cmds = command_dict['cmds']
-                    command_executor.execute_commands(cmds)
+                    docs = json.loads(json_str)['data']
+                    command_executor.execute_commands(docs)
                     
-                    if len(cmds) == 0:
+                    if len(docs) == 0:
                         renpy.jump('eawsw_no_reply_error')
                         return
 
-                    eawsw_state['endless_awsw_past'] += [{
+                    eawsw_state['endless_awsw_past'] += eawsw_json_to_doc_array([{
                         'cmd': 'msg',
                         'from': 'c',
                         'msg': prompt
-                    }]
-                    eawsw_state['endless_awsw_past'] += cmds
+                    }])
+                    eawsw_state['endless_awsw_past'] += docs
                     strip_past()
                 except urllib2.HTTPError as e:
                     error_message = e.read()
-                    m("HTTP error: " + sanitize(error_message))
+                    with open("eawsw_http_error.log", "w") as f:
+                        f.write('Request: curl -d "%s" %s/post' % (request_body, selected_server))
+                        f.write("\nData: %s" % json.dumps(request_body))
+                        f.write("\nError:")
+                        f.write(error_message)
+                    m("HTTP error (stored in eawsw_http_error.log): " + sanitize(error_message))
             renpy.block_rollback()
             renpy.jump("eawsw_loop")
         if eawsw_state['did_run_start_narrative']:

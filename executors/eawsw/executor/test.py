@@ -1,15 +1,16 @@
 from docarray import DocumentArray, Document
 from jina import Executor, requests
-from executor import EndlessAWSWExec
+from .executor import EndlessAWSWExec
 import json
 
 if __name__ == "__main__":
   m = EndlessAWSWExec()
-  test_past = [
-      { 'cmd': 'msg', 'from': 'c', 'msg': "Hey Remy!" },
-      { 'cmd': 'scn', 'scn': 'park2' },
-      { 'cmd': 'msg', 'emotion': 'smile', 'from': 'Ry', 'msg': "Hey!" },
-  ]
-  da = DocumentArray([Document(text=json.dumps(test_past), tags={ 'prompt': 'Test' })])
-  da = m.send_message(da)
+  test_past = DocumentArray([
+      Document(text = "Hey Remy!", tags = { 'cmd': 'msg', 'from': 'c' }),
+      Document(text = "park2", tags = { 'cmd': 'scn' }),
+      Document(text = "Hey!", tags = { 'emotion': 'smile', 'from': 'Ry' }),
+  ])
+  reply = m.send_message(test_past, {
+    'prompt': 'Test' 
+  })
   print(f'Reply: {da[0].text}')
