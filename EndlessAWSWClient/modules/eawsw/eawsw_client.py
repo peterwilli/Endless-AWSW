@@ -8,8 +8,8 @@ import random
 import renpy
 
 class EAWSWDebugLogger:
-    def __init__(self):
-        self.debug_mode = True
+    def __init__(self, debug_mode):
+        self.debug_mode = debug_mode
     
     def log(self, msg):
         if self.debug_mode:
@@ -17,14 +17,12 @@ class EAWSWDebugLogger:
                 f.write(msg + "\n")
 
 class EAWSWClient:
-    def __init__(self, host, mods = []):
+    def __init__(self, hosts, mods = []):
         # Jina is currently providing EAWSW hosting for free on their JCloud service.
         # At the moment, there's no need for community services.
-        # TODO: Move public servers out of here and use hosts
-        self.public_servers = ['https://bbc893b770.wolf.jina.ai']
+        self.hosts = hosts
         self.save_past_amount = 6
         self.mods = mods
-        self.host = host
         self.init_mapping()
         self.state = {
             'did_run_start_narrative': False,
@@ -32,6 +30,7 @@ class EAWSWClient:
             'start_scene': None
         }
         self.last_character = None
+        self.debug_logger = EAWSWDebugLogger(True)
 
     def init_mapping(self):
         self.character_mapping = {
@@ -154,22 +153,17 @@ class EAWSWClient:
             mods = 0
             if 'naomi' in self.mods:
                 mods = self.set_bit(mods, 0)
-            selected_server = None
-            if self.eawsw_server is None:
-                # Use a public server from a list
-                selected_server = random.choice(public_servers)
-            else:
-                selected_server = self.eawsw_server
+            selected_server = random.choice(self.hosts)
             try:
-                m("Waiting for reply...{nw}")
+                renpy.store.m("Waiting for reply...{nw}")
                 request_body = json.dumps({
-                    'data': eawsw_state['endless_awsw_past'],
+                    'data': self.state['endless_awsw_past'],
                     'execEndpoint': '/',
                     'parameters': {
                         'prompt': prompt
                     }
                 })
-                debug_logger.log("Request: %s" % request_body)
+                self.debug_logger.log("Request: %s" % request_body)
                 req = urllib2.Request(
                     '%s/post' % selected_server,
                     headers = {
@@ -181,7 +175,7 @@ class EAWSWClient:
                 ssl_ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
                 response = urllib2.urlopen(req, context = ssl_ctx)
                 json_str = response.read()
-                debug_logger.log("Response: %s" % json_str)
+                self.debug_logger.log("Response: %s" % json_str)
                 docs = json.loads(json_str)['data']
                 self.execute_commands(docs)
                 
@@ -193,13 +187,13 @@ class EAWSWClient:
                     renpy.exports.jump('eawsw_profanity_detected')
                     return
 
-                eawsw_state['endless_awsw_past'] += self.eawsw_json_to_doc_array([{
+                self.state['endless_awsw_past'] += self.eawsw_json_to_doc_array([{
                     'cmd': 'msg',
                     'from': 'c',
                     'msg': prompt
                 }])
-                eawsw_state['endless_awsw_past'] += docs
-                strip_past()
+                self.state['endless_awsw_past'] += docs
+                self.strip_past()
             except urllib2.HTTPError as e:
                 error_message = e.read()
                 with open("eawsw_http_error.log", "w") as f:
@@ -207,7 +201,7 @@ class EAWSWClient:
                     f.write("\nData: %s" % request_body)
                     f.write("\nError:")
                     f.write(error_message)
-                m("HTTP error (stored in eawsw_http_error.log): " + self.sanitize(error_message))
+                renpy.store.m("HTTP error (stored in eawsw_http_error.log): " + self.sanitize(error_message))
         renpy.exports.block_rollback()
         renpy.exports.jump("eawsw_loop")
     

@@ -38,7 +38,13 @@ label eawsw_pick_your_poison:
             mods = []
             if eawsw_naomi_installed:
                 mods.append('naomi')
-            return EAWSWClient(host = persistent.eawsw_server, mods = mods)
+            public_servers = ['https://bbc893b770.wolf.jina.ai']
+            hosts = None
+            if persistent.eawsw_server is None:
+                hosts = public_servers
+            else:
+                hosts = [persistent.eawsw_server]
+            return EAWSWClient(hosts = hosts, mods = mods)
         eawsw_client = init_client()
     menu:
         "You meet Remy at the park.":
