@@ -18,12 +18,25 @@ model_manager = OnnxModelManager(model_path)
 reply_processor = ReplyProcessor()
 command_retries = 5
 
+def text_is_unsafe(text) -> bool:
+    # Some words trigger false-positives like 'eat', 'lame' etc.
+    # Instead of retraining the whole model I opted for simply ignoring them.
+    # See https://gitlab.com/dimitrios/alt-profanity-check/-/issues/12
+    filter_words = [
+        'eat',
+        'lame',
+        'loser'
+    ]
+    for word in filter_words:
+        text = text.replace(word, '')
+    return predict_profanity([text])[0] == 1
+
 class EndlessAWSWExec(Executor):
     """Replies as characters of the game Angels with Scaly Wings, a dragon-themed visual novel."""
     @requests
     def send_message(self, docs: DocumentArray, parameters: Dict, **kwargs):
         prompt = parameters['prompt']
-        if filter_profanity and predict_profanity([prompt])[0] == 1:
+        if filter_profanity and text_is_unsafe(prompt) == 1:
             return DocumentArray(Document(text="profanity_detected", tags={'cmd': 'error'}))
 
         past_str = reply_processor.docs_to_string(docs)
@@ -34,7 +47,7 @@ class EndlessAWSWExec(Executor):
         for i in range(command_retries):
             reply = model_manager.say(past_str, prompt, do_sample = True, mods = mods)
             if reply is not None:
-                if filter_profanity and predict_profanity([reply])[0] == 1:
+                if filter_profanity and text_is_unsafe(reply):
                     continue
                 result = reply_processor.string_to_docs(model_manager.reply_prefix + reply)
                 if len(result) > 0 and result[-1].tags['cmd'] != 'scn':
