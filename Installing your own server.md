@@ -28,3 +28,11 @@ You need the following software / files:
 - To start the EAWSW server, `cd` to the `EAWSWServer`-folder, and run `python3 serve.py`
 - To test if everything is set up correctly, go to [http://localhost:5000/docs](http://localhost:5000/docs) to see the docs.
 - If you get no error dialog, you can now use `localhost:5000` as your private server in the game!
+
+# How to disable the lewd/profanity filter
+
+**Note!** This feature is only supported when running your own server!
+
+- In `EAWSWServer/executor/executor.py`, set `filter_profanity` to `False`.
+- You can now use and get responses without censorship.
+- Keep in mind that the model is biased towards certain situations regarding race/sexuality as it's partially trained on real-world data in addition to just the game. Developers take no responsibility for offensive texts.
