@@ -1,3 +1,3 @@
 class Config:
     version = "0.3.0"
-    public_servers = ['https://bbc893b770.wolf.jina.ai']
+    public_servers = ['https://6060261c13.wolf.jina.ai']
