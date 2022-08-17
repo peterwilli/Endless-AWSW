@@ -38,7 +38,7 @@ This tutorial will bring the EAWSW mod to Angels with Scaly Wings. The tutorial 
 3. At some point, Zhong comes along and asks you if you want to play endless or normal mode (it happens the moment Sebastian greets you at your house).
 4. Click endless if you want to try this mod, click normal if you want the game to progress as usual.
 5. Once you're in endless mode, you can choose a server.
-    1. For most people, the public server is fine, I'm hosting it for free, and it should be fast enough, depending on how many players are simultaneously playing.
+    1. For most people, the public server is fine, it's operated by Jina.ai and automatically scales up or down based on how much traffic there is.
     2. If you wish to install your own server, go to [Installing your own server](Installing%20your%20own%20server.md).
 6. From here you can select a narrative, and you can type any reply and the dragons will reply in return. Have fun!  
 

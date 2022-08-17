@@ -3,8 +3,9 @@
 This tutorial is to host your own EAWSW server. Hosting your own server is interesting if you:
 
  - Are training your own model and wish to test it out in the actual game.
- - Want to run a private server and not be dependent on the public servers if they go offline or get slow during busy times.
- - Are paranoid and afraid that someone gets to know what you say to Remy when you finally get to meet him 😂
+ - Want to run a private server and not be dependent on the public servers.
+ - Are paranoid and afraid that someone gets to know what you say to Remy when you finally get to meet him 😂.
+ - *cough* disable the profanity / lewd filter that the public server has on by default.
 
 ## Notes
 
@@ -14,15 +15,16 @@ This tutorial is to host your own EAWSW server. Hosting your own server is inter
 
 You need the following software / files:
 
-- [Docker](https://docs.docker.com/engine/install/)
-- [Docker-compose](https://docs.docker.com/compose/install/)
-- [Pretrained EAWSW model](https://github.com/peterwilli/Endless-AWSW/releases/tag/v0.3)
+- Python3 / pip
+- Jina AI: `pip install jina`
+- Your own model (optional, only needed if you have one)
 
 ## Installation
 
 - Download [the source from Github](https://github.com/peterwilli/Endless-AWSW/archive/refs/heads/main.zip).
-- Extract the downloaded source, and open a terminal and `cd` to the `EndlessServer`-directory.
-- Drop the model inside the `src/model` folder.
-- To start the EAWSW server, run `docker-compose up -d`
-- To test if everything is set up correctly, [click here to go to run a test command](http://localhost:5000/get_command?past=%5B%7B%22msg%22%3A+%22Hey+Remy%21%22%2C+%22cmd%22%3A+%22msg%22%2C+%22from%22%3A+%22c%22%7D%2C+%7B%22cmd%22%3A+%22scn%22%2C+%22scn%22%3A+%22park2%22%7D%2C+%7B%22msg%22%3A+%22Hey%21%22%2C+%22cmd%22%3A+%22msg%22%2C+%22from%22%3A+%22Ry%22%7D%5D&prompt=Do+I+work?).
+- Extract the downloaded source.
+- **Optional!** If you have a pretrained model, drop the model inside the `EAWSWServer/executor/model`-folder.
+    - **You can skip this step** if you wish to use ours. It'll be downloaded automatically.
+- To start the EAWSW server, `cd` to the `EAWSWServer`-folder, and run `python3 serve.py`
+- To test if everything is set up correctly, go to [http://localhost:5000/docs](http://localhost:5000/docs) to see the docs.
 - If you get no error dialog, you can now use `localhost:5000` as your private server in the game!
