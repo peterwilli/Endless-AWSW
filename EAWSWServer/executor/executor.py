@@ -19,6 +19,16 @@ reply_processor = ReplyProcessor()
 command_retries = 5
 
 def text_is_unsafe(text) -> bool:
+    # Some words trigger false-negatives like 'penis'.
+    # Instead of retraining the whole model I opted for adding them myself.
+    # Ipsum why did you make me do this!?! Whyyyyyyy!
+    block_words = [
+        'penis'
+    ]
+    for word in block_words:
+        if word in text:
+            return True
+
     # Some words trigger false-positives like 'eat', 'lame' etc.
     # Instead of retraining the whole model I opted for simply ignoring them.
     # See https://gitlab.com/dimitrios/alt-profanity-check/-/issues/12
