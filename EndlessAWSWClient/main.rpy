@@ -53,10 +53,22 @@ label eawsw_show_past:
             result += "%s: %s\n" % (eawsw_client.sanitize(json.dumps(item['tags'])), item['text'])
         n(result)
 
+label eawsw_response_error:
+    nvl clear
+    $ n("There was an error in the server response! %s" % eawsw_client.sanitize(eawsw_client.last_error))
+    jump eawsw_loop
+
 label eawsw_debug_menu:
+    $ debug_mode = eawsw_client.debug_logger.debug_mode
     menu:
         "Show past":
             jump eawsw_show_past
+        "Disable logging" if debug_mode:
+            $ eawsw_client.debug_logger.debug_mode = False
+            jump eawsw_debug_menu
+        "Enable logging" if not debug_mode:
+            $ eawsw_client.debug_logger.debug_mode = True
+            jump eawsw_debug_menu
         "Back":
             jump eawsw_m_menu
 

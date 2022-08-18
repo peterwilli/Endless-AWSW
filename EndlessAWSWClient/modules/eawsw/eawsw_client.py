@@ -30,7 +30,7 @@ class EAWSWClient:
             'start_scene': None
         }
         self.last_character = None
-        self.debug_logger = EAWSWDebugLogger(True)
+        self.debug_logger = EAWSWDebugLogger(False)
 
     def init_mapping(self):
         self.character_mapping = {
@@ -174,7 +174,14 @@ class EAWSWClient:
                 response = urllib2.urlopen(req, context = ssl_ctx)
                 json_str = response.read()
                 self.debug_logger.log("Response: %s" % json_str)
-                docs = json.loads(json_str)['data']
+                json_response = json.loads(json_str)
+                if json_response['header']['status'] is not None:
+                    # Error
+                    self.last_error = json_response['header']['status']['description']
+                    renpy.exports.jump('eawsw_response_error')
+                    return
+                    
+                docs = json_response['data']
                 self.execute_commands(docs)
                 
                 if len(docs) == 0:
@@ -204,7 +211,7 @@ class EAWSWClient:
         renpy.exports.jump("eawsw_loop")
     
     def sanitize(self, msg):
-        return re.sub(r'[^a-zA-Z0-9_\s"\']', '', msg)
+        return re.sub(r'[^a-zA-Z0-9_\s"\':\(\)\,\.\-]', '', msg)
 
     def tick(self):
         if self.state['did_run_start_narrative']:

@@ -49,7 +49,7 @@ re_token = re.compile(r'(<.*?>|[^<]*)')
 re_command = re.compile(r'^<(.*?)>$')
 re_alphanumeric_whitespace = re.compile(r'[A-Za-z0-9\s]')
 re_alphanumeric_scn = re.compile(r'[a-z0-9<>]')
-re_within_message = re.compile(r'[\sa-zA-Z0-\[\]\_\-\+\?\"\.!\',]')
+re_within_message = re.compile(r'[\sa-zA-Z0-9\_\-\+\?\"\.!\',\(\)&:]')
 re_brackets = re.compile(r'\[(.*?)]')
 
 class ValidationException(Exception):
