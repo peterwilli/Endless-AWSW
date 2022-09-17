@@ -20,6 +20,7 @@ import multiprocessing
 from scipy import interpolate
 import datasets
 from datasets import load_dataset
+from collections import Counter
 from torch.utils.data import Dataset, DataLoader
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup, get_polynomial_decay_schedule_with_warmup
@@ -70,7 +71,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             'input_ids': result
         }
     
-    inject_rp_chance_pct = 0.3
+    inject_rp_chance_pct = 0.5
     rp_list = None
     with open('rp_data.txt', 'r') as f:
         rp_list = [json.loads(line) for line in f.readlines()]
@@ -174,8 +175,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                         tmp_list_idxs = sorted(tmp_list_idxs[:random_group_count])
                         tmp_list2 += [tmp_list[idx] for idx in tmp_list_idxs]
                         # We need to make a new batch
-                        tmp_list = []
-
+                        tmp_list = [] 
                 tmp_list.append(line)        
                 last_character = msg_from
         i = 0
@@ -184,6 +184,33 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             result.append("".join(tmp_list2[i:i + slice_size]))
             i = i + slice_size
         return { 'text': result }
+    
+    def filter_per_character(batch):
+        character_batch_counter = Counter()
+        for item in batch['text']:
+            line = item.strip()
+            if len(line) > 0:
+                msg_match = re_msg.search(line)
+                if msg_match is None:
+                    raise Exception(f"msg_match None! Line: '{line}'")
+                msg_from = msg_match.group(1)
+                character_batch_counter[msg_from] += 1
+        character_with_lowest_screen_time = min(character_batch_counter, key=character_batch_counter.get)
+        max_character_appearance = character_batch_counter[character_with_lowest_screen_time]
+        result_texts = []
+        character_in_result_counter = Counter()
+        start = random.randint(0, len(batch['text']))
+        for item in (batch['text'][start:] + batch['text'][:start]):
+            line = item.strip()
+            if len(line) > 0:
+                msg_match = re_msg.search(line)
+                if msg_match is None:
+                    raise Exception(f"msg_match None! Line: '{line}'")
+                msg_from = msg_match.group(1)
+                if msg_from == 'c' or character_in_result_counter[msg_from] < max_character_appearance:
+                    result_texts.append(line)
+                    character_in_result_counter[msg_from] += 1
+        return { 'text': result_texts }
 
     def group_texts(examples):
         # Concatenate all texts.
@@ -217,6 +244,12 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
 
         def shuffle(self):
             dataset = self.current_dataset.map(
+                filter_per_character,
+                batched=True,
+                batch_size=10000000000000,
+                num_proc=dataset_map_cores
+            )
+            dataset = dataset.map(
                 shuffle_groups,
                 batched=True,
                 batch_size=dataset_batch_size,
@@ -242,7 +275,6 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 num_proc=dataset_map_cores,
                 remove_columns=["text"],
             )
-            self.pre_grouped_dataset = dataset
             self.mapped_dataset = dataset.map(
                 group_texts,
                 batched=True,
