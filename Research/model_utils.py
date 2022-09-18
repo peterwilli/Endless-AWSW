@@ -187,8 +187,8 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
     
     def filter_per_character(batch):
         result_texts = []
+        from_moments = {}
         for character in Config.interactable_characters:
-            from_moments = []
             for idx, line in enumerate(batch['text']):
                 line = line.strip()
                 if len(line) == 0:
@@ -198,13 +198,20 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                     raise Exception(f"msg_match None! Line: '{line}'")
                 msg_from = msg_match.group(1)
                 if msg_from == character:
-                    from_moments.append(idx)
-            moment = random.choice(from_moments)
-            if moment > 0:
-                text_before = batch['text'][moment - 1]
-                result_texts.append(text_before)
-            result_texts.append(batch['text'][moment])
-        return { 'text': result_texts }
+                    if not msg_from in from_moments:
+                        from_moments[msg_from] = []
+                    from_moments[msg_from].append(idx)
+             
+        while True:
+            for character in Config.interactable_characters:
+                moment = random.choice(from_moments[character])
+                if moment > 0:
+                    text_before = batch['text'][moment - 1]
+                    result_texts.append(text_before)
+                result_texts.append(batch['text'][moment])
+                from_moments[character].remove(moment)
+                if len(from_moments[character]) == 0:
+                    return { 'text': result_texts }
 
     def group_texts(examples):
         # Concatenate all texts.
