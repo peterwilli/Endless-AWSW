@@ -354,25 +354,6 @@ def get_params(params: dict) -> dict:
 def get_cycles_buildoff(
     optimizer, num_warmup_steps: int, num_training_steps: int, noise_amount: float = 0.0, num_cycles: int = 10, merge_cycles: int = 4, last_epoch: int = -1
 ):
-    """
-    Create a schedule with a learning rate that decreases following the values of the cosine function between the
-    initial lr set in the optimizer to 0, with several hard restarts, after a warmup period during which it increases
-    linearly between 0 and the initial lr set in the optimizer.
-    Args:
-        optimizer ([`~torch.optim.Optimizer`]):
-            The optimizer for which to schedule the learning rate.
-        num_warmup_steps (`int`):
-            The number of steps for the warmup phase.
-        num_training_steps (`int`):
-            The total number of training steps.
-        num_cycles (`int`, *optional*, defaults to 1):
-            The number of hard restarts to use.
-        last_epoch (`int`, *optional*, defaults to -1):
-            The index of the last epoch when resuming training.
-    Return:
-        `torch.optim.lr_scheduler.LambdaLR` with the appropriate schedule.
-    """
-    
     random_state = random.Random(94839)
 
     def lr_lambda(current_step):
@@ -383,10 +364,13 @@ def get_cycles_buildoff(
             return 0.0
         cycle_progress = float(num_cycles) * progress
         start_cycles = num_cycles - merge_cycles
+        step_noise = noise_amount
         if cycle_progress > start_cycles:
             build_down_cycles = cycle_progress - start_cycles
             cycle_progress = start_cycles + (build_down_cycles / merge_cycles)
-        return max(0.0, 0.5 * (1.0 + math.cos(math.pi * (cycle_progress % 1.0)))) + (random_state.uniform(-1, 1) * noise_amount)
+            # During buildoff there will be no noise
+            step_noise = 0
+        return max(0.0, 0.5 * (1.0 + math.cos(math.pi * (cycle_progress % 1.0)))) + (random_state.uniform(-1, 1) * step_noise)
 
     return torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda, last_epoch)
 
@@ -404,7 +388,8 @@ def get_scheduler(optimizer, num_warmup_steps: int, num_total_steps: int, params
         scheduler = get_polynomial_decay_schedule_with_warmup(optimizer, num_warmup_steps, num_total_steps, power=power, lr_end=lr_end)
     elif scheduler_str == "cycles_buildoff":
         cycles = params['cycles']
-        scheduler = get_cycles_buildoff(optimizer, num_warmup_steps, num_total_steps, num_cycles = cycles, merge_cycles = 0, noise_amount = 0.01)
+        merge_cycles = params['merge_cycles']
+        scheduler = get_cycles_buildoff(optimizer, num_warmup_steps, num_total_steps, num_cycles = cycles, merge_cycles = merge_cycles, noise_amount = 0.01)
     return scheduler
         
 def train_model(model, tokenizer, dataset, params: dict, results: dict):
