@@ -186,30 +186,24 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         return { 'text': result }
     
     def filter_per_character(batch):
-        character_batch_counter = Counter()
-        for item in batch['text']:
-            line = item.strip()
-            if len(line) > 0:
-                msg_match = re_msg.search(line)
-                if msg_match is None:
-                    raise Exception(f"msg_match None! Line: '{line}'")
-                msg_from = msg_match.group(1)
-                character_batch_counter[msg_from] += 1
-        character_with_lowest_screen_time = min(character_batch_counter, key=character_batch_counter.get)
-        max_character_appearance = character_batch_counter[character_with_lowest_screen_time]
         result_texts = []
-        character_in_result_counter = Counter()
-        start = random.randint(0, len(batch['text']))
-        for item in (batch['text'][start:] + batch['text'][:start]):
-            line = item.strip()
-            if len(line) > 0:
+        for character in Config.interactable_characters:
+            from_moments = []
+            for idx, line in enumerate(batch['text']):
+                line = line.strip()
+                if len(line) == 0:
+                    continue
                 msg_match = re_msg.search(line)
                 if msg_match is None:
                     raise Exception(f"msg_match None! Line: '{line}'")
                 msg_from = msg_match.group(1)
-                if msg_from == 'c' or character_in_result_counter[msg_from] < max_character_appearance:
-                    result_texts.append(line)
-                    character_in_result_counter[msg_from] += 1
+                if msg_from == character:
+                    from_moments.append(idx)
+            moment = random.choice(from_moments)
+            if moment > 0:
+                text_before = batch['text'][moment - 1]
+                result_texts.append(text_before)
+            result_texts.append(batch['text'][moment])
         return { 'text': result_texts }
 
     def group_texts(examples):
