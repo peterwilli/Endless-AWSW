@@ -227,6 +227,8 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
     dataset_map_cores = min(multiprocessing.cpu_count(), 1)
     # dataset_map_cores = 1
     dataset_batch_size = 1000
+    # Make sure map is getting called over and over
+    datasets.set_caching_enabled(False)
 
     class AWSWDataset(torch.utils.data.IterableDataset):
         def __init__(self, dataset, dataset_type):
