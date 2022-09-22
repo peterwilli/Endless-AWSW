@@ -247,6 +247,18 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
 
         def shuffle(self):
             dataset = self.current_dataset.map(
+                filter_per_character,
+                batched=True,
+                batch_size=9999999,
+                num_proc=dataset_map_cores
+            )
+            dataset = dataset.map(
+                shuffle_groups,
+                batched=True,
+                batch_size=dataset_batch_size,
+                num_proc=dataset_map_cores
+            )
+            dataset = self.current_dataset.map(
                 shuffle_groups,
                 batched=True,
                 batch_size=dataset_batch_size,
