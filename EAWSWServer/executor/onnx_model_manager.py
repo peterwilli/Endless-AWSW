@@ -72,6 +72,7 @@ class OnnxModelManager:
         )
         for t in prompt:
             validated_reply_buffer.add_token(t, is_computer_generated = False)
+            
         for step in range(self.max_length):
             inputs = {}
             inputs['attention_mask'] = attention_mask
@@ -81,8 +82,6 @@ class OnnxModelManager:
             while True:    
                 amount_word_samples = 10
                 next_token_logits = outputs[0][:, -1, :]
-                noise = np.random.uniform(low = 0.9, high = 1, size = next_token_logits.shape)
-                next_token_logits = next_token_logits * noise
                 next_tokens = np.argpartition(-next_token_logits, amount_word_samples).flatten()[:amount_word_samples]
                 chances = next_token_logits.flatten()[next_tokens]
                 chances = self.normalize(chances)
@@ -93,19 +92,20 @@ class OnnxModelManager:
                         'i': next_tokens[i]
                     })
                 chances_list.sort(key=lambda x: x['c'], reverse=True)
-                dyn_chance = 0.0
                 if validated_reply_buffer.in_message:
-                    dyn_chance = 0.5
-                new_chances = np.linspace(0, 1, amount_word_samples)
-                self.word_chance(new_chances, dyn_chance)
-                if validated_reply_buffer.in_message:
+                    new_chances = np.zeros(10, dtype = np.float32)
+                    self.word_chance(new_chances, 0.25)
                     for i in range(len(new_chances)):
                         new_chances[i] = new_chances[i] * chances_list[i]['c']
-                selection = random.choices(chances_list, weights=new_chances, k=1)[0]['i']
-                if selection == eos_token_id:
+                    selection = random.choices(chances_list, weights=new_chances, k=1)[0]['i']
+                    next_tokens = np.array([selection])
+                else:
+                    next_tokens = np.argmax(next_token_logits, axis=-1)
+                
+                if next_tokens[0] == eos_token_id:
                     # We end at eos_token as validated_reply_buffer doesn't track this token
                     return validated_reply_buffer.tokens
-                next_tokens = np.array([selection])
+
                 token_str = self.tokenizer.decode(next_tokens)
                 old_tokens = validated_reply_buffer.tokens
                 try:
@@ -114,15 +114,17 @@ class OnnxModelManager:
                             return validated_reply_buffer.tokens
                     break
                 except ValidationException as e:
+                    done_part = validated_reply_buffer.tokens[len(prompt):].strip()
                     logging.error(e)
-                    logging.warn(f"Validation exception with last tokens {validated_reply_buffer.tokens} (retrying generate with last known working tokens {old_tokens})...")
+                    if done_part.startswith("<") and done_part.endswith('"'):
+                        logging.info(f"Validation exception, but we still have a valid reply ({done_part}), sending that instead...")
+                        break
+                    logging.warn(f"Validation exception with last tokens:\n{validated_reply_buffer.tokens}\nRetrying generate with last known working tokens:\n{old_tokens}")
                     validated_reply_buffer = ValidatedReplyBuffer(old_tokens)
                     sample_tries_left -= 1
                     if sample_tries_left == 0:
                         logging.warning("Can't find valid samples for message!")
                         return None
-            # else:
-            #     next_tokens = np.argmax(next_token_logits, axis=-1)
             # Update input_ids, attention_mask and past
             input_ids = np.array(self.tokenizer.encode(validated_reply_buffer.tokens), dtype=np.int64)
             input_ids = input_ids[np.newaxis, ...]

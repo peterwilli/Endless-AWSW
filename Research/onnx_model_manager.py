@@ -55,7 +55,7 @@ class OnnxModelManager:
         return input_ids, attention_mask
     
     def word_chance(self, x, scale):
-        c = 1.0 - (scale * 0.5)
+        c = 1.0
         for i in range(x.shape[0]):
             x[i] = c
             c *= scale
@@ -75,28 +75,25 @@ class OnnxModelManager:
             next_token_logits = outputs[0][:, -1, :]
             
             if do_sample:
-                noise = np.random.uniform(low = 0.9, high = 1, size = next_token_logits.shape)
-                next_token_logits = next_token_logits * noise
                 next_tokens = np.argpartition(-next_token_logits, 10).flatten()[:10]
-                chances = next_token_logits.flatten()[next_tokens]
-                chances = self.normalize(chances)
-                chances_list = []
-                for i, c in enumerate(chances):
-                    chances_list.append({
-                        'c': c,
-                        'i': next_tokens[i]
-                    })
-                chances_list.sort(key=lambda x: x['c'], reverse=True)
-                dyn_chance = 0.0
                 if is_in_message:
-                    dyn_chance = 0.5
-                new_chances = np.linspace(0, 1, 10)
-                self.word_chance(new_chances, dyn_chance)
-                if is_in_message:
-                    for i in range(len(new_chances)):
+                    chances = next_token_logits.flatten()[next_tokens]
+                    chances = self.normalize(chances)
+                    chances_list = []
+                    for i, c in enumerate(chances):
+                        chances_list.append({
+                            'c': c,
+                            'i': next_tokens[i]
+                        })
+                    chances_list.sort(key=lambda x: x['c'], reverse=True)
+                    new_chances = np.zeros(10, dtype = np.float32)
+                    self.word_chance(new_chances, 0.45)
+                    for i in range(new_chances.shape[0]):
                         new_chances[i] = new_chances[i] * chances_list[i]['c']
-                selection = random.choices(chances_list, weights=new_chances, k=1)[0]['i']
-                next_tokens = np.array([selection])
+                    selection = random.choices(chances_list, weights=new_chances, k=1)[0]['i']
+                    next_tokens = np.array([selection])
+                else:
+                    next_tokens = np.argmax(next_token_logits, axis=-1)
                 if '"' in self.tokenizer.decode(next_tokens):
                     is_in_message = not is_in_message
             else:
