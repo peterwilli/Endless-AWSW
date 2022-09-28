@@ -1,4 +1,4 @@
 url: https://github.com/peterwilli/Endless-AWSW
 name: EAWSWServer
-description: GPT-Neo-125M model trained to reply as dragons from Angels With Scaly Wings.
+description: Replies as characters of the game Angels with Scaly Wings, a dragon-themed visual novel. Uses a carefully finetuned GPT-Neo-125M ported to ONNX.
 keywords: mod, game, awsw

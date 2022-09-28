@@ -35,7 +35,9 @@ def text_is_unsafe(text) -> bool:
     filter_words = [
         'eat',
         'lame',
-        'loser'
+        'loser',
+        'idiot',
+        'shut'
     ]
     for word in filter_words:
         text = text.replace(word, '')

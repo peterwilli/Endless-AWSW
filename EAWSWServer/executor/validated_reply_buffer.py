@@ -101,7 +101,7 @@ class ValidatedReplyBuffer:
     def add_token(self, token: str, is_computer_generated: bool) -> int:
         expect_tokens_len = len(self.expect_tokens)
         if self.expect_tokens_idx >= expect_tokens_len:
-            raise Exception(f"expect_tokens_idx({self.expect_tokens_idx}) > expect_tokens {self.expect_tokens} ({len(self.expect_tokens)}) (token: '{token}') (full text so far: {self.tokens})")
+            raise Exception(f"{self.in_emotion} expect_tokens_idx({self.expect_tokens_idx}) > expect_tokens {self.expect_tokens} ({expect_tokens_len}) (token: '{token}') (full text so far: {self.tokens})")
         expected_token = self.expect_tokens[self.expect_tokens_idx]
         if type(expected_token) == re.Pattern:
             if expected_token.match(token) is None:
@@ -202,7 +202,8 @@ if __name__ == '__main__':
             if buffer.add_token(t, is_computer_generated = is_computer_generated) == 1:
                 break
         if should_equal:
-            assert buffer.tokens == tokens
+            if buffer.tokens != tokens:
+                raise Exception(f"buffer.tokens({buffer.tokens}) !=\ntokens({tokens})")
         return buffer.tokens
 
     # AI as player test
@@ -226,5 +227,4 @@ if __name__ == '__main__':
     test_tokens('<p><msg>c "Hey Remy!"')
     test_tokens('<p><msg>c "Hey Remy!"<d><scn>o2<msg>Ry normal "Are you the Ghoster?"<d><scn>o2<msg>Sb normal "Yes."')
     test_tokens('<d><scn>loremapt<msg>Lo normal "I\'m glad you came!"<d><scn>loremapt<msg>Ip normal "I heard all about you."')
-    # TODO: Enforce emotions for dragon replies
-    # test_tokens('<d><scn>loremapt<msg>Lo happy "I\'m glad you came!"<d><scn>loremapt<msg>Ip "I heard all about you."')
+    test_tokens('<d><scn>testingroom<msg>An face "You\'re a little late, but thanks for coming."<d><scn>testingroom<msg>An smirk "Now lets get you set up for the lab test!"')
