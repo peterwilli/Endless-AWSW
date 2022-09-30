@@ -180,7 +180,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 last_character = msg_from
         i = 0
         while i < len(tmp_list2):
-            slice_size = random.randint(2, 10)
+            slice_size = random.randint(1, 10)
             result.append("".join(tmp_list2[i:i + slice_size]))
             i = i + slice_size
         return { 'text': result }
@@ -189,6 +189,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         result_texts = []
         from_moments = {}
         for character in Config.interactable_characters:
+            from_moments[character] = []
             for idx, line in enumerate(batch['text']):
                 line = line.strip()
                 if len(line) == 0:
@@ -198,20 +199,24 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                     raise Exception(f"msg_match None! Line: '{line}'")
                 msg_from = msg_match.group(1)
                 if msg_from == character:
-                    if not msg_from in from_moments:
-                        from_moments[msg_from] = []
                     from_moments[msg_from].append(idx)
              
         while True:
             for character in Config.interactable_characters:
-                moment = random.choice(from_moments[character])
-                if moment > 0:
-                    text_before = batch['text'][moment - 1]
-                    result_texts.append(text_before)
-                result_texts.append(batch['text'][moment])
-                from_moments[character].remove(moment)
-                if len(from_moments[character]) == 0:
-                    return { 'text': result_texts }
+                if len(from_moments[character]) > 0:
+                    text_to_add = ""
+                    moment = random.choice(from_moments[character])
+                    if moment > 0:
+                        text_before = batch['text'][moment - 1]
+                        text_to_add += text_before
+                    else:
+                        print("no before ", moment, batch['text'][moment])
+                    text_to_add += batch['text'][moment]
+                    from_moments[character].remove(moment)
+                    result_texts.append(text_to_add)
+                    if len(from_moments[character]) == 0:
+                        #print(f"{character} emptied")
+                        return { 'text': result_texts }
 
     def group_texts(examples):
         # Concatenate all texts.
@@ -247,21 +252,15 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
 
         def shuffle(self):
             dataset = self.current_dataset.map(
-                filter_per_character,
+                shuffle_groups,
                 batched=True,
-                batch_size=9999999,
+                batch_size=dataset_batch_size,
                 num_proc=dataset_map_cores
             )
             dataset = dataset.map(
-                shuffle_groups,
+                filter_per_character,
                 batched=True,
-                batch_size=dataset_batch_size,
-                num_proc=dataset_map_cores
-            )
-            dataset = self.current_dataset.map(
-                shuffle_groups,
-                batched=True,
-                batch_size=dataset_batch_size,
+                batch_size=9999999,
                 num_proc=dataset_map_cores
             )
             dataset = dataset.map(
@@ -276,7 +275,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 batch_size=dataset_batch_size,
                 num_proc=dataset_map_cores
             )
-            dataset = dataset.shuffle(seed=self.random.randint(0, 2**32-1))
+#             dataset = dataset.shuffle(seed=self.random.randint(0, 2**32-1))
             dataset = dataset.map(
                 encode,
                 batched=True,
@@ -284,6 +283,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 num_proc=dataset_map_cores,
                 remove_columns=["text"],
             )
+            #self.mapped_dataset = dataset
             self.mapped_dataset = dataset.map(
                 group_texts,
                 batched=True,
