@@ -34,6 +34,9 @@ from regexes import *
 
 reply_processor = ReplyProcessor()
 
+# Make sure map is getting called over and over
+datasets.disable_caching()
+
 def get_model(name):
     tokenizer = AutoTokenizer.from_pretrained(name)
     model = AutoModelForCausalLM.from_pretrained(name)
@@ -186,7 +189,6 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         return { 'text': result }
     
     def filter_per_character(batch):
-        result_texts = []
         from_moments = {}
         for character in Config.interactable_characters:
             from_moments[character] = []
@@ -200,22 +202,22 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 msg_from = msg_match.group(1)
                 if msg_from == character:
                     from_moments[msg_from].append(idx)
-             
+                    
+                    
+        result_texts = []             
         while True:
             for character in Config.interactable_characters:
                 if len(from_moments[character]) > 0:
                     text_to_add = ""
                     moment = random.choice(from_moments[character])
                     if moment > 0:
-                        text_before = batch['text'][moment - 1]
+                        before_slice = min(random.randint(1, 4), moment)
+                        text_before = "".join(batch['text'][moment - before_slice:moment - 1])
                         text_to_add += text_before
-                    else:
-                        print("no before ", moment, batch['text'][moment])
                     text_to_add += batch['text'][moment]
                     from_moments[character].remove(moment)
                     result_texts.append(text_to_add)
                     if len(from_moments[character]) == 0:
-                        #print(f"{character} emptied")
                         return { 'text': result_texts }
 
     def group_texts(examples):
@@ -239,8 +241,6 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
     dataset_map_cores = min(multiprocessing.cpu_count(), 1)
     # dataset_map_cores = 1
     dataset_batch_size = 1000
-    # Make sure map is getting called over and over
-    datasets.set_caching_enabled(False)
 
     class AWSWDataset(torch.utils.data.IterableDataset):
         def __init__(self, dataset, dataset_type):
@@ -248,7 +248,6 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             self.dataset_type = dataset_type
             self.random = np.random.RandomState(seed)
             datasets.logging.disable_progress_bar()
-            self.shuffle()
 
         def shuffle(self):
             dataset = self.current_dataset.map(
@@ -283,7 +282,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 num_proc=dataset_map_cores,
                 remove_columns=["text"],
             )
-            #self.mapped_dataset = dataset
+#             self.mapped_dataset = dataset
             self.mapped_dataset = dataset.map(
                 group_texts,
                 batched=True,
