@@ -209,8 +209,8 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 if len(from_moments[character]) > 0:
                     text_to_add = ""
                     moment = random.choice(from_moments[character])
-                    if moment > 0:
-                        before_slice = random.randint(1, min(moment, 4))
+                    if moment >= 2:
+                        before_slice = random.randint(2, min(moment, 4))
                         start = moment - before_slice
                         text_before = "".join(batch['text'][start:moment])
                         if len(text_before) > 0:
