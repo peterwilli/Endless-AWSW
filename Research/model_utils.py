@@ -183,7 +183,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 last_character = msg_from
         i = 0
         while i < len(tmp_list2):
-            slice_size = random.randint(1, 10)
+            slice_size = random.randint(2, 5)
             result.append("".join(tmp_list2[i:i + slice_size]))
             i = i + slice_size
         return { 'text': result }
@@ -248,22 +248,25 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             self.current_dataset = dataset
             self.dataset_type = dataset_type
             self.random = np.random.RandomState(seed)
-            self.shuffle_counter = 0
             datasets.logging.disable_progress_bar()
-
-        def shuffle(self):
+            self.datasets = []
+            for i in range(0, 15):
+                self.datasets.append(self.create_shuffled_dataset())
+                print(f"Did part {i + 1}")
+            
+        def create_shuffled_dataset(self):
             dataset = self.current_dataset.map(
                 shuffle_groups,
                 batched=True,
                 batch_size=dataset_batch_size,
                 num_proc=dataset_map_cores
             )
-            dataset = dataset.map(
-                filter_per_character,
-                batched=True,
-                batch_size=9999999,
-                num_proc=dataset_map_cores
-            )
+#             dataset = dataset.map(
+#                 filter_per_character,
+#                 batched=True,
+#                 batch_size=9999999,
+#                 num_proc=dataset_map_cores
+#             )
             dataset = dataset.map(
                 inject_random_rp,
                 batched=True,
@@ -276,7 +279,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 batch_size=dataset_batch_size,
                 num_proc=dataset_map_cores
             )
-#             dataset = dataset.shuffle(seed=self.random.randint(0, 2**32-1))
+            dataset = dataset.shuffle(seed=self.random.randint(0, 2**32-1))
             dataset = dataset.map(
                 encode,
                 batched=True,
@@ -285,7 +288,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 remove_columns=["text"],
             )
 #             self.mapped_dataset = dataset
-            self.mapped_dataset = dataset.map(
+            return dataset.map(
                 group_texts,
                 batched=True,
                 batch_size=dataset_batch_size,
@@ -293,14 +296,11 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             )
 
         def __len__(self):
-            return len(self.mapped_dataset[self.dataset_type])
+            return len(self.datasets[0][self.dataset_type])
 
         def __iter__(self):
-            if self.shuffle_counter == 0:
-                self.shuffle()
-            self.shuffle_counter = (self.shuffle_counter + 1) % 4
-            return iter(self.mapped_dataset[self.dataset_type])
-    
+            return iter(random.choice(self.datasets)[self.dataset_type])
+            
     return {
         'train': AWSWDataset(dataset, 'train')
     }
