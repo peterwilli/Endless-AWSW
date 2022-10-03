@@ -248,6 +248,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             self.current_dataset = dataset
             self.dataset_type = dataset_type
             self.random = np.random.RandomState(seed)
+            self.shuffle_counter = 0
             datasets.logging.disable_progress_bar()
 
         def shuffle(self):
@@ -295,7 +296,9 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             return len(self.mapped_dataset[self.dataset_type])
 
         def __iter__(self):
-            self.shuffle()
+            if self.shuffle_counter == 0:
+                self.shuffle()
+            self.shuffle_counter = (self.shuffle_counter + 1) % 4
             return iter(self.mapped_dataset[self.dataset_type])
     
     return {
