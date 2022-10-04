@@ -277,6 +277,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         def __init__(self, dataset, dataset_type):
             self.current_dataset = dataset
             self.dataset_type = dataset_type
+            self.trim_len = 2000
             self.random = np.random.RandomState(seed)
             datasets.logging.disable_progress_bar()
             
@@ -312,6 +313,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 num_proc=dataset_map_cores,
                 remove_columns=["text"],
             )
+            dataset = dataset.shuffle(seed=random.randint(0, 2**32-1))
             return dataset.map(
                 group_texts,
                 batched=True,
@@ -320,10 +322,10 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             )
 
         def __len__(self):
-            return 1000
+            return self.trim_len
         
         def __iter__(self):
-            return iter(list(self.create_shuffled_dataset()[self.dataset_type])[:1000])
+            return iter(list(self.create_shuffled_dataset()[self.dataset_type])[:self.trim_len])
                 
     # Make sure map is getting called over and over
     datasets.disable_caching()
