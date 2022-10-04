@@ -282,6 +282,30 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             
         def create_shuffled_dataset(self):
             dataset = self.current_dataset.map(
+                shuffle_groups,
+                batched=True,
+                batch_size=dataset_batch_size,
+                num_proc=dataset_map_cores
+            )
+            dataset = dataset.map(
+                filter_per_character,
+                batched=True,
+                batch_size=9999999,
+                num_proc=dataset_map_cores
+            )
+            dataset = dataset.map(
+                inject_random_rp,
+                batched=True,
+                batch_size=dataset_batch_size,
+                num_proc=dataset_map_cores
+            )
+            dataset = dataset.map(
+                gen_parse_variables(),
+                batched=True,
+                batch_size=dataset_batch_size,
+                num_proc=dataset_map_cores
+            )
+            dataset = self.current_dataset.map(
                 encode,
                 batched=True,
                 batch_size=dataset_batch_size,
@@ -296,16 +320,17 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             )
 
         def __len__(self):
-            return len(self.create_shuffled_dataset()[self.dataset_type])
+            return 1000
         
         def __iter__(self):
-            return iter(self.create_shuffled_dataset()[self.dataset_type])
+            return iter(list(self.create_shuffled_dataset()[self.dataset_type])[:1000])
                 
     # Make sure map is getting called over and over
     datasets.disable_caching()
-    prepare_dataset()
-    datasets.enable_caching()
-    dataset_orig = load_dataset('text', data_files={'train': 'prepared_data_train.txt', 'test': os.path.join(Config.work_dir, "data_test.txt")})
+#     prepare_dataset()
+#     datasets.enable_caching()
+    #dataset_orig = load_dataset('text', data_files={'train': 'prepared_data_train.txt', 'test': os.path.join(Config.work_dir, "data_test.txt")})
+    dataset_orig = load_dataset('text', data_files={'train': path_train, 'test': os.path.join(Config.work_dir, "data_test.txt")})
     return {
         'train': AWSWDataset(dataset_orig, 'train')
     }
