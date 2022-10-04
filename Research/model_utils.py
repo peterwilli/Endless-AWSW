@@ -34,9 +34,6 @@ from regexes import *
 
 reply_processor = ReplyProcessor()
 
-# Make sure map is getting called over and over
-datasets.disable_caching()
-
 def get_model(name):
     tokenizer = AutoTokenizer.from_pretrained(name)
     model = AutoModelForCausalLM.from_pretrained(name)
@@ -60,8 +57,6 @@ def content_aware_encode(tokenizer, text) -> [int]:
     return new_tokens
     
 def get_dataset(seed, tokenizer, path_train, block_size = 128):
-    dataset = load_dataset('text', data_files={'train': path_train, 'test': os.path.join(Config.work_dir, "data_test.txt")})
-    
     def encode(batch):
         result = []
         attention_mask = []
@@ -74,7 +69,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             'input_ids': result
         }
     
-    inject_rp_chance_pct = 0.5
+    inject_rp_chance_pct = 1
     rp_list = None
     with open('rp_data.txt', 'r') as f:
         rp_list = [json.loads(line) for line in f.readlines()]
@@ -239,9 +234,44 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         result["labels"] = result["input_ids"].copy()
         return result
 
+
     dataset_map_cores = min(multiprocessing.cpu_count(), 1)
     # dataset_map_cores = 1
     dataset_batch_size = 1000
+    
+    def prepare_dataset():
+        if not os.path.isfile(os.path.join(Config.work_dir, "prepared_data_train.txt")):
+            dataset_orig = load_dataset('text', data_files={'train': path_train, 'test': os.path.join(Config.work_dir, "data_test.txt")})
+            with open("prepared_data_train.txt", "w") as f:
+                for i in range(10):
+                    dataset = dataset_orig.map(
+                        shuffle_groups,
+                        batched=True,
+                        batch_size=dataset_batch_size,
+                        num_proc=dataset_map_cores
+                    )
+#                     dataset = dataset.map(
+#                         filter_per_character,
+#                         batched=True,
+#                         batch_size=9999999,
+#                         num_proc=dataset_map_cores
+#                     )
+                    dataset = dataset.map(
+                        inject_random_rp,
+                        batched=True,
+                        batch_size=dataset_batch_size,
+                        num_proc=dataset_map_cores
+                    )
+                    dataset = dataset.map(
+                        gen_parse_variables(),
+                        batched=True,
+                        batch_size=dataset_batch_size,
+                        num_proc=dataset_map_cores
+                    )
+                    dataset = dataset.shuffle(seed=random.randint(0, 2**32-1))
+                    for row in dataset['train']:
+                        f.write(row['text'] + "\n")
+                    print(f"did {i + 1}")
 
     class AWSWDataset(torch.utils.data.IterableDataset):
         def __init__(self, dataset, dataset_type):
@@ -249,45 +279,15 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             self.dataset_type = dataset_type
             self.random = np.random.RandomState(seed)
             datasets.logging.disable_progress_bar()
-            self.datasets = []
-            for i in range(0, 15):
-                self.datasets.append(self.create_shuffled_dataset())
-                print(f"Did part {i + 1}")
             
         def create_shuffled_dataset(self):
             dataset = self.current_dataset.map(
-                shuffle_groups,
-                batched=True,
-                batch_size=dataset_batch_size,
-                num_proc=dataset_map_cores
-            )
-#             dataset = dataset.map(
-#                 filter_per_character,
-#                 batched=True,
-#                 batch_size=9999999,
-#                 num_proc=dataset_map_cores
-#             )
-            dataset = dataset.map(
-                inject_random_rp,
-                batched=True,
-                batch_size=dataset_batch_size,
-                num_proc=dataset_map_cores
-            )
-            dataset = dataset.map(
-                gen_parse_variables(),
-                batched=True,
-                batch_size=dataset_batch_size,
-                num_proc=dataset_map_cores
-            )
-            dataset = dataset.shuffle(seed=self.random.randint(0, 2**32-1))
-            dataset = dataset.map(
                 encode,
                 batched=True,
                 batch_size=dataset_batch_size,
                 num_proc=dataset_map_cores,
                 remove_columns=["text"],
             )
-#             self.mapped_dataset = dataset
             return dataset.map(
                 group_texts,
                 batched=True,
@@ -296,13 +296,18 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             )
 
         def __len__(self):
-            return len(self.datasets[0][self.dataset_type])
-
+            return len(self.create_shuffled_dataset()[self.dataset_type])
+        
         def __iter__(self):
-            return iter(random.choice(self.datasets)[self.dataset_type])
-            
+            return iter(self.create_shuffled_dataset()[self.dataset_type])
+                
+    # Make sure map is getting called over and over
+    datasets.disable_caching()
+    prepare_dataset()
+    datasets.enable_caching()
+    dataset_orig = load_dataset('text', data_files={'train': 'prepared_data_train.txt', 'test': os.path.join(Config.work_dir, "data_test.txt")})
     return {
-        'train': AWSWDataset(dataset, 'train')
+        'train': AWSWDataset(dataset_orig, 'train')
     }
 
 def split_data(txt_file: str, shuffle_output = False):
@@ -332,7 +337,7 @@ def set_pretrained_model_dropout(h, dropout):
         
 def visualize_lr(params: dict):
     params = get_params(params)
-    steps = 100
+    steps = 1000
     optimizer = torch.optim.SGD([torch.tensor(1)], lr=1)
     scheduler = get_scheduler(optimizer, 5, steps, params)
 
@@ -405,12 +410,11 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
     params = get_params(params)
     lr = params['lr']
     batch_size = params['batch_size']
-    train_len = len(dataset['train'])
-    num_steps_per_epoch = math.ceil(train_len / batch_size)
     num_epoch = params['num_epoch']
-    num_total_steps = num_steps_per_epoch * num_epoch
-    num_warmup_steps = num_steps_per_epoch * params['warmup_factor']
+    num_total_steps = math.ceil((len(dataset['train']) * num_epoch) / batch_size)
+    num_warmup_steps = math.ceil(num_total_steps * params['warmup_factor'])
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
+    print(f"num_total_steps: {num_total_steps} num_warmup_steps: {num_warmup_steps}")
     scheduler = get_scheduler(optimizer, num_warmup_steps, num_total_steps, params)
 
     class AWSWTrainerCallback(TrainerCallback):
@@ -467,20 +471,16 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
                     self.did_freeze = True     
                 
     def train(model, dataset, trainer_callback):
-        num_log_steps = 100
-        logging_steps = math.floor(max(num_total_steps, num_log_steps) / num_log_steps)
-        print(f"train -> logging_steps: {logging_steps}")
-        
         training_args = TrainingArguments(
             params['model_folder'],
             seed=params['seed'],
             per_device_train_batch_size=batch_size,
             per_device_eval_batch_size=batch_size,
             num_train_epochs=num_epoch,
-            logging_steps=num_log_steps,
+            logging_steps=10,
             save_total_limit=2,
             log_level="error",
-            save_strategy = "steps" if params['save_model'] else "no"
+            save_strategy = "steps" if params['save_model'] else "no",
         )
         trainer = Trainer(
             model=model, 
