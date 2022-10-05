@@ -277,7 +277,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         def __init__(self, dataset, dataset_type):
             self.current_dataset = dataset
             self.dataset_type = dataset_type
-            self.trim_len = 2000
+            self.trim_len = 250
             self.random = np.random.RandomState(seed)
             datasets.logging.disable_progress_bar()
             
@@ -306,7 +306,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 batch_size=dataset_batch_size,
                 num_proc=dataset_map_cores
             )
-            dataset = self.current_dataset.map(
+            dataset = dataset.map(
                 encode,
                 batched=True,
                 batch_size=dataset_batch_size,
