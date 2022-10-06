@@ -277,7 +277,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         def __init__(self, dataset, dataset_type):
             self.current_dataset = dataset
             self.dataset_type = dataset_type
-            self.trim_len = 250
+            self.trim_len = 1000
             self.random = np.random.RandomState(seed)
             datasets.logging.disable_progress_bar()
             
@@ -288,12 +288,12 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 batch_size=dataset_batch_size,
                 num_proc=dataset_map_cores
             )
-            dataset = dataset.map(
-                filter_per_character,
-                batched=True,
-                batch_size=9999999,
-                num_proc=dataset_map_cores
-            )
+#             dataset = dataset.map(
+#                 filter_per_character,
+#                 batched=True,
+#                 batch_size=9999999,
+#                 num_proc=dataset_map_cores
+#             )
             dataset = dataset.map(
                 inject_random_rp,
                 batched=True,
@@ -504,7 +504,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             per_device_train_batch_size=batch_size,
             per_device_eval_batch_size=batch_size,
             num_train_epochs=num_epoch,
-            logging_steps=10,
+            logging_steps=100,
             save_total_limit=2,
             log_level="error",
             save_strategy = "steps" if params['save_model'] else "no",
