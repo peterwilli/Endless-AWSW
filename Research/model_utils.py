@@ -69,7 +69,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
             'input_ids': result
         }
     
-    inject_rp_chance_pct = 1
+    inject_rp_chance_pct = 0.5
     rp_list = None
     with open('rp_data.txt', 'r') as f:
         rp_list = [json.loads(line) for line in f.readlines()]
@@ -277,7 +277,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
         def __init__(self, dataset, dataset_type):
             self.current_dataset = dataset
             self.dataset_type = dataset_type
-            self.trim_len = 1000
+            self.trim_len = 2000
             self.random = np.random.RandomState(seed)
             datasets.logging.disable_progress_bar()
             
