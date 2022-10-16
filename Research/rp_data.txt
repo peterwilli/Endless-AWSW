@@ -1644,6 +1644,11 @@
 {"category": "ask_about", "about_character": "Lo", "cmd": "<p><msg>c \"What do you think of Lorem?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is ugly.\""}
 {"category": "ask_about", "about_character": "Lo", "cmd": "<p><msg>c \"What do you think of Lorem?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is good looking.\""}
 {"category": "mention", "about_character": "Lo", "cmd": "<p><msg>c \"I was with Lorem today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Very nice\""}
+{"category": "mention", "about_character": "Lo", "cmd": "<p><msg>c \"I was with Lorem today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Oh, what did he say?\""}
+{"category": "mention", "about_character": "Lo", "cmd": "<p><msg>c \"I was with Lorem today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What did you think of him?\""}
+{"category": "mention", "about_character": "Lo", "cmd": "<p><msg>c \"I was with Lorem today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"That's cool\""}
+{"category": "mention", "about_character": "Lo", "cmd": "<p><msg>c \"I was with Lorem today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Interesting. What did you two do?\""}
+{"category": "mention", "about_character": "Lo", "cmd": "<p><msg>c \"I was with Lorem today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What happened?\""}
 {"category": "ask_about", "about_character": "Ad", "cmd": "<p><msg>c \"What do you think of Adine?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think she's cute.\""}
 {"category": "ask_about", "about_character": "Ad", "cmd": "<p><msg>c \"What do you think of Adine?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I dont like her as well as before.\""}
 {"category": "ask_about", "about_character": "Ad", "cmd": "<p><msg>c \"What do you think of Adine?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I like her.\""}
@@ -1656,6 +1661,11 @@
 {"category": "ask_about", "about_character": "Ad", "cmd": "<p><msg>c \"What do you think of Adine?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think she is ugly.\""}
 {"category": "ask_about", "about_character": "Ad", "cmd": "<p><msg>c \"What do you think of Adine?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think she is good looking.\""}
 {"category": "mention", "about_character": "Ad", "cmd": "<p><msg>c \"I was with Adine today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Very nice\""}
+{"category": "mention", "about_character": "Ad", "cmd": "<p><msg>c \"I was with Adine today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Oh, what did she say?\""}
+{"category": "mention", "about_character": "Ad", "cmd": "<p><msg>c \"I was with Adine today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What did you think of her?\""}
+{"category": "mention", "about_character": "Ad", "cmd": "<p><msg>c \"I was with Adine today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"That's cool\""}
+{"category": "mention", "about_character": "Ad", "cmd": "<p><msg>c \"I was with Adine today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Interesting. What did you two do?\""}
+{"category": "mention", "about_character": "Ad", "cmd": "<p><msg>c \"I was with Adine today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What happened?\""}
 {"category": "ask_about", "about_character": "An", "cmd": "<p><msg>c \"What do you think of Anna?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think she's cute.\""}
 {"category": "ask_about", "about_character": "An", "cmd": "<p><msg>c \"What do you think of Anna?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I dont like her as well as before.\""}
 {"category": "ask_about", "about_character": "An", "cmd": "<p><msg>c \"What do you think of Anna?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I like her.\""}
@@ -1668,6 +1678,11 @@
 {"category": "ask_about", "about_character": "An", "cmd": "<p><msg>c \"What do you think of Anna?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think she is ugly.\""}
 {"category": "ask_about", "about_character": "An", "cmd": "<p><msg>c \"What do you think of Anna?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think she is good looking.\""}
 {"category": "mention", "about_character": "An", "cmd": "<p><msg>c \"I was with Anna today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Very nice\""}
+{"category": "mention", "about_character": "An", "cmd": "<p><msg>c \"I was with Anna today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Oh, what did she say?\""}
+{"category": "mention", "about_character": "An", "cmd": "<p><msg>c \"I was with Anna today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What did you think of her?\""}
+{"category": "mention", "about_character": "An", "cmd": "<p><msg>c \"I was with Anna today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"That's cool\""}
+{"category": "mention", "about_character": "An", "cmd": "<p><msg>c \"I was with Anna today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Interesting. What did you two do?\""}
+{"category": "mention", "about_character": "An", "cmd": "<p><msg>c \"I was with Anna today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What happened?\""}
 {"category": "ask_about", "about_character": "Br", "cmd": "<p><msg>c \"What do you think of Bryce?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he's cute.\""}
 {"category": "ask_about", "about_character": "Br", "cmd": "<p><msg>c \"What do you think of Bryce?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I dont like him as well as before.\""}
 {"category": "ask_about", "about_character": "Br", "cmd": "<p><msg>c \"What do you think of Bryce?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I like him.\""}
@@ -1680,6 +1695,11 @@
 {"category": "ask_about", "about_character": "Br", "cmd": "<p><msg>c \"What do you think of Bryce?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is ugly.\""}
 {"category": "ask_about", "about_character": "Br", "cmd": "<p><msg>c \"What do you think of Bryce?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is good looking.\""}
 {"category": "mention", "about_character": "Br", "cmd": "<p><msg>c \"I was with Bryce today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Very nice\""}
+{"category": "mention", "about_character": "Br", "cmd": "<p><msg>c \"I was with Bryce today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Oh, what did he say?\""}
+{"category": "mention", "about_character": "Br", "cmd": "<p><msg>c \"I was with Bryce today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What did you think of him?\""}
+{"category": "mention", "about_character": "Br", "cmd": "<p><msg>c \"I was with Bryce today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"That's cool\""}
+{"category": "mention", "about_character": "Br", "cmd": "<p><msg>c \"I was with Bryce today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Interesting. What did you two do?\""}
+{"category": "mention", "about_character": "Br", "cmd": "<p><msg>c \"I was with Bryce today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What happened?\""}
 {"category": "ask_about", "about_character": "Ry", "cmd": "<p><msg>c \"What do you think of Remy?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he's cute.\""}
 {"category": "ask_about", "about_character": "Ry", "cmd": "<p><msg>c \"What do you think of Remy?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I dont like him as well as before.\""}
 {"category": "ask_about", "about_character": "Ry", "cmd": "<p><msg>c \"What do you think of Remy?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I like him.\""}
@@ -1692,6 +1712,11 @@
 {"category": "ask_about", "about_character": "Ry", "cmd": "<p><msg>c \"What do you think of Remy?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is ugly.\""}
 {"category": "ask_about", "about_character": "Ry", "cmd": "<p><msg>c \"What do you think of Remy?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is good looking.\""}
 {"category": "mention", "about_character": "Ry", "cmd": "<p><msg>c \"I was with Remy today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Very nice\""}
+{"category": "mention", "about_character": "Ry", "cmd": "<p><msg>c \"I was with Remy today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Oh, what did he say?\""}
+{"category": "mention", "about_character": "Ry", "cmd": "<p><msg>c \"I was with Remy today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What did you think of him?\""}
+{"category": "mention", "about_character": "Ry", "cmd": "<p><msg>c \"I was with Remy today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"That's cool\""}
+{"category": "mention", "about_character": "Ry", "cmd": "<p><msg>c \"I was with Remy today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Interesting. What did you two do?\""}
+{"category": "mention", "about_character": "Ry", "cmd": "<p><msg>c \"I was with Remy today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What happened?\""}
 {"category": "ask_about", "about_character": "Ka", "cmd": "<p><msg>c \"What do you think of Katsuharu?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he's cute.\""}
 {"category": "ask_about", "about_character": "Ka", "cmd": "<p><msg>c \"What do you think of Katsuharu?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I dont like him as well as before.\""}
 {"category": "ask_about", "about_character": "Ka", "cmd": "<p><msg>c \"What do you think of Katsuharu?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I like him.\""}
@@ -1704,6 +1729,11 @@
 {"category": "ask_about", "about_character": "Ka", "cmd": "<p><msg>c \"What do you think of Katsuharu?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is ugly.\""}
 {"category": "ask_about", "about_character": "Ka", "cmd": "<p><msg>c \"What do you think of Katsuharu?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is good looking.\""}
 {"category": "mention", "about_character": "Ka", "cmd": "<p><msg>c \"I was with Katsuharu today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Very nice\""}
+{"category": "mention", "about_character": "Ka", "cmd": "<p><msg>c \"I was with Katsuharu today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Oh, what did he say?\""}
+{"category": "mention", "about_character": "Ka", "cmd": "<p><msg>c \"I was with Katsuharu today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What did you think of him?\""}
+{"category": "mention", "about_character": "Ka", "cmd": "<p><msg>c \"I was with Katsuharu today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"That's cool\""}
+{"category": "mention", "about_character": "Ka", "cmd": "<p><msg>c \"I was with Katsuharu today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Interesting. What did you two do?\""}
+{"category": "mention", "about_character": "Ka", "cmd": "<p><msg>c \"I was with Katsuharu today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What happened?\""}
 {"category": "ask_about", "about_character": "Sb", "cmd": "<p><msg>c \"What do you think of Sebastian?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he's cute.\""}
 {"category": "ask_about", "about_character": "Sb", "cmd": "<p><msg>c \"What do you think of Sebastian?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I dont like him as well as before.\""}
 {"category": "ask_about", "about_character": "Sb", "cmd": "<p><msg>c \"What do you think of Sebastian?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I like him.\""}
@@ -1716,6 +1746,11 @@
 {"category": "ask_about", "about_character": "Sb", "cmd": "<p><msg>c \"What do you think of Sebastian?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is ugly.\""}
 {"category": "ask_about", "about_character": "Sb", "cmd": "<p><msg>c \"What do you think of Sebastian?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is good looking.\""}
 {"category": "mention", "about_character": "Sb", "cmd": "<p><msg>c \"I was with Sebastian today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Very nice\""}
+{"category": "mention", "about_character": "Sb", "cmd": "<p><msg>c \"I was with Sebastian today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Oh, what did he say?\""}
+{"category": "mention", "about_character": "Sb", "cmd": "<p><msg>c \"I was with Sebastian today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What did you think of him?\""}
+{"category": "mention", "about_character": "Sb", "cmd": "<p><msg>c \"I was with Sebastian today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"That's cool\""}
+{"category": "mention", "about_character": "Sb", "cmd": "<p><msg>c \"I was with Sebastian today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Interesting. What did you two do?\""}
+{"category": "mention", "about_character": "Sb", "cmd": "<p><msg>c \"I was with Sebastian today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What happened?\""}
 {"category": "ask_about", "about_character": "Kv", "cmd": "<p><msg>c \"What do you think of Kevin?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he's cute.\""}
 {"category": "ask_about", "about_character": "Kv", "cmd": "<p><msg>c \"What do you think of Kevin?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I dont like him as well as before.\""}
 {"category": "ask_about", "about_character": "Kv", "cmd": "<p><msg>c \"What do you think of Kevin?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I like him.\""}
@@ -1728,6 +1763,11 @@
 {"category": "ask_about", "about_character": "Kv", "cmd": "<p><msg>c \"What do you think of Kevin?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is ugly.\""}
 {"category": "ask_about", "about_character": "Kv", "cmd": "<p><msg>c \"What do you think of Kevin?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is good looking.\""}
 {"category": "mention", "about_character": "Kv", "cmd": "<p><msg>c \"I was with Kevin today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Very nice\""}
+{"category": "mention", "about_character": "Kv", "cmd": "<p><msg>c \"I was with Kevin today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Oh, what did he say?\""}
+{"category": "mention", "about_character": "Kv", "cmd": "<p><msg>c \"I was with Kevin today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What did you think of him?\""}
+{"category": "mention", "about_character": "Kv", "cmd": "<p><msg>c \"I was with Kevin today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"That's cool\""}
+{"category": "mention", "about_character": "Kv", "cmd": "<p><msg>c \"I was with Kevin today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Interesting. What did you two do?\""}
+{"category": "mention", "about_character": "Kv", "cmd": "<p><msg>c \"I was with Kevin today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What happened?\""}
 {"category": "ask_about", "about_character": "Ip", "cmd": "<p><msg>c \"What do you think of Ipsum?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he's cute.\""}
 {"category": "ask_about", "about_character": "Ip", "cmd": "<p><msg>c \"What do you think of Ipsum?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I dont like him as well as before.\""}
 {"category": "ask_about", "about_character": "Ip", "cmd": "<p><msg>c \"What do you think of Ipsum?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I like him.\""}
@@ -1740,6 +1780,11 @@
 {"category": "ask_about", "about_character": "Ip", "cmd": "<p><msg>c \"What do you think of Ipsum?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is ugly.\""}
 {"category": "ask_about", "about_character": "Ip", "cmd": "<p><msg>c \"What do you think of Ipsum?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is good looking.\""}
 {"category": "mention", "about_character": "Ip", "cmd": "<p><msg>c \"I was with Ipsum today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Very nice\""}
+{"category": "mention", "about_character": "Ip", "cmd": "<p><msg>c \"I was with Ipsum today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Oh, what did he say?\""}
+{"category": "mention", "about_character": "Ip", "cmd": "<p><msg>c \"I was with Ipsum today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What did you think of him?\""}
+{"category": "mention", "about_character": "Ip", "cmd": "<p><msg>c \"I was with Ipsum today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"That's cool\""}
+{"category": "mention", "about_character": "Ip", "cmd": "<p><msg>c \"I was with Ipsum today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Interesting. What did you two do?\""}
+{"category": "mention", "about_character": "Ip", "cmd": "<p><msg>c \"I was with Ipsum today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What happened?\""}
 {"category": "ask_about", "about_character": "Em", "cmd": "<p><msg>c \"What do you think of Emera?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think she's cute.\""}
 {"category": "ask_about", "about_character": "Em", "cmd": "<p><msg>c \"What do you think of Emera?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I dont like her as well as before.\""}
 {"category": "ask_about", "about_character": "Em", "cmd": "<p><msg>c \"What do you think of Emera?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I like her.\""}
@@ -1752,6 +1797,11 @@
 {"category": "ask_about", "about_character": "Em", "cmd": "<p><msg>c \"What do you think of Emera?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think she is ugly.\""}
 {"category": "ask_about", "about_character": "Em", "cmd": "<p><msg>c \"What do you think of Emera?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think she is good looking.\""}
 {"category": "mention", "about_character": "Em", "cmd": "<p><msg>c \"I was with Emera today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Very nice\""}
+{"category": "mention", "about_character": "Em", "cmd": "<p><msg>c \"I was with Emera today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Oh, what did she say?\""}
+{"category": "mention", "about_character": "Em", "cmd": "<p><msg>c \"I was with Emera today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What did you think of her?\""}
+{"category": "mention", "about_character": "Em", "cmd": "<p><msg>c \"I was with Emera today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"That's cool\""}
+{"category": "mention", "about_character": "Em", "cmd": "<p><msg>c \"I was with Emera today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Interesting. What did you two do?\""}
+{"category": "mention", "about_character": "Em", "cmd": "<p><msg>c \"I was with Emera today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What happened?\""}
 {"category": "ask_about", "about_character": "Zh", "cmd": "<p><msg>c \"What do you think of Zhong?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he's cute.\""}
 {"category": "ask_about", "about_character": "Zh", "cmd": "<p><msg>c \"What do you think of Zhong?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I dont like him as well as before.\""}
 {"category": "ask_about", "about_character": "Zh", "cmd": "<p><msg>c \"What do you think of Zhong?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I like him.\""}
@@ -1764,6 +1814,11 @@
 {"category": "ask_about", "about_character": "Zh", "cmd": "<p><msg>c \"What do you think of Zhong?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is ugly.\""}
 {"category": "ask_about", "about_character": "Zh", "cmd": "<p><msg>c \"What do you think of Zhong?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think he is good looking.\""}
 {"category": "mention", "about_character": "Zh", "cmd": "<p><msg>c \"I was with Zhong today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Very nice\""}
+{"category": "mention", "about_character": "Zh", "cmd": "<p><msg>c \"I was with Zhong today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Oh, what did he say?\""}
+{"category": "mention", "about_character": "Zh", "cmd": "<p><msg>c \"I was with Zhong today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What did you think of him?\""}
+{"category": "mention", "about_character": "Zh", "cmd": "<p><msg>c \"I was with Zhong today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"That's cool\""}
+{"category": "mention", "about_character": "Zh", "cmd": "<p><msg>c \"I was with Zhong today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Interesting. What did you two do?\""}
+{"category": "mention", "about_character": "Zh", "cmd": "<p><msg>c \"I was with Zhong today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What happened?\""}
 {"category": "ask_about", "about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think she's cute.\""}
 {"category": "ask_about", "about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I dont like her as well as before.\""}
 {"category": "ask_about", "about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I like her.\""}
@@ -1776,3 +1831,8 @@
 {"category": "ask_about", "about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think she is ugly.\""}
 {"category": "ask_about", "about_character": "Nm", "cmd": "<p><msg>c \"What do you think of Naomi?\"<d><scn>%lastscene<msg>%lastcharactercode normal \"I think she is good looking.\""}
 {"category": "mention", "about_character": "Nm", "cmd": "<p><msg>c \"I was with Naomi today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Very nice\""}
+{"category": "mention", "about_character": "Nm", "cmd": "<p><msg>c \"I was with Naomi today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Oh, what did she say?\""}
+{"category": "mention", "about_character": "Nm", "cmd": "<p><msg>c \"I was with Naomi today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What did you think of her?\""}
+{"category": "mention", "about_character": "Nm", "cmd": "<p><msg>c \"I was with Naomi today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"That's cool\""}
+{"category": "mention", "about_character": "Nm", "cmd": "<p><msg>c \"I was with Naomi today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"Interesting. What did you two do?\""}
+{"category": "mention", "about_character": "Nm", "cmd": "<p><msg>c \"I was with Naomi today\"<d><scn>%lastscene<msg>%lastcharactercode normal \"What happened?\""}
