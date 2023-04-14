@@ -34,7 +34,7 @@ class ModelManager:
         self.model = model
     
     @torch.cuda.amp.autocast()
-    def say_raw(self, prompt, top_k=None, top_p=None, max_length:int=128) -> str:
+    def say_raw(self, prompt, top_k=None, top_p=None, max_length:int=128, skip_special_tokens:bool=False) -> str:
         generated = torch.tensor(self.content_aware_encode(prompt)).unsqueeze(0)
         generated = generated.to(self.device)
         generated = {'input_ids': generated, 'attention_mask': torch.zeros_like(generated).fill_(1)}
@@ -48,8 +48,8 @@ class ModelManager:
             max_new_tokens=max_length,
             num_return_sequences=1
         )
-        return self.tokenizer.decode(sample_outputs[0], skip_special_tokens=False)
+        return self.tokenizer.decode(sample_outputs[0], skip_special_tokens=skip_special_tokens)
     
     def say(self, past, prompt, top_k=None, top_p=None, max_length:int=128) -> str:
         prompt = f'{past}<p><msg>c "{prompt}"{self.reply_prefix}'
-        return self.say_raw(prompt, top_k=top_k, top_p=top_p, max_length=max_length)[len(prompt):].strip()
+        return self.say_raw(prompt, top_k=top_k, top_p=top_p, max_length=max_length, skip_special_tokens=True)[len(prompt) - len(self.reply_prefix):].strip()

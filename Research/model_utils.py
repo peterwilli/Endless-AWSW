@@ -381,6 +381,7 @@ def get_params(params: dict) -> dict:
         "power": 0.6,
         "num_epoch": 10,
         "save_model": True,
+        "gradient_accumulation_steps": 4,
         "batch_size": 32,
         "model_folder": os.path.join(Config.work_dir, "models", "awsw_main")
     }
@@ -431,9 +432,10 @@ def get_scheduler(optimizer, num_warmup_steps: int, num_total_steps: int, params
 def train_model(model, tokenizer, dataset, params: dict, results: dict, callbacks = []):
     params = get_params(params)
     lr = params['lr']
+    gradient_accumulation_steps = params['gradient_accumulation_steps']
     batch_size = params['batch_size']
     num_epoch = params['num_epoch']
-    num_total_steps = math.ceil((len(dataset['train']) * num_epoch) / batch_size)
+    num_total_steps = math.ceil((len(dataset['train']) * num_epoch) / batch_size / gradient_accumulation_steps)
     num_warmup_steps = math.ceil(num_total_steps * params['warmup_factor'])
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
     print(f"num_total_steps: {num_total_steps} num_warmup_steps: {num_warmup_steps}")
@@ -455,6 +457,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict, callback
             seed=params['seed'],
             per_device_train_batch_size=batch_size,
             per_device_eval_batch_size=batch_size,
+            gradient_accumulation_steps=gradient_accumulation_steps,
             num_train_epochs=num_epoch,
             logging_steps=1,
             fp16=True,
