@@ -24,7 +24,7 @@ from collections import Counter
 from torch.utils.data import Dataset, DataLoader
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup, get_polynomial_decay_schedule_with_warmup
-from transformers import Trainer, TrainingArguments, TrainerCallback
+from transformers import Trainer, TrainingArguments, TrainerCallback, ProgressCallback
 from config import Config
 import onnx
 from onnx_model_manager import OnnxModelManager
@@ -456,7 +456,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict, callback
             per_device_train_batch_size=batch_size,
             per_device_eval_batch_size=batch_size,
             num_train_epochs=num_epoch,
-            logging_steps=10,
+            logging_steps=1,
             fp16=True,
             save_total_limit=2,
             save_strategy = "steps" if params['save_model'] else "no",
@@ -468,12 +468,17 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict, callback
             optimizers=(optimizer, scheduler),
             callbacks=callbacks + [trainer_callback]
         )
+        # To avoid log spam
+        trainer.callback_handler.callbacks.pop()
         checkpoint_dirs = [os.path.join(params['model_folder'], d) for d in os.listdir(params['model_folder']) if os.path.isdir(os.path.join(params['model_folder'], d))]
+        # silence the warnings. Please re-enable for inference!
+        model.config.use_cache = False
         if len(checkpoint_dirs) > 0:
             latest_checkpoint = max(checkpoint_dirs, key=os.path.getmtime)
             trainer.train(latest_checkpoint)
         else:
             trainer.train()
+        model.config.use_cache = True
         del training_args
         del trainer
         gc.collect()
