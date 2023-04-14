@@ -34,11 +34,6 @@ from regexes import *
 
 reply_processor = ReplyProcessor()
 
-def get_model(name):
-    tokenizer = AutoTokenizer.from_pretrained(name)
-    model = AutoModelForCausalLM.from_pretrained(name)
-    return model, tokenizer
-
 def random_model_folder():
     now = int(time.time())
     models_dir = os.path.join(Config.work_dir, "models", str(now))
@@ -433,7 +428,7 @@ def get_scheduler(optimizer, num_warmup_steps: int, num_total_steps: int, params
         scheduler = get_cycles_buildoff(optimizer, num_warmup_steps, num_total_steps, num_cycles = cycles, merge_cycles = merge_cycles, noise_amount = 0.01)
     return scheduler
         
-def train_model(model, tokenizer, dataset, params: dict, results: dict):
+def train_model(model, tokenizer, dataset, params: dict, results: dict, callbacks = []):
     params = get_params(params)
     lr = params['lr']
     batch_size = params['batch_size']
@@ -445,14 +440,8 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
     scheduler = get_scheduler(optimizer, num_warmup_steps, num_total_steps, params)
 
     class AWSWTrainerCallback(TrainerCallback):
-        def __init__(self, optimizer, results):
-            self.random = np.random.RandomState(params['seed'])
-            self.old_freeze_part_layers = None
-            self.optimizer = optimizer
+        def __init__(self, results):
             self.results = results
-            self.named_parameters = list(model.named_parameters())
-            self.random.shuffle(self.named_parameters)
-            self.did_freeze = False
             
         def on_train_end(self, args, state, control, **kwargs):
             learning_rate_history = [h['learning_rate'] for h in state.log_history if 'learning_rate' in h]
@@ -460,43 +449,6 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             self.results['loss_history'] = loss_history
             self.results['learning_rate_history'] = learning_rate_history
             
-        def on_step_begin(self, args, state, control, **kwargs):
-            current_step = state.global_step
-            # Freeze a part
-            freeze_part_layers = False
-            freeze_once = False
-            learning_rate = self.optimizer.param_groups[0]['lr']
-            if 'freeze_layer_rate' in params:
-                freeze_layer_rate = params['freeze_layer_rate']
-                freeze_part_layers = learning_rate > freeze_layer_rate
-            if 'freeze_from_steps' in params:
-                freeze_part_layers = current_step > params['freeze_from_steps']
-            if 'freeze_once' in params:
-                freeze_once = params['freeze_once']
-            if self.old_freeze_part_layers is not freeze_part_layers:
-                if freeze_once and self.did_freeze:
-                    return
-                if 'to_freeze_gpt_blocks' in params:
-                    param_slice = self.named_parameters
-                    for name, param in param_slice:
-                        param.requires_grad = False
-                    for name, param in model.transformer.h.named_parameters():
-                        param.requires_grad = True
-                    to_freeze_gpt_blocks = params['to_freeze_gpt_blocks']
-                    param_slice = model.transformer.h[:to_freeze_gpt_blocks]
-                    print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (freezing {len(param_slice)} out of {len(model.transformer.h)} gpt blocks.)")
-                    for name, param in param_slice.named_parameters():
-                        param.requires_grad = not freeze_part_layers
-                if 'to_freeze_count' in params:
-                    to_freeze_count = params['to_freeze_count']
-                    param_slice = self.named_parameters[:to_freeze_count]
-                    print(f"[{current_step}] set freeze_part_layers: {freeze_part_layers} (freezing {len(param_slice)} out of {len(self.named_parameters)} layers.)")
-                    for name, param in param_slice:
-                        param.requires_grad = not freeze_part_layers
-                self.old_freeze_part_layers = freeze_part_layers   
-                if freeze_part_layers:
-                    self.did_freeze = True     
-                
     def train(model, dataset, trainer_callback):
         training_args = TrainingArguments(
             params['model_folder'],
@@ -504,9 +456,9 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             per_device_train_batch_size=batch_size,
             per_device_eval_batch_size=batch_size,
             num_train_epochs=num_epoch,
-            logging_steps=100,
+            logging_steps=10,
+            fp16=True,
             save_total_limit=2,
-            log_level="error",
             save_strategy = "steps" if params['save_model'] else "no",
         )
         trainer = Trainer(
@@ -514,7 +466,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
             args=training_args, 
             train_dataset=dataset['train'],
             optimizers=(optimizer, scheduler),
-            callbacks=[trainer_callback]
+            callbacks=callbacks + [trainer_callback]
         )
         checkpoint_dirs = [os.path.join(params['model_folder'], d) for d in os.listdir(params['model_folder']) if os.path.isdir(os.path.join(params['model_folder'], d))]
         if len(checkpoint_dirs) > 0:
@@ -530,7 +482,7 @@ def train_model(model, tokenizer, dataset, params: dict, results: dict):
         except:
             pass
         torch.cuda.empty_cache()
-    trainer_callback = AWSWTrainerCallback(optimizer, results)
+    trainer_callback = AWSWTrainerCallback(results)
     train(model, dataset, trainer_callback)
     del model
     del dataset

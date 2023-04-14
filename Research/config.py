@@ -1,9 +1,10 @@
 import os
+import pathlib
 
 class Config:
-    base_model_name = "EleutherAI/gpt-neo-125M"
+    base_model_name = "facebook/opt-6.7b"
     base_model_basename = base_model_name.split("/")[1]
-    work_dir = os.path.join("/opt", "awsw")
+    work_dir = pathlib.Path(__file__).parent.resolve()
     interactable_characters = {
         "Ad": "Adine",
         "An": "Anna",
