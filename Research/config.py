@@ -2,7 +2,7 @@ import os
 import pathlib
 
 class Config:
-    base_model_name = "facebook/opt-6.7b"
+    base_model_name = "lmsys/vicuna-7b-v1.5-16k"
     base_model_basename = base_model_name.split("/")[1]
     work_dir = pathlib.Path(__file__).parent.resolve()
     interactable_characters = {
