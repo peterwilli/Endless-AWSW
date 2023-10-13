@@ -1,6 +1,6 @@
 from jina import Executor, requests
 from docarray import DocumentArray, Document
-from .onnx_model_manager import OnnxModelManager
+from .model_manager import ModelManager
 from .reply_processor import ReplyProcessor
 import os
 import json
@@ -9,12 +9,7 @@ from typing import Dict
 from profanity_check import predict as predict_profanity
 
 filter_profanity = True
-script_path = os.path.dirname(os.path.realpath(__file__))
-model_path = os.path.join(script_path, "model", "model.onnx")
-if not os.path.exists(model_path):
-    print("Downloading model...")
-    urllib.request.urlretrieve("https://github.com/peterwilli/Endless-AWSW/releases/download/v0.3/model.onnx", model_path)
-model_manager = OnnxModelManager(model_path)
+model_manager = ModelManager("peterwilli/eawsw-16k")
 reply_processor = ReplyProcessor()
 command_retries = 5
 
@@ -66,17 +61,18 @@ class EndlessAWSWExec(Executor):
                     return DocumentArray(result)
             return DocumentArray()
 
-# def test():
-#     m = EndlessAWSWExec()
-#     test_past = DocumentArray([
-#         Document(text = "Hey Remy!", tags = { 'cmd': 'msg', 'from': 'c' }),
-#         Document(text = "park2", tags = { 'cmd': 'scn' }),
-#         Document(text = "Hey!", tags = { 'cmd': 'msg', 'emotion': 'smile', 'from': 'Ry' }),
-#     ])
-#     print(f"json: {test_past.to_json()}")
-#     replies = m.send_message(test_past, {
-#         'prompt': 'Test' 
-#     })
-#     for reply in replies:
-#         print(f"Tags: {reply.tags} Reply: {reply.text}")
-# test()
+if __name__ == "__main__":
+    def test():
+        m = EndlessAWSWExec()
+        test_past = DocumentArray([
+            Document(text = "Hey Remy!", tags = { 'cmd': 'msg', 'from': 'c' }),
+            Document(text = "park2", tags = { 'cmd': 'scn' }),
+            Document(text = "Hey!", tags = { 'cmd': 'msg', 'emotion': 'smile', 'from': 'Ry' }),
+        ])
+        print(f"json: {test_past.to_json()}")
+        replies = m.send_message(test_past, {
+            'prompt': 'Test' 
+        })
+        for reply in replies:
+            print(f"Tags: {reply.tags} Reply: {reply.text}")
+    test()
