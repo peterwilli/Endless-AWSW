@@ -1,8 +1,9 @@
 from jina import Executor, requests
 from docarray import DocList
 from .reply_processor import ReplyProcessor
-from .docs import InputDoc, ReplyDoc
+from .docs import InputDoc, ReplyDoc, CommandDoc
 from .model_manager import ModelManager
+from .bad_prompt_filter import is_disallowed
 import sys
 
 filter_profanity = True
@@ -11,38 +12,29 @@ reply_processor = ReplyProcessor()
 # model_manager = ModelManager("peterwilli/eawsw-16k")
 command_retries = 5
 
-def text_is_unsafe(text) -> bool:
-    # Some words trigger false-negatives like 'penis'.
-    # Instead of retraining the whole model I opted for adding them myself.
-    # Ipsum why did you make me do this!?! Whyyyyyyy!
-    block_words = [
-        'penis'
-    ]
-    for word in block_words:
-        if word in text:
-            return True
-
-    # Some words trigger false-positives like 'eat', 'lame' etc.
-    # Instead of retraining the whole model I opted for simply ignoring them.
-    # See https://gitlab.com/dimitrios/alt-profanity-check/-/issues/12
-    filter_words = [
-        'eat',
-        'lame',
-        'loser',
-        'idiot',
-        'shut'
-    ]
-    for word in filter_words:
-        text = text.replace(word, '')
-    text: str
-
 class EndlessAWSWExec(Executor):
     @requests(on=['/send_message'])
     async def send_message(self, docs: DocList[InputDoc], **kwargs) -> DocList[ReplyDoc]:
         result = []
         for doc in docs:
             past_text = reply_processor.docs_to_string(doc.past)
-            reply = await model_manager.say(past_text, doc.prompt)
-            result_docs = reply_processor.string_to_docs(reply)
-            result.append(result_docs)
+            if is_disallowed(doc.prompt):
+                return DocList[ReplyDoc]([
+                    ReplyDoc(
+                        commands=DocList[CommandDoc]([
+                            CommandDoc(cmd="error", value="profanity_detected")
+                        ])
+                    )
+                ])
+
+            found_reply = False
+            for i in range(command_retries):
+                reply = await model_manager.say(past_text, doc.prompt)
+                if not is_disallowed(reply):
+                    cmd_docs = reply_processor.string_to_docs(reply)
+                    result.append(ReplyDoc(commands=cmd_docs))
+                    found_reply = True
+                    break
+            if not found_reply:
+                result.append(ReplyDoc(commands=[]))
         return DocList[ReplyDoc](result)
