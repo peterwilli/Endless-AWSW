@@ -1,11 +1,13 @@
 from jina import Executor, requests
 from docarray import DocList
-from .docs import InputDoc, OutputDoc
+from .reply_processor import ReplyProcessor
+from .docs import InputDoc, OutputDoc, ReplyDoc
 from .model_manager import ModelManager
 import sys
 
 filter_profanity = True
 model_manager = ModelManager("/Projects/Personal/Endless-AWSW/Research/merged-eawsw-16k")
+reply_processor = ReplyProcessor()
 # model_manager = ModelManager("peterwilli/eawsw-16k")
 command_retries = 5
 
@@ -36,9 +38,10 @@ def text_is_unsafe(text) -> bool:
 
 class EndlessAWSWExec(Executor):
     @requests
-    async def send_message(self, docs: DocList[InputDoc], **kwargs) -> DocList[OutputDoc]:
+    async def send_message(self, docs: DocList[InputDoc], **kwargs) -> DocList[ReplyDoc]:
         result = []
         for doc in docs:
             reply = await model_manager.say(doc.past, doc.prompt)
-            result.append(OutputDoc(reply=reply))
-        return DocList[OutputDoc](result)
+            docs = reply_processor.string_to_docs(reply)
+            result.append(docs)
+        return DocList[ReplyDoc](result)

@@ -1,4 +1,5 @@
-from docarray import BaseDoc
+from docarray import BaseDoc, DocList
+from typing import Optional
 
 class InputDoc(BaseDoc):
     past: str
@@ -6,3 +7,12 @@ class InputDoc(BaseDoc):
 
 class OutputDoc(BaseDoc):
     reply: str
+
+class CommandDoc(BaseDoc):
+    cmd: str
+    emotion: Optional[str]
+    msg_from: Optional[str]
+    value: Optional[str]
+
+class ReplyDoc(BaseDoc):
+    commands: DocList[CommandDoc]
