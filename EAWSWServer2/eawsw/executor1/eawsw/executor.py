@@ -1,7 +1,7 @@
 from jina import Executor, requests
 from docarray import DocList
 from .reply_processor import ReplyProcessor
-from .docs import InputDoc, OutputDoc, ReplyDoc
+from .docs import InputDoc, ReplyDoc
 from .model_manager import ModelManager
 import sys
 
@@ -37,11 +37,12 @@ def text_is_unsafe(text) -> bool:
     text: str
 
 class EndlessAWSWExec(Executor):
-    @requests
+    @requests(on=['/send_message'])
     async def send_message(self, docs: DocList[InputDoc], **kwargs) -> DocList[ReplyDoc]:
         result = []
         for doc in docs:
-            reply = await model_manager.say(doc.past, doc.prompt)
-            docs = reply_processor.string_to_docs(reply)
-            result.append(docs)
+            past_text = reply_processor.docs_to_string(doc.past)
+            reply = await model_manager.say(past_text, doc.prompt)
+            result_docs = reply_processor.string_to_docs(reply)
+            result.append(result_docs)
         return DocList[ReplyDoc](result)

@@ -1,13 +1,6 @@
 from docarray import BaseDoc, DocList
 from typing import Optional
 
-class InputDoc(BaseDoc):
-    past: str
-    prompt: str
-
-class OutputDoc(BaseDoc):
-    reply: str
-
 class CommandDoc(BaseDoc):
     cmd: str
     emotion: Optional[str]
@@ -16,3 +9,8 @@ class CommandDoc(BaseDoc):
 
 class ReplyDoc(BaseDoc):
     commands: DocList[CommandDoc]
+
+class InputDoc(BaseDoc):
+    past: Optional[DocList[CommandDoc]] = DocList[CommandDoc]([])
+    prompt: str
+    

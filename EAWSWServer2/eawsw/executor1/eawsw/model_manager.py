@@ -32,4 +32,4 @@ class ModelManager:
         
     async def say(self, past, prompt) -> str:
         reply = await self.awsw_reply(past, prompt)
-        return ("<d>" + reply.prompt.split("<d>")[1]).strip()
+        return reply.prompt.rsplit('<d>', 1)[1].strip()

@@ -90,50 +90,50 @@ label eawsw_pick_your_poison:
     menu:
         "You meet Remy at the park.":
             $ eawsw_client.set_start_narrative('park2', [
-                { 'cmd': 'msg', 'from': 'c', 'msg': "Hey Remy!" },
-                { 'cmd': 'scn', 'scn': 'park2' },
-                { 'cmd': 'msg', 'emotion': 'smile', 'from': 'Ry', 'msg': "Hey!" },
+                { 'cmd': 'msg', 'msg_from': 'c', 'value': "Hey Remy!" },
+                { 'cmd': 'scn', 'value': 'park2' },
+                { 'cmd': 'msg', 'emotion': 'smile', 'msg_from': 'Ry', 'value': "Hey!" },
             ])
         "You're watching Adine training stunt flights at the beach":
             $ eawsw_client.set_start_narrative('beach', [
-                { 'cmd': 'msg', 'from': 'c', 'msg': "Wow nice looping!" },
-                { 'cmd': 'scn', 'scn': 'beach' },
-                { 'cmd': 'msg', 'emotion': 'giggle', 'from': 'Ad', 'msg': "Thanks! But I have to do much better than this!" },
+                { 'cmd': 'msg', 'msg_from': 'c', 'value': "Wow nice looping!" },
+                { 'cmd': 'scn', 'value': 'beach' },
+                { 'cmd': 'msg', 'emotion': 'giggle', 'msg_from': 'Ad', 'value': "Thanks! But I have to do much better than this!" },
             ])
         "You're with Lorem in the forest.":
             $ eawsw_client.set_start_narrative('forest1', [
-                { 'cmd': 'msg', 'from': 'm', 'msg': "Lorem approached me in the forest." },
-                { 'cmd': 'scn', 'scn': 'forest1' },
-                { 'cmd': 'msg', 'from': 'Lo', 'emotion': 'happy', 'msg': "Hey!" },
+                { 'cmd': 'msg', 'msg_from': 'm', 'value': "Lorem approached me in the forest." },
+                { 'cmd': 'scn', 'value': 'forest1' },
+                { 'cmd': 'msg', 'msg_from': 'Lo', 'emotion': 'happy', 'value': "Hey!" },
             ])
         "You're with Lorem and Ipsum in their apartment.":
             $ eawsw_client.set_start_narrative('loremapt', [
-                { 'cmd': 'scn', 'scn': 'loremapt' },
-                { 'cmd': 'msg', 'from': 'Lo', 'emotion': 'happy', 'msg': "I'm glad you came!" },
-                { 'cmd': 'scn', 'scn': 'loremapt' },
-                { 'cmd': 'msg', 'from': 'Ip', 'emotion': 'happy', 'msg': "I heard all about you." },
+                { 'cmd': 'scn', 'value': 'loremapt' },
+                { 'cmd': 'msg', 'msg_from': 'Lo', 'emotion': 'happy', 'value': "I'm glad you came!" },
+                { 'cmd': 'scn', 'value': 'loremapt' },
+                { 'cmd': 'msg', 'msg_from': 'Ip', 'emotion': 'happy', 'value': "I heard all about you." },
             ])
         "You're in a fight with Maverick.":
             $ eawsw_client.set_start_narrative('np1r', [
-                { 'cmd': 'scn', 'scn': 'np1r' },
-                { 'cmd': 'msg', 'from': 'm', 'msg': "Maverick growled heavily at me." },
-                { 'cmd': 'scn', 'scn': 'np1r' },
-                { 'cmd': 'msg', 'from': 'Mv', 'emotion': 'angry', 'msg': "I'll slice you open!" },
+                { 'cmd': 'scn', 'value': 'np1r' },
+                { 'cmd': 'msg', 'msg_from': 'm', 'value': "Maverick growled heavily at me." },
+                { 'cmd': 'scn', 'value': 'np1r' },
+                { 'cmd': 'msg', 'msg_from': 'Mv', 'emotion': 'angry', 'value': "I'll slice you open!" },
             ])
         "On a picnic with Bryce":
             $ eawsw_client.set_start_narrative('np2', [
-                { 'cmd': 'scn', 'scn': 'np2' },
-                { 'cmd': 'msg', 'from': 'm', 'msg': "I sat down with Bryce. During our trip to the picnic place he carried a large basket." },
-                { 'cmd': 'scn', 'scn': 'np2' },
-                { 'cmd': 'msg', 'from': 'Br', 'emotion': 'laugh', 'msg': "If you're hungry, you can grab something from the fun basket." },
+                { 'cmd': 'scn', 'value': 'np2' },
+                { 'cmd': 'msg', 'msg_from': 'm', 'value': "I sat down with Bryce. During our trip to the picnic place he carried a large basket." },
+                { 'cmd': 'scn', 'value': 'np2' },
+                { 'cmd': 'msg', 'msg_from': 'Br', 'emotion': 'laugh', 'value': "If you're hungry, you can grab something from the fun basket." },
             ])
         "In a shipwreck with Naomi":
             if eawsw_naomi_installed:   
                 $ eawsw_client.set_start_narrative('eckoldbiolab', [
-                    { 'cmd': 'scn', 'scn': 'eckoldbiolab' },
-                    { 'cmd': 'msg', 'from': 'm', 'msg': "After days locked up in here, we still haven't found a way out." },
-                    { 'cmd': 'scn', 'scn': 'eckoldbiolab' },
-                    { 'cmd': 'msg', 'from': 'Nm', 'emotion': 'blank', 'msg': "Are they looking for us you think?" },
+                    { 'cmd': 'scn', 'value': 'eckoldbiolab' },
+                    { 'cmd': 'msg', 'msg_from': 'm', 'value': "After days locked up in here, we still haven't found a way out." },
+                    { 'cmd': 'scn', 'value': 'eckoldbiolab' },
+                    { 'cmd': 'msg', 'msg_from': 'Nm', 'emotion': 'blank', 'value': "Are they looking for us you think?" },
                 ])
             else:    
                 jump need_naomi_error

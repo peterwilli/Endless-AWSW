@@ -21,7 +21,7 @@ class EAWSWClient:
         # Jina is currently providing EAWSW hosting for free on their JCloud service.
         # At the moment, there's no need for community services.
         self.hosts = hosts
-        self.save_past_amount = 6
+        self.save_past_amount = 128
         self.mods = mods
         self.init_mapping()
         self.state = {
@@ -78,27 +78,27 @@ class EAWSWClient:
         
     def set_start_narrative(self, start_scene, start_narrative):
         self.state['start_scene'] = start_scene
-        self.state['start_narrative'] = self.eawsw_json_to_doc_array(start_narrative)
+        self.state['start_narrative'] = start_narrative
         self.last_scene = self.state['start_scene']
 
     def strip_past(self):
         self.state['endless_awsw_past'] = self.state['endless_awsw_past'][self.save_past_amount * -1:]
         potential_stray_dragon = self.state['endless_awsw_past'][0]
-        if potential_stray_dragon['tags']['cmd'] == 'msg' and potential_stray_dragon['tags']['from'] != 'c':
+        if potential_stray_dragon['cmd'] == 'msg' and potential_stray_dragon['msg_from'] != 'c':
             # Dragon without a scene, forbidden so we delete it too
             self.state['endless_awsw_past'].pop(0)
-                
-    def execute_commands(self, docs):
-        for item in docs:
-            cmd = item['tags']['cmd']
+
+    def execute_commands(self, commands):
+        for command in commands:
+            cmd = command['cmd']
             if cmd == "scn":
-                self.last_scene = item['text']
+                self.last_scene = command['value']
             elif cmd == "msg":
-                msg_from = item['tags']['from']
-                msg = item['text']
+                msg_from = command['msg_from']
+                msg = command['value']
                 emotion = None
-                if 'emotion' in item['tags']:
-                    emotion = item['tags']['emotion']
+                if 'emotion' in command and command['emotion'] is not None:
+                    emotion = command['emotion']
                 if msg_from in self.character_mapping:
                     if self.character_mapping[msg_from] is None:
                         self.last_character = None
@@ -116,28 +116,7 @@ class EAWSWClient:
                     renpy.exports.show(self.last_character)
                 if msg_from in self.talk_functions:
                     talk_fn = self.talk_functions[msg_from]
-                    talk_fn(msg)     
-
-    # Since we can't use Jina's DocumentArray directly in this mod
-    # We use a sexy json and convert it to DocumentArray's json format
-    def eawsw_json_to_doc_array(self, arr):
-        result = []
-        for cmd in arr:
-            obj = {
-                'tags': {
-                    'cmd': cmd['cmd']
-                }
-            }
-            if cmd['cmd'] == 'msg':
-                obj['text'] = cmd['msg']
-                obj['tags']['from'] = cmd['from']
-                if 'emotion' in cmd:
-                    obj['tags']['emotion'] = cmd['emotion']
-            elif cmd['cmd'] == 'scn':
-                obj['text'] = cmd['scn']
-            obj['id'] = self.get_random_string(32)
-            result.append(obj)
-        return result
+                    talk_fn(msg)
 
     def await_prompt(self):
         prompt = renpy.exports.input("Enter your reply ('m' for menu)", default="", exclude='{%[]}', length=512)
@@ -155,15 +134,14 @@ class EAWSWClient:
             try:
                 renpy.store.m("Waiting for reply...{nw}")
                 request_body = json.dumps({
-                    'data': self.state['endless_awsw_past'],
-                    'execEndpoint': '/',
-                    'parameters': {
+                    'data': {
+                        'past': self.state['endless_awsw_past'],
                         'prompt': prompt
                     }
                 })
                 self.debug_logger.log("Request: %s" % request_body)
                 req = urllib2.Request(
-                    '%s/post' % selected_server,
+                    '%s/send_message' % selected_server,
                     headers = {
                         'User-Agent': 'EmeraldOdin/EAWSW',
                         'Content-Type': 'application/json'
@@ -175,29 +153,27 @@ class EAWSWClient:
                 json_str = response.read()
                 self.debug_logger.log("Response: %s" % json_str)
                 json_response = json.loads(json_str)
-                if json_response['header']['status'] is not None:
-                    # Error
-                    self.last_error = json_response['header']['status']['description']
-                    renpy.exports.jump('eawsw_response_error')
-                    return
-                    
-                docs = json_response['data']
-                self.execute_commands(docs)
-                
+                # if json_response['header']['status'] is not None:
+                #     # Error
+                #     self.last_error = json_response['header']['status']['description']
+                #     renpy.exports.jump('eawsw_response_error')
+                #     return                    
+                docs = json_response['data'][0]
+                self.execute_commands(docs['commands'])
                 if len(docs) == 0:
                     renpy.exports.jump('eawsw_no_reply_error')
                     return
 
-                if docs[0]['tags']['cmd'] == 'error' and docs[0]['text'] == 'profanity_detected': 
+                if docs[0]['cmd'] == 'error' and docs[0]['value'] == 'profanity_detected': 
                     renpy.exports.jump('eawsw_profanity_detected')
                     return
 
-                self.state['endless_awsw_past'] += self.eawsw_json_to_doc_array([{
+                self.state['endless_awsw_past'] += [{
                     'cmd': 'msg',
-                    'from': 'c',
-                    'msg': prompt
-                }])
-                self.state['endless_awsw_past'] += docs
+                    'msg_from': 'c',
+                    'value': prompt
+                }]
+                self.state['endless_awsw_past'] += docs['commands']
                 self.strip_past()
             except urllib2.HTTPError as e:
                 error_message = e.read()
