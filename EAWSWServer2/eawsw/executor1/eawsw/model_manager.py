@@ -50,7 +50,7 @@ class ModelManager:
     @lmql.query
     async def awsw_reply(self, past, prompt):
         '''lmql
-        sample(25, 0.8)
+        sample(25, 0.25)
         "{past}[player: player_prompt(prompt)]<d><scn>[scene: valid_scene]<msg>[dragon: valid_dragon] "
         "[emotion: valid_emotion(dragon)]"
         "[reply: valid_reply]"
