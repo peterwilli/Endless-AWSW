@@ -173,7 +173,7 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 last_character = msg_from
         i = 0
         while i < len(tmp_list2):
-            slice_size = random.randint(2, 5)
+            slice_size = random.randint(4, 16)
             result.append("".join(tmp_list2[i:i + slice_size]))
             i = i + slice_size
         return { 'text': result }
@@ -233,40 +233,6 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
     dataset_map_cores = min(multiprocessing.cpu_count(), 1)
     # dataset_map_cores = 1
     dataset_batch_size = 1000
-    
-    def prepare_dataset():
-        if not os.path.isfile(os.path.join(Config.work_dir, "prepared_data_train.txt")):
-            dataset_orig = load_dataset('text', data_files={'train': path_train, 'test': os.path.join(Config.work_dir, "data_test.txt")})
-            with open("prepared_data_train.txt", "w") as f:
-                for i in range(10):
-                    dataset = dataset_orig.map(
-                        shuffle_groups,
-                        batched=True,
-                        batch_size=dataset_batch_size,
-                        num_proc=dataset_map_cores
-                    )
-#                     dataset = dataset.map(
-#                         filter_per_character,
-#                         batched=True,
-#                         batch_size=9999999,
-#                         num_proc=dataset_map_cores
-#                     )
-                    dataset = dataset.map(
-                        inject_random_rp,
-                        batched=True,
-                        batch_size=dataset_batch_size,
-                        num_proc=dataset_map_cores
-                    )
-                    dataset = dataset.map(
-                        gen_parse_variables(),
-                        batched=True,
-                        batch_size=dataset_batch_size,
-                        num_proc=dataset_map_cores
-                    )
-                    dataset = dataset.shuffle(seed=random.randint(0, 2**32-1))
-                    for row in dataset['train']:
-                        f.write(row['text'] + "\n")
-                    print(f"did {i + 1}")
 
     class AWSWDataset(torch.utils.data.IterableDataset):
         def __init__(self, dataset, dataset_type):
@@ -324,9 +290,6 @@ def get_dataset(seed, tokenizer, path_train, block_size = 128):
                 
     # Make sure map is getting called over and over
     datasets.disable_caching()
-#     prepare_dataset()
-#     datasets.enable_caching()
-    #dataset_orig = load_dataset('text', data_files={'train': 'prepared_data_train.txt', 'test': os.path.join(Config.work_dir, "data_test.txt")})
     dataset_orig = load_dataset('text', data_files={'train': path_train, 'test': os.path.join(Config.work_dir, "data_test.txt")})
     return {
         'train': AWSWDataset(dataset_orig, 'train')
